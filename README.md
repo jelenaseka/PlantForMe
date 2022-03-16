@@ -19,6 +19,7 @@ Pored registracije i prijave, neautentifikovani korisnik može da pretražuje bi
 -	dužini života (jednogodišnje, dvogodišnje, višegodišnje)
 -	visini
 -	period cvetanja
+
 Parametri uključuju jedni druge, pa korisnik može da kombinuje parametre za pretragu.
 
 ### Funkcionalnosti ulogovanog korisnika
@@ -46,10 +47,17 @@ Admin može kreirati nove korisnike i moderatore. On takođe ima uvid u izvešta
 
 ## Arhitektura sistema 
 **API Gateway** – servis za grupisanje svih usluga dostupnih korisnicima. Tehnologija: Nginx
+
 **User service** – GoLang mikroservis i MySQL baza podataka. Zadužen za registraciju, prijavu, autentifikaciju i autorizaciju i dodavanje novih korisnika
+
 **Plant service** – GoLang mikroservis i MySQL baza podataka za CRUD operacije nad biljkama i za njihovu pretragu
+
 **PlantCare service** – GoLang mikroservis i MySQL baza podataka za korisničko dodavanje svojih kolekcija i biljaka, kao i taskova za biljke
+
 **Forum service** – GoLang mikroservis i MySQL baza podataka za upravljanje diskusijama na forumu
+
 **Report service** – Pharo servis za izveštaje o moderatorima i biljkama
+
 **Recommendation service** – GoLang mikroservis i Neo4j baza podataka za preporuku biljaka korisnicima na osnovu onih koje već poseduju
+
 **React front-end aplikacija** – Monolitna react aplikacija koja komunicira sa api gateway-om
