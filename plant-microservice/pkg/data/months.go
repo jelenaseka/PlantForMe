@@ -17,6 +17,11 @@ const (
 	December
 )
 
+type BloomingMonth struct {
+	ID    int   `json:"id"`
+	Month Month `gorm:"unique" json:"month"`
+}
+
 func (m Month) String() string {
 	switch m {
 	case January:

@@ -4,11 +4,22 @@ import (
 	"log"
 	"net/http"
 
-	"plant-microservice/handlers"
-	"plant-microservice/service"
+	"plant-microservice/pkg/config"
+	"plant-microservice/pkg/data"
+	"plant-microservice/pkg/handlers"
+	"plant-microservice/pkg/service"
 
 	"github.com/gorilla/mux"
 )
+
+func init() {
+	config.Connect()
+	db := config.GetDB()
+	db.AutoMigrate(&data.Plant{})
+	db.AutoMigrate(&data.Category{})
+	db.AutoMigrate(&data.BloomingMonth{})
+
+}
 
 func main() {
 	r := mux.NewRouter()

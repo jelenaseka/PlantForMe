@@ -3,7 +3,7 @@ package handlers
 import (
 	"log"
 	"net/http"
-	"plant-microservice/service"
+	"plant-microservice/pkg/service"
 )
 
 type Plant struct {
