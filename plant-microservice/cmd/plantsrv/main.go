@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -12,16 +13,22 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func init() {
-	config.Connect()
+func main() {
+	configuration, err := config.LoadConfig("../../")
+	if err != nil {
+		log.Fatal("cannot load config:", err)
+	}
+	fmt.Println("Reading variables using the model..")
+	fmt.Println("Database is\t", configuration.DBName)
+	fmt.Println("Port is\t\t", configuration.ServerAddress)
+	fmt.Println("DSN\t", configuration.DSN)
+
+	config.Connect(configuration.DSN)
 	db := config.GetDB()
 	db.AutoMigrate(&data.Plant{})
 	db.AutoMigrate(&data.Category{})
 	db.AutoMigrate(&data.BloomingMonth{})
 
-}
-
-func main() {
 	r := mux.NewRouter()
 	l := log.Default()
 	plantService := service.NewPlantService()
@@ -36,6 +43,6 @@ func main() {
 	deleteR := r.Methods(http.MethodDelete).Subrouter()
 	deleteR.HandleFunc("/api/plants/{id}", plantHandler.Delete)
 
-	http.ListenAndServe(":8085", r)
+	http.ListenAndServe(configuration.ServerAddress, r)
 
 }
