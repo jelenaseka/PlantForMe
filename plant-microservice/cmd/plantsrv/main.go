@@ -6,8 +6,8 @@ import (
 	"net/http"
 
 	"plant-microservice/pkg/config"
-	"plant-microservice/pkg/data"
 	"plant-microservice/pkg/handlers"
+	"plant-microservice/pkg/repository"
 	"plant-microservice/pkg/service"
 
 	"github.com/gorilla/mux"
@@ -24,14 +24,25 @@ func main() {
 	fmt.Println("DSN\t", configuration.DSN)
 
 	config.Connect(configuration.DSN)
-	db := config.GetDB()
-	db.AutoMigrate(&data.Plant{})
-	db.AutoMigrate(&data.Category{})
-	db.AutoMigrate(&data.BloomingMonth{})
+	// db := config.GetDB()
+	// db.Exec("DROP TABLE plant_blooming_months;")
+	// db.Exec("DROP TABLE blooming_months;")
+	// db.Exec("DROP TABLE plants;")
+	// db.Exec("DROP TABLE categories;")
+
+	// db.AutoMigrate(&data.Plant{})
+	// db.AutoMigrate(&data.Category{})
+	// db.AutoMigrate(&data.BloomingMonth{})
+
+	// config.InitDatabase(db)
 
 	r := mux.NewRouter()
 	l := log.Default()
-	plantService := service.NewPlantService()
+	plantRepository := repository.NewPlantRepository()
+	bloomingMonthRepository := repository.NewBloomingMonthRepository()
+	categoryService := service.NewCategoryService()
+	bloomingMonthService := service.NewBloomingMonthService(bloomingMonthRepository)
+	plantService := service.NewPlantService(plantRepository, categoryService, bloomingMonthService)
 	plantHandler := handlers.NewPlantHandler(l, plantService)
 	getR := r.Methods(http.MethodGet).Subrouter()
 	getR.HandleFunc("/api/plants", plantHandler.GetAll)
