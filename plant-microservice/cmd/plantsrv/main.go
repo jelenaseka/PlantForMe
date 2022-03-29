@@ -38,9 +38,11 @@ func main() {
 
 	r := mux.NewRouter()
 	l := log.Default()
+
 	plantRepository := repository.NewPlantRepository()
 	bloomingMonthRepository := repository.NewBloomingMonthRepository()
-	categoryService := service.NewCategoryService()
+	categoryRepository := repository.NewCategoryRepository()
+	categoryService := service.NewCategoryService(categoryRepository)
 	bloomingMonthService := service.NewBloomingMonthService(bloomingMonthRepository)
 	plantService := service.NewPlantService(plantRepository, categoryService, bloomingMonthService)
 	plantHandler := handlers.NewPlantHandler(l, plantService)
@@ -48,6 +50,8 @@ func main() {
 	getR.HandleFunc("/api/plants", plantHandler.GetAll)
 	getR.HandleFunc("/api/plants/{id}", plantHandler.GetOne)
 	postR := r.Methods(http.MethodPost).Subrouter()
+
+	postR.Use(plantHandler.MiddlewarePlantValidation)
 	postR.HandleFunc("/api/plants", plantHandler.Create)
 	putR := r.Methods(http.MethodPut).Subrouter()
 	putR.HandleFunc("/api/plants/{id}", plantHandler.Update)
