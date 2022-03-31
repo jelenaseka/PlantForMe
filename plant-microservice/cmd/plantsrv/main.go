@@ -24,7 +24,6 @@ func main() {
 	fmt.Println("DSN\t", configuration.DSN)
 
 	config.Connect(configuration.DSN)
-	// db := config.GetDB()
 	// db.Exec("DROP TABLE plant_blooming_months;")
 	// db.Exec("DROP TABLE blooming_months;")
 	// db.Exec("DROP TABLE plants;")
@@ -54,6 +53,7 @@ func main() {
 	postR.Use(plantHandler.MiddlewarePlantValidation)
 	postR.HandleFunc("/api/plants", plantHandler.Create)
 	putR := r.Methods(http.MethodPut).Subrouter()
+	putR.Use(plantHandler.MiddlewarePlantValidation)
 	putR.HandleFunc("/api/plants/{id}", plantHandler.Update)
 	deleteR := r.Methods(http.MethodDelete).Subrouter()
 	deleteR.HandleFunc("/api/plants/{id}", plantHandler.Delete)

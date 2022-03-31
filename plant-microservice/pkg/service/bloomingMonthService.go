@@ -5,16 +5,21 @@ import (
 	"plant-microservice/pkg/repository"
 )
 
-type BloomingMonthService struct {
-	BloomingMonthRepository *repository.BloomingMonthRepository
+type bloomingMonthService struct {
+	IBloomingMonthRepository repository.BloomingMonthRepositoryInterface
 }
 
-func NewBloomingMonthService(r *repository.BloomingMonthRepository) *BloomingMonthService {
-	return &BloomingMonthService{r}
+type BloomingMonthServiceInterface interface {
+	GetOneByMonth(month data.Month) (*data.BloomingMonth, error)
+	FindByMonths(months []int) []data.BloomingMonth
 }
 
-func (service *BloomingMonthService) GetOneByMonth(month data.Month) (*data.BloomingMonth, error) {
-	bloomingMonth, err := service.BloomingMonthRepository.FindByMonth(month)
+func NewBloomingMonthService(r repository.BloomingMonthRepositoryInterface) BloomingMonthServiceInterface {
+	return &bloomingMonthService{r}
+}
+
+func (service *bloomingMonthService) GetOneByMonth(month data.Month) (*data.BloomingMonth, error) {
+	bloomingMonth, err := service.IBloomingMonthRepository.FindByMonth(month)
 	if err != nil {
 		return nil, err
 	}
@@ -22,10 +27,10 @@ func (service *BloomingMonthService) GetOneByMonth(month data.Month) (*data.Bloo
 	return bloomingMonth, nil
 }
 
-func (service *BloomingMonthService) FindByMonths(months []int) []data.BloomingMonth {
+func (service *bloomingMonthService) FindByMonths(months []int) []data.BloomingMonth {
 	var bloomMonths []data.BloomingMonth
 	for _, v := range months {
-		bloomMonth, err := service.BloomingMonthRepository.FindByMonth(data.Month(v))
+		bloomMonth, err := service.IBloomingMonthRepository.FindByMonth(data.Month(v))
 		if err != nil {
 			return []data.BloomingMonth{}
 		}

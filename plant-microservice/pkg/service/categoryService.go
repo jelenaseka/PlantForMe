@@ -7,16 +7,20 @@ import (
 	"github.com/google/uuid"
 )
 
-type CategoryService struct {
-	CategoryRepository *repository.CategoryRepository
+type categoryService struct {
+	ICategoryRepository repository.CategoryRepositoryInterface
 }
 
-func NewCategoryService(r *repository.CategoryRepository) *CategoryService {
-	return &CategoryService{r}
+type CategoryServiceInterface interface {
+	GetOneById(id uuid.UUID) (*data.Category, error)
 }
 
-func (service *CategoryService) GetOneById(id uuid.UUID) (*data.Category, error) {
-	plant, err := service.CategoryRepository.FindById(id)
+func NewCategoryService(r repository.CategoryRepositoryInterface) CategoryServiceInterface {
+	return &categoryService{r}
+}
+
+func (service *categoryService) GetOneById(id uuid.UUID) (*data.Category, error) {
+	plant, err := service.ICategoryRepository.FindById(id)
 	if err != nil {
 		return nil, err
 	}

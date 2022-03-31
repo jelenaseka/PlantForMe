@@ -8,14 +8,18 @@ import (
 	"github.com/google/uuid"
 )
 
-type CategoryRepository struct {
+type categoryRepository struct {
 }
 
-func NewCategoryRepository() *CategoryRepository {
-	return &CategoryRepository{}
+type CategoryRepositoryInterface interface {
+	FindById(id uuid.UUID) (*data.Category, error)
 }
 
-func (repo *CategoryRepository) FindById(id uuid.UUID) (*data.Category, error) {
+func NewCategoryRepository() CategoryRepositoryInterface {
+	return &categoryRepository{}
+}
+
+func (repo *categoryRepository) FindById(id uuid.UUID) (*data.Category, error) {
 	db := config.GetDB()
 	var cat data.Category
 	result := db.First(&cat, "id = ?", id.String())

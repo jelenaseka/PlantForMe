@@ -13,7 +13,7 @@ type PlantRequest struct {
 	CategoryID     string `json:"categoryId" validate:"required,uuid"`
 	Light          int    `json:"light" validate:"min=0,max=3"`
 	Watering       int    `json:"watering" validate:"min=0,max=4"`
-	IsBlooming     bool   `json:"isBlooming" validate:"required"`
+	IsBlooming     bool   `json:"isBlooming"`
 	BloomingMonths []int  `json:"bloomingMonths" validate:"required,unique,dive,min=0,max=11"`
 	GrowthRate     int    `json:"growthRate" validate:"min=0,max=2"`
 	Hardiness      int    `json:"hardiness" validate:"min=0,max=2"`
@@ -25,7 +25,7 @@ type PlantResponse struct {
 	ID             string               `json:"id" validate:"required,uuid"`
 	Name           string               `json:"name" validate:"required"`
 	Description    string               `json:"description" validate:"required"`
-	CategoryID     string               `json:"categoryId" validate:"required"`
+	Category       data.Category        `json:"category" validate:"required"`
 	Light          data.Light           `json:"light" validate:"required"`
 	Watering       data.Watering        `json:"watering" validate:"required"`
 	IsBlooming     bool                 `json:"isBlooming" validate:"required"`
@@ -37,14 +37,14 @@ type PlantResponse struct {
 	CreatedAt      string               `json:"createdOn" validate:"required"`
 }
 
-func NewPlantResponse(id string, name string, description string, categoryID string, light data.Light, watering data.Watering,
+func NewPlantResponse(id string, name string, description string, category data.Category, light data.Light, watering data.Watering,
 	isBlooming bool, bloomingMonths []data.BloomingMonth, growthRate data.GrowthRate, hardiness data.Hardiness, height data.Height,
 	lifeTime data.LifeTime, createdAt string) *PlantResponse {
 	return &PlantResponse{
 		ID:             id,
 		Name:           name,
 		Description:    description,
-		CategoryID:     categoryID,
+		Category:       category,
 		Light:          light,
 		Watering:       watering,
 		IsBlooming:     isBlooming,
@@ -54,6 +54,24 @@ func NewPlantResponse(id string, name string, description string, categoryID str
 		Height:         height,
 		LifeTime:       lifeTime,
 		CreatedAt:      createdAt,
+	}
+}
+
+func NewPlantResponseFromPlant(plant data.Plant) *PlantResponse {
+	return &PlantResponse{
+		ID:             plant.ID.String(),
+		Name:           plant.Name,
+		Description:    plant.Description,
+		Category:       plant.Category,
+		Light:          plant.Light,
+		Watering:       plant.Watering,
+		IsBlooming:     plant.IsBlooming,
+		BloomingMonths: plant.BloomingMonths,
+		GrowthRate:     plant.GrowthRate,
+		Hardiness:      plant.Hardiness,
+		Height:         plant.Height,
+		LifeTime:       plant.LifeTime,
+		CreatedAt:      plant.CreatedAt.String(),
 	}
 }
 

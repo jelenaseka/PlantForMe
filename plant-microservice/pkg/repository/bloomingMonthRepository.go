@@ -5,14 +5,18 @@ import (
 	"plant-microservice/pkg/data"
 )
 
-type BloomingMonthRepository struct {
+type bloomingMonthRepository struct {
 }
 
-func NewBloomingMonthRepository() *BloomingMonthRepository {
-	return &BloomingMonthRepository{}
+type BloomingMonthRepositoryInterface interface {
+	FindByMonth(month data.Month) (*data.BloomingMonth, error)
 }
 
-func (repo *BloomingMonthRepository) FindByMonth(month data.Month) (*data.BloomingMonth, error) {
+func NewBloomingMonthRepository() BloomingMonthRepositoryInterface {
+	return &bloomingMonthRepository{}
+}
+
+func (repo *bloomingMonthRepository) FindByMonth(month data.Month) (*data.BloomingMonth, error) {
 	db := config.GetDB()
 	var bloomingMonth data.BloomingMonth
 	result := db.First(&bloomingMonth, "month = ?", month)

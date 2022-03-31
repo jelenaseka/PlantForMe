@@ -3,38 +3,49 @@ package service
 import (
 	"errors"
 	"fmt"
-	"plant-microservice/pkg/data"
 	"plant-microservice/pkg/dto"
 	"plant-microservice/pkg/repository"
 	"plant-microservice/pkg/utils/error_utils"
-	"time"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
-type PlantService struct {
-	PlantRepository      *repository.PlantRepository
-	CategoryService      *CategoryService
-	BloomingMonthService *BloomingMonthService
+type plantService struct {
+	IPlantRepository      repository.PlantRepositoryInterface
+	ICategoryService      CategoryServiceInterface
+	IBloomingMonthService BloomingMonthServiceInterface
 }
 
-func NewPlantService(r *repository.PlantRepository, c *CategoryService, bm *BloomingMonthService) *PlantService {
-	return &PlantService{r, c, bm}
+type PlantServiceInterface interface {
+	GetAll() ([]dto.PlantResponse, error_utils.MessageErr)
+	GetOneById(uuid.UUID) (*dto.PlantResponse, error_utils.MessageErr)
+	Create(*dto.PlantRequest) (*uuid.NullUUID, error_utils.MessageErr)
+	Update(*dto.PlantRequest, uuid.UUID) error_utils.MessageErr
+	Delete(uuid.UUID) error_utils.MessageErr
 }
 
-func (service *PlantService) GetAll() ([]data.Plant, error_utils.MessageErr) {
-	plants, err := service.PlantRepository.GetAll()
+func NewPlantService(r repository.PlantRepositoryInterface, c CategoryServiceInterface, bm BloomingMonthServiceInterface) PlantServiceInterface {
+	return &plantService{r, c, bm}
+}
+
+func (service *plantService) GetAll() ([]dto.PlantResponse, error_utils.MessageErr) {
+	plants, err := service.IPlantRepository.GetAll()
 
 	if err != nil {
-		return nil, error_utils.NewInternalServerError(fmt.Sprintf("Error when trying to prepare message: %s", err.Error()))
+		return nil, error_utils.NewInternalServerError(fmt.Sprintf("Error when trying to retrieve plants: %s", err.Error()))
 	}
 
-	return plants, nil
+	var plantsResponse []dto.PlantResponse
+	for _, v := range plants {
+		plantsResponse = append(plantsResponse, *dto.NewPlantResponseFromPlant(v))
+	}
+	return plantsResponse, nil
 }
 
-func (service *PlantService) GetOneById(id uuid.UUID) (*dto.PlantResponse, error_utils.MessageErr) {
-	plant, err := service.PlantRepository.FindById(id)
+func (service *plantService) GetOneById(id uuid.UUID) (*dto.PlantResponse, error_utils.MessageErr) {
+	plant, err := service.IPlantRepository.FindById(id)
+
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, error_utils.NewNotFoundError(fmt.Sprintf("The plant with the id %s is not found in the database.", id.String()))
@@ -49,46 +60,62 @@ func (service *PlantService) GetOneById(id uuid.UUID) (*dto.PlantResponse, error
 	return plantResponse, nil
 }
 
-func (service *PlantService) Create(plantRequest *dto.PlantRequest) (*uuid.NullUUID, error) {
+func (service *plantService) Create(plantRequest *dto.PlantRequest) (*uuid.NullUUID, error_utils.MessageErr) {
 	id := uuid.New()
-	bloomMonths := service.BloomingMonthService.FindByMonths(plantRequest.BloomingMonths)
+	bloomMonths := service.IBloomingMonthService.FindByMonths(plantRequest.BloomingMonths)
+	plant := dto.ConvertPlantRequestToPlant(plantRequest, bloomMonths, id)
 
-	plant := data.NewPlant(
-		id,
-		plantRequest.Name,
-		plantRequest.Description,
-		uuid.Must(uuid.Parse(plantRequest.CategoryID)),
-		data.Light(plantRequest.Light),
-		data.Watering(plantRequest.Watering),
-		plantRequest.IsBlooming,
-		bloomMonths,
-		data.GrowthRate(plantRequest.GrowthRate),
-		data.Hardiness(plantRequest.Hardiness),
-		data.Height(plantRequest.Height),
-		data.LifeTime(plantRequest.LifeTime),
-		time.Now(),
-	)
-	err := plant.Validate()
-
-	if err != nil {
-		return nil, err
-	}
-
-	foundPlant, err := service.PlantRepository.FindByName(plant.Name)
-	if foundPlant != nil {
+	_, err := service.IPlantRepository.FindByName(plant.Name)
+	if err == nil {
 		return nil, error_utils.NewConflictError(fmt.Sprintf("Plant with the name %s already exists in the database.", plant.Name))
 	}
 
-	category, err := service.CategoryService.GetOneById(plant.CategoryID)
-	if category == nil {
+	_, err = service.ICategoryService.GetOneById(plant.CategoryID)
+	if err != nil {
 		return nil, error_utils.NewConflictError(fmt.Sprintf("Category with the id %s does not exists in the database.", plant.CategoryID.String()))
 	}
 
-	err = service.PlantRepository.Create(plant)
+	err = service.IPlantRepository.Create(plant)
 	if err != nil {
-		// return nil, error_formats.ParseError(getError)
-		return nil, err
+		return nil, error_utils.NewInternalServerError(fmt.Sprintf("Error when trying to create plant: %s", err.Error()))
 	}
 
 	return &uuid.NullUUID{UUID: id, Valid: true}, nil
+}
+
+func (service *plantService) Update(plantRequest *dto.PlantRequest, id uuid.UUID) error_utils.MessageErr {
+	bloomMonths := service.IBloomingMonthService.FindByMonths(plantRequest.BloomingMonths)
+	plant := dto.ConvertPlantRequestToPlant(plantRequest, bloomMonths, id)
+
+	_, err := service.IPlantRepository.FindById(plant.ID)
+	if err != nil {
+		return error_utils.NewNotFoundError(fmt.Sprintf("The plant with the id %s is not found in the database.", id.String()))
+	}
+
+	foundPlant, err := service.IPlantRepository.FindByName(plant.Name)
+	if err == nil && foundPlant.Name != plant.Name {
+		return error_utils.NewConflictError(fmt.Sprintf("Plant with the name %s already exists in the database.", plant.Name))
+	}
+
+	_, err = service.ICategoryService.GetOneById(plant.CategoryID)
+	if err != nil {
+		return error_utils.NewConflictError(fmt.Sprintf("Category with the id %s does not exists in the database.", plant.CategoryID.String()))
+	}
+
+	err = service.IPlantRepository.Update(plant)
+	if err != nil {
+		// return nil, error_formats.ParseError(getError)
+		return error_utils.NewInternalServerError(fmt.Sprintf("Error when trying to update plant: %s", err.Error()))
+	}
+	return nil
+}
+
+func (service *plantService) Delete(id uuid.UUID) error_utils.MessageErr {
+	_, err := service.IPlantRepository.FindById(id)
+	if err != nil {
+		return error_utils.NewNotFoundError(fmt.Sprintf("The plant with the id %s is not found in the database.", id.String()))
+	}
+
+	service.IPlantRepository.Delete(id)
+	return nil
 }

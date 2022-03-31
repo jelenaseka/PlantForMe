@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"plant-microservice/pkg/dto"
-	"plant-microservice/pkg/errors"
 	"plant-microservice/pkg/service"
 
 	"github.com/google/uuid"
@@ -13,11 +12,11 @@ import (
 )
 
 type Plant struct {
-	l            *log.Logger
-	PlantService *service.PlantService
+	l             *log.Logger
+	IPlantService service.PlantServiceInterface
 }
 
-func NewPlantHandler(l *log.Logger, s *service.PlantService) *Plant {
+func NewPlantHandler(l *log.Logger, s service.PlantServiceInterface) *Plant {
 	return &Plant{l, s}
 }
 
@@ -25,11 +24,10 @@ func (plant *Plant) GetAll(w http.ResponseWriter, r *http.Request) {
 	plant.l.Print("Get all plants")
 
 	w.Header().Add("Content-Type", "application/json")
-	plants, err := plant.PlantService.GetAll()
 
+	plants, err := plant.IPlantService.GetAll()
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(err)
+		http.Error(w, err.Message(), err.Status())
 	}
 
 	json.NewEncoder(w).Encode(plants)
@@ -38,14 +36,14 @@ func (plant *Plant) GetAll(w http.ResponseWriter, r *http.Request) {
 func (plant *Plant) GetOne(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
-
 	plant.l.Println("Get plant with the id ", id)
 
 	w.Header().Add("Content-Type", "application/json")
 
-	plantResponse, err := plant.PlantService.GetOneById(uuid.Must(uuid.Parse(id)))
+	plantResponse, err := plant.IPlantService.GetOneById(uuid.Must(uuid.Parse(id)))
 	if err != nil {
 		http.Error(w, err.Message(), err.Status())
+		return
 	}
 	json.NewEncoder(w).Encode(plantResponse)
 }
@@ -55,26 +53,38 @@ func (plant *Plant) Create(w http.ResponseWriter, r *http.Request) {
 
 	plantRequest := r.Context().Value(ContextPlantKey{}).(dto.PlantRequest)
 
-	id, err := plant.PlantService.Create(&plantRequest)
+	id, err := plant.IPlantService.Create(&plantRequest)
 	if err != nil {
-		switch err.(type) {
-		case *errors.AlreadyExistsException:
-			http.Error(w, err.Error(), http.StatusConflict)
-		case *errors.NotExistsException:
-			http.Error(w, err.Error(), http.StatusNotFound)
-		default:
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
+		http.Error(w, err.Message(), err.Status())
 		return
 	}
 
 	json.NewEncoder(w).Encode(id)
+	w.WriteHeader(http.StatusCreated)
 }
 
 func (plant *Plant) Update(w http.ResponseWriter, r *http.Request) {
-	plant.l.Print("Update plant")
+	vars := mux.Vars(r)
+	id := vars["id"]
+	plant.l.Print("Update plant with the id ", id)
+
+	plantRequest := r.Context().Value(ContextPlantKey{}).(dto.PlantRequest)
+
+	err := plant.IPlantService.Update(&plantRequest, uuid.Must(uuid.Parse(id)))
+	if err != nil {
+		http.Error(w, err.Message(), err.Status())
+	}
 }
 
 func (plant *Plant) Delete(w http.ResponseWriter, r *http.Request) {
-	plant.l.Print("Delete plant")
+	vars := mux.Vars(r)
+	id := vars["id"]
+	plant.l.Print("Delete plant with the id ", id)
+
+	err := plant.IPlantService.Delete(uuid.Must(uuid.Parse(id)))
+	if err != nil {
+		http.Error(w, err.Message(), err.Status())
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
 }
