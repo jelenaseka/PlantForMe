@@ -24,10 +24,7 @@ func main() {
 	fmt.Println("DSN\t", configuration.DSN)
 
 	config.Connect(configuration.DSN)
-	// db.Exec("DROP TABLE plant_blooming_months;")
-	// db.Exec("DROP TABLE blooming_months;")
-	// db.Exec("DROP TABLE plants;")
-	// db.Exec("DROP TABLE categories;")
+	// db := config.GetDB()
 
 	// db.AutoMigrate(&data.Plant{})
 	// db.AutoMigrate(&data.Category{})
@@ -38,25 +35,58 @@ func main() {
 	r := mux.NewRouter()
 	l := log.Default()
 
+	// REPOSITORIES
+
 	plantRepository := repository.NewPlantRepository()
 	bloomingMonthRepository := repository.NewBloomingMonthRepository()
 	categoryRepository := repository.NewCategoryRepository()
+
+	// SERVICES
+
 	categoryService := service.NewCategoryService(categoryRepository)
 	bloomingMonthService := service.NewBloomingMonthService(bloomingMonthRepository)
 	plantService := service.NewPlantService(plantRepository, categoryService, bloomingMonthService)
-	plantHandler := handlers.NewPlantHandler(l, plantService)
-	getR := r.Methods(http.MethodGet).Subrouter()
-	getR.HandleFunc("/api/plants", plantHandler.GetAll)
-	getR.HandleFunc("/api/plants/{id}", plantHandler.GetOne)
-	postR := r.Methods(http.MethodPost).Subrouter()
 
-	postR.Use(plantHandler.MiddlewarePlantValidation)
-	postR.HandleFunc("/api/plants", plantHandler.Create)
-	putR := r.Methods(http.MethodPut).Subrouter()
-	putR.Use(plantHandler.MiddlewarePlantValidation)
-	putR.HandleFunc("/api/plants/{id}", plantHandler.Update)
-	deleteR := r.Methods(http.MethodDelete).Subrouter()
-	deleteR.HandleFunc("/api/plants/{id}", plantHandler.Delete)
+	// HANDLERS
+
+	plantHandler := handlers.NewPlantHandler(l, plantService)
+	categoryHandler := handlers.NewCategoryHandler(l, categoryService)
+
+	// GET
+	getPlantsR := r.Methods(http.MethodGet).Subrouter()
+	getPlantsR.HandleFunc("/api/plants", plantHandler.GetAll)
+	getPlantsR.HandleFunc("/api/plants/{id}", plantHandler.GetOne)
+
+	getCategoriesR := r.Methods(http.MethodGet).Subrouter()
+	getCategoriesR.HandleFunc("/api/categories", categoryHandler.GetAll)
+	getCategoriesR.HandleFunc("/api/categories/{id}", categoryHandler.GetOne)
+
+	// POST
+	postPlantR := r.Methods(http.MethodPost).Subrouter()
+	postPlantR.Use(plantHandler.MiddlewarePlantValidation)
+	postPlantR.HandleFunc("/api/plants", plantHandler.Create)
+
+	postCategoryR := r.Methods(http.MethodPost).Subrouter()
+	postCategoryR.Use(categoryHandler.MiddlewareCategoryValidation)
+	postCategoryR.HandleFunc("/api/categories", categoryHandler.Create)
+
+	// PUT
+
+	putPlantR := r.Methods(http.MethodPut).Subrouter()
+	putPlantR.Use(plantHandler.MiddlewarePlantValidation)
+	putPlantR.HandleFunc("/api/plants/{id}", plantHandler.Update)
+
+	putCategoryR := r.Methods(http.MethodPut).Subrouter()
+	putCategoryR.Use(categoryHandler.MiddlewareCategoryValidation)
+	putCategoryR.HandleFunc("/api/categories/{id}", categoryHandler.Update)
+
+	// DELETE
+
+	deletePlantR := r.Methods(http.MethodDelete).Subrouter()
+	deletePlantR.HandleFunc("/api/plants/{id}", plantHandler.Delete)
+
+	deleteCategoryR := r.Methods(http.MethodDelete).Subrouter()
+	deleteCategoryR.HandleFunc("/api/categories/{id}", categoryHandler.Delete)
 
 	http.ListenAndServe(configuration.ServerAddress, r)
 

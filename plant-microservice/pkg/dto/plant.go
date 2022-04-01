@@ -4,7 +4,6 @@ import (
 	"plant-microservice/pkg/data"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/google/uuid"
 )
 
 type PlantRequest struct {
@@ -81,7 +80,7 @@ func (p *PlantRequest) Validate() error {
 	return validate.Struct(p)
 }
 
-func IsValidUUID(u string) bool {
-	_, err := uuid.Parse(u)
-	return err == nil
-}
+// func IsValidUUID(u string) bool {
+// 	_, err := uuid.Parse(u)
+// 	return err == nil
+// }

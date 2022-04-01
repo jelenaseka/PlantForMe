@@ -42,3 +42,7 @@ func ConvertPlantRequestToPlant(plantRequest *PlantRequest, bloomMonths []data.B
 		time.Now(),
 	)
 }
+
+func ConvertCategoryToCategoryResponse(cat *data.Category) *CategoryResponse {
+	return NewCategoryResponse(cat.ID.String(), cat.Name)
+}

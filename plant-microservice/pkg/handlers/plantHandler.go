@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"plant-microservice/pkg/dto"
 	"plant-microservice/pkg/service"
+	"plant-microservice/pkg/utils"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -36,6 +37,12 @@ func (plant *Plant) GetAll(w http.ResponseWriter, r *http.Request) {
 func (plant *Plant) GetOne(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
+
+	if !utils.IsValidUUID(id) {
+		http.Error(w, "Bad request. Id format error", http.StatusBadRequest)
+		return
+	}
+
 	plant.l.Println("Get plant with the id ", id)
 
 	w.Header().Add("Content-Type", "application/json")

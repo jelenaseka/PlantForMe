@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"fmt"
 	"plant-microservice/pkg/config"
 	"plant-microservice/pkg/data"
 
@@ -12,7 +11,7 @@ type plantRepository struct {
 }
 
 type PlantRepositoryInterface interface {
-	GetAll() ([]data.Plant, error)
+	FindAll() ([]data.Plant, error)
 	FindById(id uuid.UUID) (*data.Plant, error)
 	FindByName(name string) (*data.Plant, error)
 	Create(plant *data.Plant) error
@@ -24,11 +23,10 @@ func NewPlantRepository() PlantRepositoryInterface {
 	return &plantRepository{}
 }
 
-func (repo *plantRepository) GetAll() ([]data.Plant, error) {
+func (repo *plantRepository) FindAll() ([]data.Plant, error) {
 	db := config.GetDB()
 	var plants []data.Plant
 	result := db.Debug().Preload("BloomingMonths").Joins("Category").Find(&plants)
-	fmt.Print(plants[0].Category.Name)
 
 	if result.Error != nil {
 		return nil, result.Error

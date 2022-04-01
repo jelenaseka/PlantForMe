@@ -30,7 +30,7 @@ func NewPlantService(r repository.PlantRepositoryInterface, c CategoryServiceInt
 }
 
 func (service *plantService) GetAll() ([]dto.PlantResponse, error_utils.MessageErr) {
-	plants, err := service.IPlantRepository.GetAll()
+	plants, err := service.IPlantRepository.FindAll()
 
 	if err != nil {
 		return nil, error_utils.NewInternalServerError(fmt.Sprintf("Error when trying to retrieve plants: %s", err.Error()))
@@ -93,7 +93,7 @@ func (service *plantService) Update(plantRequest *dto.PlantRequest, id uuid.UUID
 	}
 
 	foundPlant, err := service.IPlantRepository.FindByName(plant.Name)
-	if err == nil && foundPlant.Name != plant.Name {
+	if err == nil && foundPlant.ID != plant.ID {
 		return error_utils.NewConflictError(fmt.Sprintf("Plant with the name %s already exists in the database.", plant.Name))
 	}
 
