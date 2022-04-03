@@ -13,6 +13,7 @@ type Plant struct {
 	ID             uuid.UUID `gorm:"type:varchar(36)"`
 	Name           string    `gorm:"type:varchar(255);unique"`
 	Description    string    `gorm:"type:varchar(2500)"`
+	Base64Image    string    `gorm:`
 	CategoryID     uuid.UUID `gorm:"type:varchar(36)"`
 	Category       Category  `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	Light          Light
@@ -26,13 +27,14 @@ type Plant struct {
 	CreatedAt      time.Time
 }
 
-func NewPlant(id uuid.UUID, name string, description string, categoryID uuid.UUID, light Light, watering Watering,
+func NewPlant(id uuid.UUID, name string, description string, image string, categoryID uuid.UUID, light Light, watering Watering,
 	isBlooming bool, bloomingMonths []BloomingMonth, growthRate GrowthRate, hardiness Hardiness, height Height,
 	lifeTime LifeTime, createdAt time.Time) *Plant {
 	return &Plant{
 		ID:             id,
 		Name:           name,
 		Description:    description,
+		Base64Image:    image,
 		CategoryID:     categoryID,
 		Light:          light,
 		Watering:       watering,

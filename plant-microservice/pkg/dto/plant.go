@@ -9,6 +9,7 @@ import (
 type PlantRequest struct {
 	Name           string `json:"name" validate:"required,min=3,max=50"`
 	Description    string `json:"description" validate:"required,min=3,max=10000"`
+	Image          string
 	CategoryID     string `json:"categoryId" validate:"required,uuid"`
 	Light          int    `json:"light" validate:"min=0,max=3"`
 	Watering       int    `json:"watering" validate:"min=0,max=4"`
@@ -21,9 +22,10 @@ type PlantRequest struct {
 }
 
 type PlantResponse struct {
-	ID             string               `json:"id" validate:"required,uuid"`
-	Name           string               `json:"name" validate:"required"`
-	Description    string               `json:"description" validate:"required"`
+	ID             string `json:"id" validate:"required,uuid"`
+	Name           string `json:"name" validate:"required"`
+	Description    string `json:"description" validate:"required"`
+	Image          string
 	Category       data.Category        `json:"category" validate:"required"`
 	Light          data.Light           `json:"light" validate:"required"`
 	Watering       data.Watering        `json:"watering" validate:"required"`
@@ -36,13 +38,14 @@ type PlantResponse struct {
 	CreatedAt      string               `json:"createdOn" validate:"required"`
 }
 
-func NewPlantResponse(id string, name string, description string, category data.Category, light data.Light, watering data.Watering,
+func NewPlantResponse(id string, name string, description string, image string, category data.Category, light data.Light, watering data.Watering,
 	isBlooming bool, bloomingMonths []data.BloomingMonth, growthRate data.GrowthRate, hardiness data.Hardiness, height data.Height,
 	lifeTime data.LifeTime, createdAt string) *PlantResponse {
 	return &PlantResponse{
 		ID:             id,
 		Name:           name,
 		Description:    description,
+		Image:          image,
 		Category:       category,
 		Light:          light,
 		Watering:       watering,
@@ -61,6 +64,7 @@ func NewPlantResponseFromPlant(plant data.Plant) *PlantResponse {
 		ID:             plant.ID.String(),
 		Name:           plant.Name,
 		Description:    plant.Description,
+		Image:          plant.Base64Image,
 		Category:       plant.Category,
 		Light:          plant.Light,
 		Watering:       plant.Watering,

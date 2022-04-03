@@ -11,6 +11,7 @@ import (
 	"plant-microservice/pkg/service"
 
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 func main() {
@@ -88,6 +89,12 @@ func main() {
 	deleteCategoryR := r.Methods(http.MethodDelete).Subrouter()
 	deleteCategoryR.HandleFunc("/api/categories/{id}", categoryHandler.Delete)
 
-	http.ListenAndServe(configuration.ServerAddress, r)
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:3000"},
+		AllowCredentials: true,
+	})
+	handler := c.Handler(r)
+
+	http.ListenAndServe(configuration.ServerAddress, handler)
 
 }
