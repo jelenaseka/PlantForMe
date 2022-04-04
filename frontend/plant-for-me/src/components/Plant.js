@@ -1,14 +1,19 @@
-import { Card, CardActions, CardContent, CardHeader, CardMedia, IconButton, Typography } from "@mui/material"
+import { Button, Card, CardActions, CardContent, CardHeader, CardMedia, IconButton, Typography } from "@mui/material"
 import React from "react"
 import ShareIcon from '@mui/icons-material/Share';
 
 const Plant = ({plant}) => {
+
+  const displayBeginningOfContent = (content) => {
+    return content.substring(0,50);
+  }
+
   return (
     <div>
       <Card sx={{ maxWidth: 345 }}>
       <CardHeader
         title={plant.name}
-        subheader="September 14, 2016"
+        subheader={plant.createdAt}
       />
       <CardMedia
         component="img"
@@ -18,15 +23,11 @@ const Plant = ({plant}) => {
       />
       <CardContent>
         <Typography variant="body2" color="text.secondary">
-          This impressive paella is a perfect party dish and a fun meal to cook
-          together with your guests. Add 1 cup of frozen peas along with the mussels,
-          if you like.
+          {displayBeginningOfContent(plant.description)}
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton aria-label="share">
-          <ShareIcon />
-        </IconButton>
+        <Button variant="contained" >See more</Button>
         
       </CardActions>
       

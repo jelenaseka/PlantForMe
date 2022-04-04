@@ -19,12 +19,6 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 const CreatePlantPage = () => {
   const createPlantContext = useContext(CreatePlantContext)
   const [newPlant, setNewPlant] = useState(null)
-  const [wateringOptions, setWateringOptions] = useState(null)
-  const [lightOptions, setLightOptions] = useState(null)
-  const [growthRateOptions, setGrowthRateOptions] = useState(null)
-  const [hardinessOptions, setHardinessOptions] = useState(null)
-  const [heightOptions, setHeightOptions] = useState(null)
-  const [lifeTimeOptions, setLifeTimeOptions] = useState(null)
   const [checkedBloomingMonths, setCheckedBloomingMonths] = useState(
     new Array(months.length).fill(false)
   );
@@ -49,12 +43,6 @@ const CreatePlantPage = () => {
 
   useEffect(() => {
     reset()
-    setWateringOptions(watering)
-    setLightOptions(light)
-    setGrowthRateOptions(growthRate)
-    setHardinessOptions(hardiness)
-    setHeightOptions(height)
-    setLifeTimeOptions(lifeTime)
   }, [createPlantContext.categories])
 
   const handleOnChange = (position) => {
@@ -157,12 +145,12 @@ const CreatePlantPage = () => {
               <MySelect label="Category" options={createPlantContext.categories} selected={newPlant.categoryID} onValueChange={(categoryID) => setNewPlant({...newPlant, categoryID})}/>
             }
             
-            <MySelect label="Watering" options={wateringOptions} selected={newPlant.watering} onValueChange={(watering) => setNewPlant({...newPlant, watering})}/>
-            <MySelect label="Light" options={lightOptions} selected={newPlant.light} onValueChange={(light) => setNewPlant({...newPlant, light})}/>
-            <MySelect label="Growth rate" options={growthRateOptions} selected={newPlant.growthRate} onValueChange={(growthRate) => setNewPlant({...newPlant, growthRate})}/>
-            <MySelect label="Hardiness" options={hardinessOptions} selected={newPlant.hardiness} onValueChange={(hardiness) => setNewPlant({...newPlant, hardiness})}/>
-            <MySelect label="Height" options={heightOptions} selected={newPlant.height} onValueChange={(height) => setNewPlant({...newPlant, height})}/>
-            <MySelect label="Life time" options={lifeTimeOptions} selected={newPlant.lifeTime} onValueChange={(lifeTime) => setNewPlant({...newPlant, lifeTime})}/>
+            <MySelect label="Watering" options={watering} selected={newPlant.watering} onValueChange={(watering) => setNewPlant({...newPlant, watering})}/>
+            <MySelect label="Light" options={light} selected={newPlant.light} onValueChange={(light) => setNewPlant({...newPlant, light})}/>
+            <MySelect label="Growth rate" options={growthRate} selected={newPlant.growthRate} onValueChange={(growthRate) => setNewPlant({...newPlant, growthRate})}/>
+            <MySelect label="Hardiness" options={hardiness} selected={newPlant.hardiness} onValueChange={(hardiness) => setNewPlant({...newPlant, hardiness})}/>
+            <MySelect label="Height" options={height} selected={newPlant.height} onValueChange={(height) => setNewPlant({...newPlant, height})}/>
+            <MySelect label="Life time" options={lifeTime} selected={newPlant.lifeTime} onValueChange={(lifeTime) => setNewPlant({...newPlant, lifeTime})}/>
             
 
           </Grid>

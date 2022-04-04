@@ -6,3 +6,7 @@
 .image-placeholder img {
     max-width: 100%;
 }
+
+.filterPlantsPanel {
+    margin-right:20px;
+}

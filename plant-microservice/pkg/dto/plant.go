@@ -2,6 +2,7 @@ package dto
 
 import (
 	"plant-microservice/pkg/data"
+	"time"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -35,7 +36,7 @@ type PlantResponse struct {
 	Hardiness      data.Hardiness       `json:"hardiness" validate:"required"`
 	Height         data.Height          `json:"height" validate:"required"`
 	LifeTime       data.LifeTime        `json:"lifeTime" validate:"required"`
-	CreatedAt      string               `json:"createdOn" validate:"required"`
+	CreatedAt      string               `json:"createdAt" validate:"required"`
 }
 
 func NewPlantResponse(id string, name string, description string, image string, category data.Category, light data.Light, watering data.Watering,
@@ -74,7 +75,7 @@ func NewPlantResponseFromPlant(plant data.Plant) *PlantResponse {
 		Hardiness:      plant.Hardiness,
 		Height:         plant.Height,
 		LifeTime:       plant.LifeTime,
-		CreatedAt:      plant.CreatedAt.String(),
+		CreatedAt:      plant.CreatedAt.Format(time.RFC3339),
 	}
 }
 

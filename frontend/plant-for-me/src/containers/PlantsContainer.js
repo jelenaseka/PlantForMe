@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { PlantsContext} from '../context/PlantsContext'
 import PlantsPage from '../pages/PlantsPage';
+import { CategoryService } from '../services/CategoryService';
 import { PlantService } from '../services/PlantService';
 
 const PlantsContainer = () => {
   const [plants, setPlants] = useState([])
+  const [categories, setCategories] = useState([])
 
   useEffect(() => {
     const getData = async () => {
       try {
         setPlants(await PlantService.getPlants())
+        setCategories(await CategoryService.getCategories())
       } catch(err) { console.log(err) }
     }
     getData()
@@ -17,7 +20,7 @@ const PlantsContainer = () => {
 
 
   return (
-    <PlantsContext.Provider value={{plants}}>
+    <PlantsContext.Provider value={{plants, categories}}>
       <PlantsPage />
     </PlantsContext.Provider>
   )
