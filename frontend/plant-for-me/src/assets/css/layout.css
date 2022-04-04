@@ -1,0 +1,8 @@
+.image-placeholder {
+    margin-top: 2em;
+    border: 1px solid gainsboro
+}
+
+.image-placeholder img {
+    max-width: 100%;
+}

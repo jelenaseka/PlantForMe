@@ -13,7 +13,7 @@ const Plant = ({plant}) => {
       <CardMedia
         component="img"
         height="194"
-        image={plant.Image}
+        image={plant.image}
         alt="Paella dish"
       />
       <CardContent>

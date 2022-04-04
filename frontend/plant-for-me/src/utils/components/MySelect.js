@@ -8,7 +8,7 @@ const MySelect = ({label, options, selected, onValueChange}) => {
   return (
     <FormControl fullWidth>
       <InputLabel id="demo-simple-select-label">{label}</InputLabel>
-      <Select
+      <Select sx={{ marginBottom: '15px'}}
         labelId="demo-simple-select-label"
         id="demo-simple-select"
         value={selected}

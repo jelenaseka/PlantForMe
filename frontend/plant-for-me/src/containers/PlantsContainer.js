@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { PlantsContext} from '../context/PlantsContext'
 import PlantsPage from '../pages/PlantsPage';
-import Plants from '../pages/PlantsPage'
 import { PlantService } from '../services/PlantService';
 
 const PlantsContainer = () => {

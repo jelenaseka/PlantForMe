@@ -5,7 +5,7 @@ const MyCheckboxList = ({label, options, isChecked, onValueChange}) => {
   return (
     <FormControl component="fieldset">
       <FormLabel component="legend">{label}</FormLabel>
-      <FormGroup aria-label="position" row>
+      <FormGroup aria-label="position">
         {options.map((option, index) => (
           <FormControlLabel
             key={index}

@@ -9,7 +9,7 @@ import (
 type PlantRequest struct {
 	Name           string `json:"name" validate:"required,min=3,max=50"`
 	Description    string `json:"description" validate:"required,min=3,max=10000"`
-	Image          string
+	Image          string `json:"image"`
 	CategoryID     string `json:"categoryId" validate:"required,uuid"`
 	Light          int    `json:"light" validate:"min=0,max=3"`
 	Watering       int    `json:"watering" validate:"min=0,max=4"`
@@ -22,10 +22,10 @@ type PlantRequest struct {
 }
 
 type PlantResponse struct {
-	ID             string `json:"id" validate:"required,uuid"`
-	Name           string `json:"name" validate:"required"`
-	Description    string `json:"description" validate:"required"`
-	Image          string
+	ID             string               `json:"id" validate:"required,uuid"`
+	Name           string               `json:"name" validate:"required"`
+	Description    string               `json:"description" validate:"required"`
+	Image          string               `json:"image"`
 	Category       data.Category        `json:"category" validate:"required"`
 	Light          data.Light           `json:"light" validate:"required"`
 	Watering       data.Watering        `json:"watering" validate:"required"`
