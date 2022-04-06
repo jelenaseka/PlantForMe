@@ -3,14 +3,13 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { CreatePlantContext } from "../context/CreatePlantContext";
-import Switch from '@material-ui/core/Switch';
 import MySelect from '../utils/components/MySelect';
 import { watering, light, lifeTime, growthRate, hardiness, height, months } from "../data/enums";
 import MyCheckboxList from "../utils/components/MyCheckboxList";
-import { Divider, FormControl, Grid, InputLabel, MenuItem, Paper, Select, Typography } from "@mui/material";
+import { Divider, FormControl, Grid, Typography } from "@mui/material";
 import '../assets/css/layout.css';
 import Snackbar from '@mui/material/Snackbar';
-import MuiAlert, { AlertProps } from '@mui/material/Alert';
+import MuiAlert from '@mui/material/Alert';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -107,7 +106,9 @@ const CreatePlantPage = () => {
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     const base64 = await convertToBase64(file);
+    
     setNewPlant({...newPlant, image: base64})
+    e.target.value = null;
   };
 
   const handleClick = () => {

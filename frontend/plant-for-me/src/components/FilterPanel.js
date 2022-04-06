@@ -1,7 +1,6 @@
-import { Button, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Select, Switch, TextField } from "@mui/material"
+import { Button, FormControl, FormControlLabel, Grid, Switch, TextField } from "@mui/material"
 import { Box } from "@mui/system"
 import React, { useContext, useEffect, useState } from "react"
-import Plant from "../components/Plant"
 import { PlantsContext } from "../context/PlantsContext"
 import { growthRate, hardiness, lifeTime, light, months, watering, height } from "../data/enums"
 import MyCheckboxList from "../utils/components/MyCheckboxList"

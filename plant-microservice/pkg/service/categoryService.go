@@ -35,7 +35,7 @@ func (this *categoryService) GetAll() ([]dto.CategoryResponse, error_utils.Messa
 		return nil, error_utils.NewInternalServerError(fmt.Sprintf("Error when trying to retrieve categories: %s", err.Error()))
 	}
 
-	var categoriesResponse []dto.CategoryResponse
+	categoriesResponse := make([]dto.CategoryResponse, 0)
 	for _, v := range categories {
 		categoriesResponse = append(categoriesResponse, *dto.NewCategoryResponseFromCategory(v))
 	}

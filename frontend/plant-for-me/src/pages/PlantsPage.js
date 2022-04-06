@@ -4,11 +4,13 @@ import React, { useContext } from "react"
 import FilterPanel from "../components/FilterPanel"
 import Plant from "../components/Plant"
 import { PlantsContext } from "../context/PlantsContext"
+
 const PlantsPage = () => {
   const plantContext = useContext(PlantsContext)
 
   return (
-    <div>
+    <div> {
+      plantContext.plants && 
       <Box sx={{ flexGrow: 1, padding: '2em' }}>
         <Grid container>
           <Grid item md={3}>
@@ -25,6 +27,8 @@ const PlantsPage = () => {
           </Grid>
         </Grid>
       </Box>
+      }
+      
     </div>
   )
 }

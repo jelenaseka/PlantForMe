@@ -36,7 +36,7 @@ func (service *plantService) GetAll() ([]dto.PlantResponse, error_utils.MessageE
 		return nil, error_utils.NewInternalServerError(fmt.Sprintf("Error when trying to retrieve plants: %s", err.Error()))
 	}
 
-	var plantsResponse []dto.PlantResponse
+	plantsResponse := make([]dto.PlantResponse, 0)
 	for _, v := range plants {
 		plantsResponse = append(plantsResponse, *dto.NewPlantResponseFromPlant(v))
 	}

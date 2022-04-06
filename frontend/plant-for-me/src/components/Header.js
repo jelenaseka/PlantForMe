@@ -1,10 +1,8 @@
-import styled from "@emotion/styled";
-import { alpha, Button, InputBase } from "@mui/material";
+import { Button } from "@mui/material";
 import { AppBar, IconButton, Toolbar, Typography } from "@mui/material"
 import { Box } from "@mui/system"
 import React from "react"
 import MenuIcon from '@mui/icons-material/Menu';
-import SearchIcon from '@mui/icons-material/Search';
 
 const Header = () => {
   return (

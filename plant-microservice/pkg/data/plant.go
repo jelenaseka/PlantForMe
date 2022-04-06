@@ -12,8 +12,8 @@ type Plant struct {
 	gorm.Model
 	ID             uuid.UUID `gorm:"type:varchar(36)"`
 	Name           string    `gorm:"type:varchar(255);unique"`
-	Description    string    `gorm:"type:varchar(2500)"`
-	Base64Image    string    `gorm:`
+	Description    string
+	Base64Image    string
 	CategoryID     uuid.UUID `gorm:"type:varchar(36)"`
 	Category       Category  `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	Light          Light

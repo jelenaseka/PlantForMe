@@ -1,6 +1,5 @@
-import { Button, Card, CardActions, CardContent, CardHeader, CardMedia, IconButton, Typography } from "@mui/material"
+import { Button, Card, CardActions, CardContent, CardHeader, CardMedia, Typography } from "@mui/material"
 import React from "react"
-import ShareIcon from '@mui/icons-material/Share';
 
 const Plant = ({plant}) => {
 
@@ -23,7 +22,7 @@ const Plant = ({plant}) => {
       />
       <CardContent>
         <Typography variant="body2" color="text.secondary">
-          {displayBeginningOfContent(plant.description)}
+          {displayBeginningOfContent(plant.description)}...
         </Typography>
       </CardContent>
       <CardActions disableSpacing>

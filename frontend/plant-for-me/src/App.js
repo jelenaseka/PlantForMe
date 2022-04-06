@@ -4,7 +4,7 @@ import { Route, Routes } from 'react-router-dom';
 import CreatePlantContainer from './containers/CreatePlantContainer'
 import PlantsContainer from './containers/PlantsContainer'
 import Header from './components/Header';
-import { Container } from '@mui/material';
+import CategoriesContainer from './containers/CategoriesContainer';
 
 function App() {
   return (
@@ -14,6 +14,7 @@ function App() {
         <Routes>
           <Route path="/plants/create" element={<CreatePlantContainer/>}/>
           <Route path="/plants" element={<PlantsContainer/>}/>
+          <Route path="/categories" element={<CategoriesContainer/>}/>
         </Routes>
       {/* </Container> */}
     </div>

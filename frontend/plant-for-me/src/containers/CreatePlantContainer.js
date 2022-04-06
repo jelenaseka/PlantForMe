@@ -21,11 +21,13 @@ const CreatePlantContainer = () => {
     const createPlant = async () => {
       try {
         await PlantService.createPlant(plant)
-      } catch(err) {console.log(err)}
+        return true
+      } catch(err) {
+        console.log(err)
+        return false
+      }
     }
-    createPlant()
-    
-    
+    return createPlant()
   }
 
   return (
