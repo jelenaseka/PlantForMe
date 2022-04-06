@@ -4,7 +4,11 @@ export const PlantService = {
     getPlants: async () => {
       const response = await fetch(baseUrl)
       const data = await response.json()
-      console.log(data)
+      return data
+    },
+    getOne: async (id) => {
+      const response = await fetch(baseUrl + `/${id}`)
+      const data = await response.json()
       return data
     },
     createPlant: async (plant) => {

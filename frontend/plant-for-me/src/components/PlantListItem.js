@@ -1,7 +1,7 @@
 import { Button, Card, CardActions, CardContent, CardHeader, CardMedia, Typography } from "@mui/material"
 import React from "react"
 
-const Plant = ({plant}) => {
+const PlantListItem = ({plant}) => {
 
   const displayBeginningOfContent = (content) => {
     return content.substring(0,50);
@@ -35,4 +35,4 @@ const Plant = ({plant}) => {
   )
 }
 
-export default Plant
+export default PlantListItem

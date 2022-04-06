@@ -5,19 +5,19 @@ export const watering = [{
   },
   {
     id: 1,
-    name: "TwiceAWeek"
+    name: "Twice a week"
   },
   {
     id: 2,
-    name: "OnceAWeek"
+    name: "Once a week"
   },
   {
     id: 3,
-    name: "TwiceAMonth"
+    name: "Twice a month"
   },
   {
     id: 4,
-    name: "OnceAMonth"
+    name: "Once a month"
   },
 ]
 
