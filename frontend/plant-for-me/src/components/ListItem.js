@@ -9,8 +9,8 @@ const ListItem = ({icon, name, value}) => {
           {icon}
         </Box>
         <Box>
-          <b class="text-uppercase">{name}</b>
-          <p class="text-left">{value}</p>
+          <b className="text-uppercase">{name}</b>
+          <p className="text-left">{value}</p>
         </Box>
       </Box>
     </li>

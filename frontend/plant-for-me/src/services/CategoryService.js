@@ -7,8 +7,8 @@ export const CategoryService = {
       console.log(data)
       return data
     },
-    createCategory: async (category) => {
-      await fetch(baseUrl, {
+    createCategory: (category) => {
+      return fetch(baseUrl, {
         method: 'POST',
         headers: {
           'Content-type': 'application/json'
@@ -16,8 +16,8 @@ export const CategoryService = {
         body: JSON.stringify(category)
       })
     },
-    updateCategory: async (category) => {
-      await fetch(baseUrl + `/${category.id}`, {
+    updateCategory: (category) => {
+      return fetch(baseUrl + `/${category.id}`, {
         method: 'PUT',
         headers: {
           'Content-type':'application/json'

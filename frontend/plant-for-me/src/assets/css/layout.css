@@ -42,3 +42,7 @@ margin: 0;
 font-size: 15px;
 }
 
+.plant-list-item-button  {
+    color: #1976d2;
+    text-decoration: none;
+}

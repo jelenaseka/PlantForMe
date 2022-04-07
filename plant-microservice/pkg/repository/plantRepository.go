@@ -1,8 +1,11 @@
 package repository
 
 import (
+	"fmt"
+	"net/url"
 	"plant-microservice/pkg/config"
 	"plant-microservice/pkg/data"
+	"plant-microservice/pkg/utils"
 
 	"github.com/google/uuid"
 )
@@ -11,7 +14,7 @@ type plantRepository struct {
 }
 
 type PlantRepositoryInterface interface {
-	FindAll() ([]data.Plant, error)
+	FindAll(url.Values) ([]data.Plant, error)
 	FindById(id uuid.UUID) (*data.Plant, error)
 	FindByName(name string) (*data.Plant, error)
 	Create(plant *data.Plant) error
@@ -23,14 +26,15 @@ func NewPlantRepository() PlantRepositoryInterface {
 	return &plantRepository{}
 }
 
-func (repo *plantRepository) FindAll() ([]data.Plant, error) {
+func (repo *plantRepository) FindAll(urlValues url.Values) ([]data.Plant, error) {
 	db := config.GetDB()
 	var plants []data.Plant
-	result := db.Debug().Preload("BloomingMonths").Joins("Category").Find(&plants)
 
-	if result.Error != nil {
-		return nil, result.Error
-	}
+	query := "SELECT pl.* from plantdb.plants pl left join plantdb.plant_blooming_months pbm on pbm.plant_id = pl.id left join plantdb.blooming_months bm on bm.id = pbm.blooming_month_id left join plantdb.categories c on pl.category_id = c.id "
+	query += utils.BuildQuery(urlValues)
+	fmt.Print(query)
+
+	db.Debug().Raw(query).Scan(&plants)
 
 	return plants, nil
 }

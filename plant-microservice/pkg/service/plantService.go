@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	"fmt"
+	"net/url"
 	"plant-microservice/pkg/dto"
 	"plant-microservice/pkg/repository"
 	"plant-microservice/pkg/utils/error_utils"
@@ -18,7 +19,7 @@ type plantService struct {
 }
 
 type PlantServiceInterface interface {
-	GetAll() ([]dto.PlantResponse, error_utils.MessageErr)
+	GetAll(url.Values) ([]dto.PlantResponse, error_utils.MessageErr)
 	GetOneById(uuid.UUID) (*dto.PlantResponse, error_utils.MessageErr)
 	Create(*dto.PlantRequest) (*uuid.NullUUID, error_utils.MessageErr)
 	Update(*dto.PlantRequest, uuid.UUID) error_utils.MessageErr
@@ -29,8 +30,8 @@ func NewPlantService(r repository.PlantRepositoryInterface, c CategoryServiceInt
 	return &plantService{r, c, bm}
 }
 
-func (service *plantService) GetAll() ([]dto.PlantResponse, error_utils.MessageErr) {
-	plants, err := service.IPlantRepository.FindAll()
+func (service *plantService) GetAll(urlValues url.Values) ([]dto.PlantResponse, error_utils.MessageErr) {
+	plants, err := service.IPlantRepository.FindAll(urlValues)
 
 	if err != nil {
 		return nil, error_utils.NewInternalServerError(fmt.Sprintf("Error when trying to retrieve plants: %s", err.Error()))

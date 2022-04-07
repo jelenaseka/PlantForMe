@@ -15,6 +15,7 @@ const MySelect = ({label, options, selected, onValueChange}) => {
         label={label}
         onChange={(e) => onValueChange(e.target.value)}
       >
+        <MenuItem value="-1">None</MenuItem>
         {options.map((option) => (
           <MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>
         ))}

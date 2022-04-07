@@ -1,9 +1,15 @@
 const baseUrl = "http://localhost:8085/api/plants"
 
 export const PlantService = {
-    getPlants: async () => {
-      const response = await fetch(baseUrl)
+    getPlants: async (url) => {
+      if(url == undefined) {
+        url = ""
+      }
+      var fullUrl = baseUrl + "?" + url;
+      console.log(fullUrl)
+      const response = await fetch(fullUrl)
       const data = await response.json()
+      console.log(data)
       return data
     },
     getOne: async (id) => {

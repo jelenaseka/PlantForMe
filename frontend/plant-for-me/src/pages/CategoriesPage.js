@@ -18,24 +18,37 @@ const CategoriesPage = () => {
   const [selectedCategory, setSelectedCategory] = useState({})
 
   const createCategory = (name) => {
-    if(name.trim() === "") {
-      setupAlert("warning", "Name should not be empty!")
-      setAlertOpen(true);
-      return
-    }
+    validate(name)
     
-    var isCreated = categoriesContext.createCategoryHandler({name: name.trim()})
-    if(isCreated) {
-      setupAlert("success", "Successfully added category!")
-    } else {
-      setupAlert("error", "Error when creating category")
-    }
-
-    setCreateCategoryDialogOpen(false)
-    setAlertOpen(true);
+    categoriesContext.createCategoryHandler({name: name.trim()}).then(res => {
+      if(res.ok) {
+        setupAlert("success", "Successfully added category!")
+      } else {
+        setupAlert("error", res.err)
+      }
+      setAlertOpen(true);
+      setCreateCategoryDialogOpen(false);
+    }).then(() => categoriesContext.getAllHandler())
   }
 
-  
+  const updateCategory = (name, category) => {
+    validate(name)
+    
+    var categoryToUpdate = JSON.parse(JSON.stringify(category));
+    categoryToUpdate.name = name.trim()
+    
+    categoriesContext.updateCategoryHandler(categoryToUpdate)
+    .then(res => {
+      if(res.ok) {
+        setupAlert("success", "Successfully updated category!")
+      } else {
+        setupAlert("error", res.err)
+      }
+      setAlertOpen(true);
+      setUpdateCategoryDialogOpen(false);
+    }).then(() => categoriesContext.getAllHandler())
+    
+  }
 
   const deleteCategory = (categoryID) => {
     var isDeleted = categoriesContext.deleteCategoryHandler(categoryID)
@@ -48,18 +61,12 @@ const CategoriesPage = () => {
     setAlertOpen(true);
   }
 
-  const updateCategory = (name, category) => {
-    var categoryToUpdate = JSON.parse(JSON.stringify(category));
-    categoryToUpdate.name = name.trim()
-    var isUpdated = categoriesContext.updateCategoryHandler(categoryToUpdate)
-    if(isUpdated) {
-      setupAlert("success", "Successfully updated category!")
-    } else {
-      setupAlert("error", "Error when updating category")
+  const validate = (name) => {
+    if(name.trim() === "") {
+      setupAlert("warning", "Name should not be empty!")
+      setAlertOpen(true);
+      return
     }
-    setUpdateCategoryDialogOpen(false)
-    setAlertOpen(true);
-    
   }
 
   const handleClickDelete = (category) => {

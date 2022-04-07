@@ -8,26 +8,40 @@ const CategoriesContainer = () => {
   const [categories, setCategories] = useState([])
 
   useEffect(() => {
+    getAllHandler()
+  }, [])
+
+  const getAllHandler = () => {
     const getData = async () => {
       try {
         setCategories(await CategoryService.getCategories())
       } catch(err) { console.log(err) }
     }
     getData()
-  }, [])
+  }
 
   const createCategoryHandler = (category) => {
-    const createCategory = async () => {
-      try {
-        await CategoryService.createCategory(category)
-        setCategories(await CategoryService.getCategories())
-        return true
-      } catch(err) {
-        console.log(err)
-        return false
-      }
-    }
-    return createCategory()
+    const createCategory = CategoryService.createCategory(category)
+      .then(response => response.text())
+      .then(data => {
+        const regexExp = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
+        if(data.startsWith("\"")) {
+          data = data.slice(1, -2)
+        }
+        
+        if(regexExp.test(data)) {
+          
+          return { ok: true, err: null}
+          
+        } else {
+          return { ok: false, err: data}
+        }
+
+    }).catch(err => {
+      console.log('err: ',err)
+    })
+        
+    return createCategory;
   }
 
   const deleteCategoryHandler = (categoryID) => {
@@ -42,18 +56,22 @@ const CategoriesContainer = () => {
   }
 
   const updateCategoryHandler = (category) => {
-    const updateCategory = async () => {
-      try {
-        await CategoryService.updateCategory(category)
-        setCategories(await CategoryService.getCategories())
-        return true;
-      } catch (err) { console.log(err); return false }
-    }
-    return updateCategory()
+    const updateCategory = CategoryService.updateCategory(category)
+    .then(response => response.text())
+    .then(data => {
+      if(data === "") {
+        return { ok: true, err: null}
+      } else {
+        return { ok: false, err: data}
+      }
+    }).catch(err => {
+      console.log('err: ',err)
+    })
+    return updateCategory
   }
 
   return (
-    <CategoriesContext.Provider value={{categories, createCategoryHandler, deleteCategoryHandler, updateCategoryHandler}}>
+    <CategoriesContext.Provider value={{categories, createCategoryHandler, deleteCategoryHandler, updateCategoryHandler, getAllHandler}}>
       <CategoriesPage />
     </CategoriesContext.Provider>
   )

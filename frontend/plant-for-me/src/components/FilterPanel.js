@@ -1,4 +1,4 @@
-import { Button, FormControl, FormControlLabel, Grid, Switch, TextField } from "@mui/material"
+import { Button, Divider, FormControl,  Grid, TextField, Typography } from "@mui/material"
 import { Box } from "@mui/system"
 import React, { useContext, useEffect, useState } from "react"
 import { PlantsContext } from "../context/PlantsContext"
@@ -7,30 +7,28 @@ import MyCheckboxList from "../utils/components/MyCheckboxList"
 import MySelect from "../utils/components/MySelect"
 
 const FilterPanel = () => {
-  const plantContext = useContext(PlantsContext)
+  const plantsContext = useContext(PlantsContext)
+  const [categories, setCategories] = useState([])
   const [filterParameters, setFilterParameters] = useState(null)
   const [checkedBloomingMonths, setCheckedBloomingMonths] = useState(
     new Array(months.length).fill(false)
   );
   const [checkedCategories, setCheckedCategories] = useState([]);
-  const [categories, setCategories] = useState([])
   
   useEffect(() => {
     setFilterParameters({
       name: "",
-      categoryID: "",
-      light: 0,
-      watering: 0,
-      isBlooming: false,
-      bloomingMonths: [],
-      growthRate: 0,
-      hardiness: 0,
-      height: 0,
-      lifeTime: 0
+      light: "-1",
+      watering: "-1",
+      isBlooming: "-1",
+      growthRate: "-1",
+      hardiness: "-1",
+      height: "-1",
+      lifeTime: "-1"
     })
-    setCheckedCategories(new Array(plantContext.categories.length).fill(false))
-    setCategories(plantContext.categories.map(cat => cat.name))
-  }, [plantContext.categories])
+    setCheckedCategories(new Array(plantsContext.categories.length).fill(false))
+    setCategories(plantsContext.categories.map(cat => cat.name))
+  }, [plantsContext.categories])
 
   const handleOnChangeCheckedCategories = (position) => {
     const updatedCheckedCategories = checkedCategories.map((item, index) =>
@@ -47,13 +45,33 @@ const FilterPanel = () => {
   };
 
   const filterPlants = () => {
+    const params = new URLSearchParams()
 
+    for (const [key, value] of Object.entries(filterParameters)) {
+      if(key === "isBlooming" && value !== "-1") {
+        value === 0 ? params.append(key, true) : params.append(key, false)
+        continue;
+      }
+      if(value !== "-1" && value !== "") {
+        params.append(key, value)
+      }
+      
+    }
+
+    checkedCategories.forEach((cc, index) => cc === true && params.append('category', categories[index]))
+    checkedBloomingMonths.forEach((bm, index) => bm === true && params.append('bloomingMonth', index))
+    
+    var url = params.toString()
+
+    plantsContext.handleGetAll(url)
   }
 
-
   return (
-    
     <div className="filterPlantsPanel">
+      <Typography variant="h5" gutterBottom component="div">
+        Filter plants
+      </Typography>
+      <Divider sx={{marginBottom:'1em'}}/>
       {filterParameters && <div>
         <FormControl fullWidth>
         <TextField sx={{ marginBottom: '10px'}} id="outlined-basic" label="Plant name" variant="outlined" value={filterParameters.name} onChange={(e) => setFilterParameters({...filterParameters, name: e.target.value})} />
@@ -69,18 +87,10 @@ const FilterPanel = () => {
       <MySelect label="Hardiness" options={hardiness} selected={filterParameters.hardiness} onValueChange={(hardiness) => setFilterParameters({...filterParameters, hardiness})}/>
       <MySelect label="Height" options={height} selected={filterParameters.height} onValueChange={(height) => setFilterParameters({...filterParameters, height})}/>
       <MySelect label="Life time" options={lifeTime} selected={filterParameters.lifeTime} onValueChange={(lifeTime) => setFilterParameters({...filterParameters, lifeTime})}/>
+      <MySelect label="Blooming" options={[{id: 0, name: "Blooming"}, {id: 1, name: "Not blooming"}]} selected={filterParameters.isBlooming} onValueChange={(isBlooming) => setFilterParameters({...filterParameters, isBlooming})}/>
       
-      
-      <FormControlLabel
-        value="start"
-        control={<Switch checked={filterParameters.isBlooming} onChange={(event) => setFilterParameters({...filterParameters, isBlooming: event.target.checked})}/>}
-        label="Is blooming"
-        labelPlacement="start"
-      />
-
       <Grid item md={2} sx={{ padding:'0 20px'}}>
         <MyCheckboxList label="Blooming months" options={months} isChecked={(index) => checkedBloomingMonths[index]} onValueChange={(index) => handleOnChangeCheckedBloomingMonths(index)}/>
-      
       </Grid>
       
       <Box

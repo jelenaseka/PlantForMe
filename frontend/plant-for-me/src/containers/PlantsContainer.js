@@ -18,9 +18,17 @@ const PlantsContainer = () => {
     getData()
   }, [])
 
+  const handleGetAll = (url) => {
+    const getData = async () => {
+      try {
+        setPlants(await PlantService.getPlants(url))
+      } catch(err) { console.log(err) }
+    }
+    getData()
+  }
 
   return (
-    <PlantsContext.Provider value={{plants, categories}}>
+    <PlantsContext.Provider value={{plants, categories, handleGetAll}}>
       <PlantsPage />
     </PlantsContext.Provider>
   )

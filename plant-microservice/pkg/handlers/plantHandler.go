@@ -21,12 +21,14 @@ func NewPlantHandler(l *log.Logger, s service.PlantServiceInterface) *Plant {
 	return &Plant{l, s}
 }
 
-func (plant *Plant) GetAll(w http.ResponseWriter, r *http.Request) {
-	plant.l.Print("Get all plants")
+func (this *Plant) GetAll(w http.ResponseWriter, r *http.Request) {
+	this.l.Print("Get all plants")
+	this.l.Print("\n----------------------------\n")
+	values := r.URL.Query()
 
 	w.Header().Add("Content-Type", "application/json")
 
-	plants, err := plant.IPlantService.GetAll()
+	plants, err := this.IPlantService.GetAll(values)
 	if err != nil {
 		http.Error(w, err.Message(), err.Status())
 	}
