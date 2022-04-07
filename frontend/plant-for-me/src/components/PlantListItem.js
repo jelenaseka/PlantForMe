@@ -1,5 +1,6 @@
 import { Button, Card, CardActions, CardContent, CardHeader, CardMedia, Typography } from "@mui/material"
 import React from "react"
+import NavbarLink from "./NavbarLink";
 
 const PlantListItem = ({plant}) => {
 
@@ -26,7 +27,9 @@ const PlantListItem = ({plant}) => {
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <Button variant="contained" >See more</Button>
+        <Button variant="contained" >
+          <NavbarLink link={"/plants/" + plant.id} title="See more" />
+        </Button>
         
       </CardActions>
       

@@ -21,7 +21,9 @@ const CreatePlantPage = () => {
   const [checkedBloomingMonths, setCheckedBloomingMonths] = useState(
     new Array(months.length).fill(false)
   );
-  const [open, setOpen] = React.useState(false);
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [severity, setSeverity] = useState("success")
+  const [alertMsg, setAlertMsg] = useState("")
 
   const reset = () => {
     setNewPlant({
@@ -79,8 +81,22 @@ const CreatePlantPage = () => {
     // TODO trim
     
     checkedBloomingMonths.forEach((bm, index) => bm === true && newPlant.bloomingMonths.push(index))
-    createPlantContext.createPlantHandler(newPlant)
-    reset()
+    createPlantContext.createPlantHandler(newPlant).then(res => {
+      if(res.ok) {
+        setupAlert("success", "Successfully created plant!")
+        reset()
+      } else {
+        setupAlert("error", res.err)
+      }
+      setAlertOpen(true);
+      
+    })
+    
+  }
+
+  const setupAlert = (severity, msg) => {
+    setSeverity(severity);
+    setAlertMsg(msg);
   }
 
   const validateForm = (plant) => {
@@ -112,7 +128,7 @@ const CreatePlantPage = () => {
   };
 
   const handleClick = () => {
-    setOpen(true);
+    setAlertOpen(true);
   };
 
   const handleClose = (event, reason) => {
@@ -120,15 +136,15 @@ const CreatePlantPage = () => {
       return;
     }
 
-    setOpen(false);
+    setAlertOpen(false);
   };
 
   return (
     <div>{newPlant &&
       <Box sx={{ padding: '2em' }}>
-        <Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>
-          <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-            You must fill in all the required fields
+        <Snackbar open={alertOpen} autoHideDuration={4000} onClose={handleClose}>
+          <Alert onClose={handleClose} severity={severity} sx={{ width: '100%' }}>
+            {alertMsg}
           </Alert>
         </Snackbar>
         <Typography variant="h1" sx={{ fontSize: '30px'}} component="div" gutterBottom>

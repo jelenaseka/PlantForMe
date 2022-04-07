@@ -1,0 +1,28 @@
+.nav-ul {
+    display: flex;
+    list-style-type: none;
+    background-color: #1976d2;
+    margin: 0;
+    padding: 0.5em;
+}
+
+.navigation__button {
+	height: 38px;
+	line-height: 36px;
+	color: #fff;
+	font-size: 14px;
+	padding: 0 10px;
+	border-radius: 4px;
+	text-decoration: none;
+	border: 1px solid transparent;
+}
+
+.btn--active {
+	position: relative;
+	z-index: 1;
+	border-bottom: 1px solid #fff;
+}
+
+.navigation__list {
+    list-style: none;
+}

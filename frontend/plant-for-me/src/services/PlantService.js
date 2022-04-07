@@ -11,8 +11,8 @@ export const PlantService = {
       const data = await response.json()
       return data
     },
-    createPlant: async (plant) => {
-      await fetch(baseUrl, {
+    createPlant: (plant) => {
+      return fetch(baseUrl, {
         method: 'POST',
         headers: {
           'Content-type': 'application/json'
