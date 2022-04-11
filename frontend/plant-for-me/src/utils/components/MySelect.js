@@ -4,7 +4,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
-const MySelect = ({label, options, selected, onValueChange}) => {
+const MySelect = ({label, options, selected, onValueChange, isFiltering}) => {
   return (
     <FormControl fullWidth>
       <InputLabel id="demo-simple-select-label">{label}</InputLabel>
@@ -15,7 +15,9 @@ const MySelect = ({label, options, selected, onValueChange}) => {
         label={label}
         onChange={(e) => onValueChange(e.target.value)}
       >
-        <MenuItem value="-1">None</MenuItem>
+        {isFiltering &&
+          <MenuItem value="-1">None</MenuItem>
+        }
         {options.map((option) => (
           <MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>
         ))}

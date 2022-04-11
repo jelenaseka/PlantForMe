@@ -19,24 +19,18 @@ const CreatePlantContainer = () => {
   const createPlantHandler = (plant) => {
     
     const createPlant = PlantService.createPlant(plant)
-      .then(response => response.text())
-      .then(data => {
-        const regexExp = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
-        if(data.startsWith("\"")) {
-          data = data.slice(1, -2)
-        }
-        
-        if(regexExp.test(data)) {
-          console.log('usao')
-          return { ok: true, err: null}
-          
+      .then(async res => {
+        if(res.status === 409) {
+          const data = await res.text();
+          return { ok: false, err: data };
         } else {
-          return { ok: false, err: data}
+          await res.text();
+          return { ok: true, err: null };
         }
-
-    }).catch(err => {
-      console.log('err: ',err)
-    })
+      })
+      .catch(err => {
+        console.log('err: ',err)
+      })
 
     return createPlant;
     

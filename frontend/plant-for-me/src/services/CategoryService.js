@@ -4,7 +4,6 @@ export const CategoryService = {
     getCategories: async () => {
       const response = await fetch(baseUrl)
       const data = await response.json()
-      console.log(data)
       return data
     },
     createCategory: (category) => {

@@ -3,7 +3,7 @@ package utils
 import "net/url"
 
 func BuildQuery(values url.Values) string {
-	query := "where "
+	query := " and "
 	countParam := 0
 
 	for k, arrV := range values {
@@ -35,12 +35,12 @@ func BuildQuery(values url.Values) string {
 				countParam += 1
 			} else if k == "isBlooming" {
 
-				query += "pl.isBlooming=" + v
+				query += "pl.is_blooming=" + v
 				query += operator
 				countParam += 1
 			} else if k == "growthRate" {
 
-				query += "pl.growthRate=" + v
+				query += "pl.growth_rate=" + v
 				query += operator
 				countParam += 1
 			} else if k == "hardiness" {
@@ -55,7 +55,7 @@ func BuildQuery(values url.Values) string {
 				countParam += 1
 			} else if k == "lifeTime" {
 
-				query += "pl.lifeTime=" + v
+				query += "pl.life_time=" + v
 				query += operator
 				countParam += 1
 			} else if k == "category" {

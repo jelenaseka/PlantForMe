@@ -1,21 +1,11 @@
 import { Button, Card, CardActions, CardContent, CardHeader, CardMedia, Typography } from "@mui/material"
 import React from "react"
-import NavbarLink from "./NavbarLink";
-import parseISO from 'date-fns/parseISO'
-import { format } from "date-fns";
 import { NavLink } from "react-router-dom";
 
 const PlantListItem = ({plant}) => {
 
   const displayBeginningOfContent = (content) => {
     return content.substring(0,50);
-  }
-
-  const convertISODate = (date) => {
-    // return parseISO(date)
-    
-    console.log(parseISO("2022-04-07T10:18:05+02:00"))
-    return format(parseISO(date), 'yyyy-MM-dd')
   }
 
   return (

@@ -5,7 +5,9 @@ import CreatePlantContainer from './containers/CreatePlantContainer'
 import PlantsContainer from './containers/PlantsContainer'
 import Header from './components/Header';
 import CategoriesContainer from './containers/CategoriesContainer';
-import PlantPage from './pages/PlantPage';
+import UpdatePlantContainer from './containers/UpdatePlantContainer';
+import PlantContainer from './containers/PlantContainer';
+import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
   return (
@@ -14,9 +16,11 @@ function App() {
       {/* <Container maxWidth="lg"> */}
         <Routes>
           <Route path="/plants/create" element={<CreatePlantContainer/>}/>
+          <Route path="/plants/update/:id" element={<UpdatePlantContainer/>}/>
           <Route path="/plants" element={<PlantsContainer/>}/>
-          <Route path="/plants/:id" element={<PlantPage/>}/>
+          <Route path="/plants/:id" element={<PlantContainer/>}/>
           <Route path="/categories" element={<CategoriesContainer/>}/>
+          <Route path="/404" element={<NotFoundPage/>} />
         </Routes>
       {/* </Container> */}
     </div>

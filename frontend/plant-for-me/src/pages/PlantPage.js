@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import { Box } from "@mui/system"
-import { useParams } from 'react-router-dom';
-import { PlantService } from '../services/PlantService';
-import { Grid } from "@mui/material"
+import { NavLink } from 'react-router-dom';
+import { Button, Grid } from "@mui/material"
 import CategoryIcon from '@mui/icons-material/Category';
 import OpacityIcon from '@mui/icons-material/Opacity';
 import WbSunnyIcon from '@mui/icons-material/WbSunny';
@@ -14,59 +13,59 @@ import Divider from '@mui/material/Divider';
 import '../assets/css/layout.css';
 import ListItem from '../components/ListItem'
 import { watering, light, lifeTime, growthRate, hardiness, height, months } from "../data/enums";
+import { PlantContext } from '../context/PlantContext';
 
 const PlantPage = () => {
-  const { id } = useParams();
-  const [plant, setPlant] = useState(null)
+  const plantContext = useContext(PlantContext)
 
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        setPlant(await PlantService.getOne(id))
-      } catch(err) { console.log(err) }
-    }
-    getData()
-  }, [id])
-
-const getBloomingMonths = () => {
-  var blm = "";
-  plant.bloomingMonths.forEach(bm => {
-    console.log(months[bm.month])
-    blm += months[bm.month] + ", "
-  })
-  return blm
-}
+  const getBloomingMonths = () => {
+    var blm = "";
+    plantContext.plant.bloomingMonths.forEach(bm => {
+      console.log(months[bm.month])
+      blm += months[bm.month] + ", "
+    })
+    return blm
+  }
 
   return (
     <div>{
-      plant &&
+      plantContext.plant &&
       <Box>
         <Grid container justifyContent="center" sx={{padding:'2em'}}>
           <Grid item md={6} >
             <h2 className="center">Plant parameters</h2>
             <Divider/>
             <ul className="plant-parameters-list">
-              <ListItem icon={<CategoryIcon/>} name="Category" value={plant.category.name}/>
-              <ListItem icon={<OpacityIcon/>} name="Watering" value={watering[plant.watering].name}/>
-              <ListItem icon={<WbSunnyIcon/>} name="Light" value={light[plant.light].name}/>
-              <ListItem icon={<ExpandIcon/>} name="Growth rate" value={growthRate[plant.growthRate].name}/>
-              <ListItem icon={<YardIcon/>} name="Hardiness" value={hardiness[plant.hardiness].name}/>
-              <ListItem icon={<HeightIcon/>} name="Height" value={height[plant.height].name}/>
-              <ListItem icon={<FilterVintageIcon/>} name="Life time" value={lifeTime[plant.lifeTime].name}/>
+              <ListItem icon={<CategoryIcon/>} name="Category" value={plantContext.plant.category.name}/>
+              <ListItem icon={<OpacityIcon/>} name="Watering" value={watering[plantContext.plant.watering].name}/>
+              <ListItem icon={<WbSunnyIcon/>} name="Light" value={light[plantContext.plant.light].name}/>
+              <ListItem icon={<ExpandIcon/>} name="Growth rate" value={growthRate[plantContext.plant.growthRate].name}/>
+              <ListItem icon={<YardIcon/>} name="Hardiness" value={hardiness[plantContext.plant.hardiness].name}/>
+              <ListItem icon={<HeightIcon/>} name="Height" value={height[plantContext.plant.height].name}/>
+              <ListItem icon={<FilterVintageIcon/>} name="Life time" value={lifeTime[plantContext.plant.lifeTime].name}/>
               <ListItem icon={<FilterVintageIcon/>} name="Blooming months" value={getBloomingMonths()}/>
             </ul>
           </Grid>
           <Grid container item md={6} justifyContent="center" >
+            
             <Box >
-            <h1 className="center">{plant.name}</h1>
+            <Button variant="contained">
+              <NavLink to={"/plants/update/" + plantContext.plant.id} className="plant-edit-button">
+                Edit plant
+              </NavLink>
+            </Button>
+            <Button variant="contained" onClick={() => plantContext.deletePlantHandler()}>
+                Delete plant
+            </Button>
+            <h1 className="center">{plantContext.plant.name}</h1>
             <div className="placeholder-one-plant">
-              <img src={plant.image}/>
+              <img  src={plantContext.plant.image} alt="Your plant"/>
             </div>
             </Box>
           </Grid>
           <Grid item md={12}>
             <h2>Plant description</h2>
-            {plant.description}
+            {plantContext.plant.description}
           </Grid>
         </Grid>
         

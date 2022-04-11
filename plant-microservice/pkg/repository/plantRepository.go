@@ -30,7 +30,7 @@ func (repo *plantRepository) FindAll(urlValues url.Values) ([]data.Plant, error)
 	db := config.GetDB()
 	var plants []data.Plant
 
-	query := "SELECT pl.* from plantdb.plants pl left join plantdb.plant_blooming_months pbm on pbm.plant_id = pl.id left join plantdb.blooming_months bm on bm.id = pbm.blooming_month_id left join plantdb.categories c on pl.category_id = c.id "
+	query := "SELECT pl.* from plantdb.plants pl left join plantdb.plant_blooming_months pbm on pbm.plant_id = pl.id left join plantdb.blooming_months bm on bm.id = pbm.blooming_month_id left join plantdb.categories c on pl.category_id = c.id where pl.deleted_at IS NULL "
 	query += utils.BuildQuery(urlValues)
 	fmt.Print(query)
 
