@@ -25,7 +25,6 @@ func (u *UserHandler) MiddlewareUserValidation(next http.Handler) http.Handler {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-
 		ctx := context.WithValue(r.Context(), ContextUserKey{}, userRequest)
 		r = r.WithContext(ctx)
 		next.ServeHTTP(w, r)

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"user-microservise/pkg/auth"
 	"user-microservise/pkg/config"
 	"user-microservise/pkg/handlers"
 	"user-microservise/pkg/repository"
@@ -32,6 +33,9 @@ func main() {
 	userService := services.NewUserService(userRepository)
 	userHandler := handlers.NewUserHandler(l, userService)
 
+	authService := auth.NewAuthService(userRepository)
+	authHandler := auth.NewAuthHandler(l, authService)
+
 	// GET
 
 	getUsersR := r.Methods(http.MethodGet).Subrouter()
@@ -41,8 +45,17 @@ func main() {
 	// POST
 
 	postUserR := r.Methods(http.MethodPost).Subrouter()
+	// postUserR.Use(userHandler.MiddlewareUserAuth)
 	postUserR.Use(userHandler.MiddlewareUserValidation)
 	postUserR.HandleFunc("/api/users", userHandler.Create)
+
+	postAuthR := r.Methods(http.MethodPost).Subrouter()
+	postAuthR.Use(authHandler.MiddlewareUserCredentialsValidation)
+	postAuthR.HandleFunc("/api/auth/login", authHandler.Login)
+
+	getAuthR := r.Methods(http.MethodGet).Subrouter()
+	getAuthR.Use(authHandler.MiddlewareAuthentication)
+	getAuthR.HandleFunc("/api/auth/me", authHandler.Me)
 
 	// PUT
 

@@ -50,7 +50,7 @@ func (this *userRepository) FindById(id uuid.UUID) (*data.User, error) {
 func (this *userRepository) FindByUsername(name string) (*data.User, error) {
 	db := config.GetDB()
 	var user data.User
-	result := db.First(&user, "username = ?", name)
+	result := db.Debug().First(&user, "username = ?", name)
 
 	if result.Error != nil {
 		return nil, result.Error
