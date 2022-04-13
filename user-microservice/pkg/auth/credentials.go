@@ -18,6 +18,18 @@ type Claims struct {
 	jwt.StandardClaims
 }
 
+type Principal struct {
+	Username string
+	Role     data.Role
+}
+
+func NewPrincipal(username string, role data.Role) Principal {
+	return Principal{
+		Username: username,
+		Role:     role,
+	}
+}
+
 func (c *Credentials) Validate() error {
 	validate := validator.New()
 

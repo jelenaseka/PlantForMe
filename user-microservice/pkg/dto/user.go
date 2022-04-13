@@ -7,8 +7,8 @@ import (
 )
 
 type UserRequest struct {
-	Username string `json:"username" validate:"required"`
-	Password string `json:"password" validate:"required"`
+	Username string `json:"username" validate:"required,min=3"`
+	Password string `json:"password" validate:"required,min=3"`
 	Role     int    `json:"role" validate:"min=0,max=3"`
 }
 

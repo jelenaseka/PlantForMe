@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"user-microservise/pkg/dto"
 )
 
 type AuthHandler struct {
@@ -34,18 +35,47 @@ func (this *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+func (this *AuthHandler) Registration(w http.ResponseWriter, r *http.Request) {
+	this.l.Print("Registration")
+	w.Header().Add("Content-Type", "application/json")
+
+	registerUserRequest := r.Context().Value(ContextRegisterUserKey{}).(dto.RegisterUserRequest)
+
+	id, err := this.IAuthService.Registration(&registerUserRequest)
+	if err != nil {
+		http.Error(w, err.Message(), err.Status())
+		return
+	}
+
+	json.NewEncoder(w).Encode(id)
+	w.WriteHeader(http.StatusCreated)
+}
+
 func (this *AuthHandler) Me(w http.ResponseWriter, r *http.Request) {
 	this.l.Print("Me")
 	w.Header().Add("Content-Type", "application/json")
 
-	username := r.Context().Value(ContextClaimsKey{}).(string)
+	principal := r.Context().Value(ContextClaimsKey{}).(Principal)
 
-	user, err := this.IAuthService.Me(username)
+	if principal.Username == "" {
+		http.Error(w, "Not logged in.", http.StatusUnauthorized)
+		return
+	}
+
+	user, err := this.IAuthService.Me(principal.Username)
 	if err != nil {
 		http.Error(w, err.Message(), err.Status())
 		return
 	}
 
 	json.NewEncoder(w).Encode(user)
+	w.WriteHeader(http.StatusOK)
+}
+
+func (this *AuthHandler) IsAuthorized(w http.ResponseWriter, r *http.Request) {
+	this.l.Print("Is authorized")
+	w.Header().Add("Content-Type", "application/json")
+
+	json.NewEncoder(w).Encode("Authorized")
 	w.WriteHeader(http.StatusOK)
 }

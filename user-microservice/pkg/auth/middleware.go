@@ -3,15 +3,19 @@ package auth
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
+	"user-microservise/pkg/dto"
 	"user-microservise/pkg/utils/error_utils"
 
+	"github.com/casbin/casbin/v2"
 	"github.com/dgrijalva/jwt-go"
 )
 
 type ContextUserCredentialsKey struct{}
 type ContextClaimsKey struct{}
+type ContextRegisterUserKey struct{}
 
 func (u *AuthHandler) MiddlewareUserCredentialsValidation(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -33,8 +37,9 @@ func (u *AuthHandler) MiddlewareUserCredentialsValidation(next http.Handler) htt
 	})
 }
 
-func (u *AuthHandler) MiddlewareAuthentication(next http.Handler) http.Handler {
+func MiddlewareAuthentication(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("Middleware Authentication called")
 
 		if r.Header["Authorization"] != nil {
 
@@ -49,7 +54,7 @@ func (u *AuthHandler) MiddlewareAuthentication(next http.Handler) http.Handler {
 			claims := &Claims{}
 
 			tkn, err := jwt.ParseWithClaims(tokenStr, claims, func(token *jwt.Token) (interface{}, error) {
-				return jwtKey, nil
+				return JwtKey, nil
 			})
 
 			if err != nil {
@@ -66,13 +71,87 @@ func (u *AuthHandler) MiddlewareAuthentication(next http.Handler) http.Handler {
 				return
 			}
 
-			ctx := context.WithValue(r.Context(), ContextClaimsKey{}, claims.Username)
+			ctx := context.WithValue(r.Context(), ContextClaimsKey{}, NewPrincipal(claims.Username, claims.Role))
 			r = r.WithContext(ctx)
-
-			next.ServeHTTP(w, r)
-
 		} else {
-			w.WriteHeader(http.StatusUnauthorized)
+			ctx := context.WithValue(r.Context(), ContextClaimsKey{}, NewPrincipal("", 0))
+			r = r.WithContext(ctx)
 		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
+func MiddlewareAuthorization(cas *casbin.Enforcer) func(next http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			fmt.Println("Middleware Authorization called")
+
+			principal := r.Context().Value(ContextClaimsKey{}).(Principal)
+
+			sub := principal.Role.String()
+			obj := r.URL.String()
+			act := r.Method
+
+			if res, _ := cas.Enforce(sub, obj, act); res {
+				next.ServeHTTP(w, r)
+			} else {
+				json.NewEncoder(w).Encode("Not authorized.")
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
+
+		})
+	}
+}
+
+func MiddlewareAuthorizationFromAPIGateway(cas *casbin.Enforcer) func(next http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			fmt.Println("Middleware AuthorizationFromAPIGateway called")
+
+			if r.Header["Requested-Api"] == nil || r.Header["Requested-Method"] == nil {
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			}
+
+			ra := r.Header["Requested-Api"][0]
+			meth := r.Header["Requested-Method"][0]
+
+			principal := r.Context().Value(ContextClaimsKey{}).(Principal)
+
+			sub := principal.Role.String()
+			obj := ra
+			act := meth
+
+			if res, _ := cas.Enforce(sub, obj, act); res {
+				next.ServeHTTP(w, r)
+			} else {
+				json.NewEncoder(w).Encode("Not authorized.")
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
+
+		})
+	}
+}
+
+func (u *AuthHandler) MiddlewareRegisterUserValidation(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		var registerUserRequest dto.RegisterUserRequest
+		err := json.NewDecoder(r.Body).Decode(&registerUserRequest)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		err = registerUserRequest.Validate()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		ctx := context.WithValue(r.Context(), ContextRegisterUserKey{}, registerUserRequest)
+		r = r.WithContext(ctx)
+		next.ServeHTTP(w, r)
 	})
 }

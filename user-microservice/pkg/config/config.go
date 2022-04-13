@@ -10,6 +10,7 @@ type Configurations struct {
 	DBUser        string `mapstructure:"DB_USER"`
 	DBPassword    string `mapstructure:"DB_PASSWORD"`
 	DSN           string `mapstructure:"DSN"`
+	JWTSecretKey  string `mapstructure:"JWT_SECRET_KEY"`
 }
 
 type ServerConfigurations struct {

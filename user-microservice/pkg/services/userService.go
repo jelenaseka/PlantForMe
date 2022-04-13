@@ -72,7 +72,7 @@ func (this *userService) Create(userRequest *dto.UserRequest) (*uuid.NullUUID, e
 
 	err = this.IUserRepository.Create(user)
 	if err != nil {
-		return nil, error_utils.NewInternalServerError(fmt.Sprintf("Error when trying to create category: %s", err.Error()))
+		return nil, error_utils.NewInternalServerError(fmt.Sprintf("Error when trying to create user: %s", err.Error()))
 	}
 
 	return &uuid.NullUUID{UUID: id, Valid: true}, nil

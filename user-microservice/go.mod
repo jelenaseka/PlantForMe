@@ -5,7 +5,9 @@ go 1.18
 require gorm.io/driver/mysql v1.3.3
 
 require (
+	github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible // indirect
 	github.com/auth0/go-jwt-middleware/v2 v2.0.1 // indirect
+	github.com/casbin/casbin/v2 v2.43.2 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
