@@ -1,7 +1,7 @@
 import { Snackbar } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react"
-import PlantEditPanel from "../components/PlantEditPanel";
-import { UpdatePlantContext } from "../context/UpdatePlantContext";
+import PlantEditPanel from "../../components/PlantEditPanel";
+import { UpdatePlantContext } from "../../context/plants/UpdatePlantContext";
 import MuiAlert from '@mui/material/Alert';
 
 const Alert = React.forwardRef(function Alert(props, ref) {

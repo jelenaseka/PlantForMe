@@ -10,10 +10,13 @@ const Header = () => {
       <Box >
         <ul className="nav-ul">
           <Button>
-          <NavbarLink link="/plants" title="Plants" />
+            <NavbarLink link="/plants" title="Plants" />
           </Button>
           <Button>
-          <NavbarLink link="/categories" title="Categories" />
+            <NavbarLink link="/categories" title="Categories" />
+          </Button>
+          <Button>
+            <NavbarLink link="/users" title="Users" />
           </Button>
         </ul>
       </Box>

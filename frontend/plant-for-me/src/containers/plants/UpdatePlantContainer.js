@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react"
-import { CategoryService } from "../services/CategoryService"
-import { UpdatePlantContext} from '../context/UpdatePlantContext'
-import UpdatePlantPage from '../pages/UpdatePlantPage';
-import { PlantService } from '../services/PlantService';
+import { CategoryService } from "../../services/plants/CategoryService"
+import { UpdatePlantContext} from '../../context/plants/UpdatePlantContext'
+import UpdatePlantPage from '../../pages/plants/UpdatePlantPage';
+import { PlantService } from '../../services/plants/PlantService';
 import { useParams } from "react-router-dom";
 
 const UpdatePlantContainer = () => {

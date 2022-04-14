@@ -10,10 +10,10 @@ import YardIcon from '@mui/icons-material/Yard';
 import HeightIcon from '@mui/icons-material/Height';
 import FilterVintageIcon from '@mui/icons-material/FilterVintage';
 import Divider from '@mui/material/Divider';
-import '../assets/css/layout.css';
-import ListItem from '../components/ListItem'
-import { watering, light, lifeTime, growthRate, hardiness, height, months } from "../data/enums";
-import { PlantContext } from '../context/PlantContext';
+import '../../assets/css/layout.css';
+import ListItem from '../../components/ListItem'
+import { watering, light, lifeTime, growthRate, hardiness, height, months } from "../../data/enums";
+import { PlantContext } from '../../context/plants/PlantContext';
 
 const PlantPage = () => {
   const plantContext = useContext(PlantContext)

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { PlantsContext} from '../context/PlantsContext'
-import PlantsPage from '../pages/PlantsPage';
-import { CategoryService } from '../services/CategoryService';
-import { PlantService } from '../services/PlantService';
+import { PlantsContext} from '../../context/plants/PlantsContext'
+import PlantsPage from '../../pages/plants/PlantsPage';
+import { CategoryService } from '../../services/plants/CategoryService';
+import { PlantService } from '../../services/plants/PlantService';
 
 const PlantsContainer = () => {
   const [plants, setPlants] = useState([])

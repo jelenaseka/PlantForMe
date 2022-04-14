@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react"
 import { useParams } from "react-router-dom";
-import { PlantContext} from '../context/PlantContext'
-import PlantPage from "../pages/PlantPage";
-import { PlantService } from "../services/PlantService";
+import { PlantContext} from '../../context/plants/PlantContext'
+import PlantPage from "../../pages/plants/PlantPage";
+import { PlantService } from "../../services/plants/PlantService";
 import { useNavigate } from "react-router-dom";
 
 const PlantContainer = () => {

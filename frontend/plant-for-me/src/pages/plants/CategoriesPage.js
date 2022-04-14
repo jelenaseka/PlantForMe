@@ -1,11 +1,11 @@
 import { Alert, Button, Paper, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material"
 import { Box } from "@mui/system"
 import React, { useContext, useState } from "react"
-import { CategoriesContext } from "../context/CategoriesContext"
+import { CategoriesContext } from "../../context/plants/CategoriesContext"
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import SaveCategoryDialog from "../components/SaveCategoryDialog";
-import AreYouSureDialog from "../components/AreYouSureDialog";
+import SaveCategoryDialog from "../../components/SaveCategoryDialog";
+import AreYouSureDialog from "../../components/AreYouSureDialog";
 
 const CategoriesPage = () => {
   const categoriesContext = useContext(CategoriesContext)
@@ -18,7 +18,7 @@ const CategoriesPage = () => {
   const [selectedCategory, setSelectedCategory] = useState({})
 
   const createCategory = (name) => {
-    validate(name)
+    validate(name) //nije dobro
     
     categoriesContext.createCategoryHandler({name: name.trim()}).then(res => {
       if(res.ok) {
@@ -32,7 +32,7 @@ const CategoriesPage = () => {
   }
 
   const updateCategory = (name, category) => {
-    validate(name)
+    validate(name) //nije dobro
     
     var categoryToUpdate = JSON.parse(JSON.stringify(category));
     categoryToUpdate.name = name.trim()

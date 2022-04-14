@@ -1,7 +1,7 @@
 import { Button, Divider, FormControl,  Grid, TextField, Typography } from "@mui/material"
 import { Box } from "@mui/system"
 import React, { useContext, useEffect, useState } from "react"
-import { PlantsContext } from "../context/PlantsContext"
+import { PlantsContext } from "../context/plants/PlantsContext"
 import { growthRate, hardiness, lifeTime, light, months, watering, height } from "../data/enums"
 import MyCheckboxList from "../utils/components/MyCheckboxList"
 import MySelect from "../utils/components/MySelect"
