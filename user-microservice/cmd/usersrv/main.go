@@ -48,7 +48,6 @@ func main() {
 	getUsersR := r.Methods(http.MethodGet).Subrouter()
 	getUsersR.HandleFunc("/api/users", userHandler.GetAll)
 	getUsersR.HandleFunc("/api/users/{id}", userHandler.GetOne)
-	// getUsersR.Use(auth.MiddlewareAuthorization(e))
 
 	getAuthGatewayR := r.Methods(http.MethodGet).Subrouter()
 	getAuthGatewayR.HandleFunc("/api/auth/authorized", authHandler.IsAuthorized)
@@ -56,42 +55,37 @@ func main() {
 
 	getAuthR := r.Methods(http.MethodGet).Subrouter()
 	getAuthR.HandleFunc("/api/auth/me", authHandler.Me)
-	getAuthR.Use(auth.MiddlewareAuthorization(e))
 
 	// POST
 
 	postUserR := r.Methods(http.MethodPost).Subrouter()
 	postUserR.Use(userHandler.MiddlewareUserValidation)
 	postUserR.HandleFunc("/api/users", userHandler.Create)
-	// postUserR.Use(auth.MiddlewareAuthorization(e))
 
 	postAuthR := r.Methods(http.MethodPost).Subrouter()
 	postAuthR.Use(authHandler.MiddlewareUserCredentialsValidation)
 	postAuthR.HandleFunc("/api/auth/login", authHandler.Login)
-	postAuthR.Use(auth.MiddlewareAuthorization(e))
 
 	postAuthRegisterR := r.Methods(http.MethodPost).Subrouter()
 	postAuthRegisterR.HandleFunc("/api/auth/register", authHandler.Registration)
 	postAuthRegisterR.Use(authHandler.MiddlewareRegisterUserValidation)
-	postAuthRegisterR.Use(auth.MiddlewareAuthorization(e))
 
 	// PUT
 
 	putUserR := r.Methods(http.MethodPut).Subrouter()
 	putUserR.Use(userHandler.MiddlewareUserValidation)
 	putUserR.HandleFunc("/api/users/{id}", userHandler.Update)
-	// putUserR.Use(auth.MiddlewareAuthorization(e))
 
 	// DELETE
 
 	deleteUserR := r.Methods(http.MethodDelete).Subrouter()
 	deleteUserR.HandleFunc("/api/users/{id}", userHandler.Delete)
-	// deleteUserR.Use(auth.MiddlewareAuthorization(e))
 
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:3000"},
 		AllowCredentials: true,
 		AllowedMethods:   []string{"GET", "OPTIONS", "POST", "DELETE", "PUT"},
+		AllowedHeaders:   []string{"*"},
 	})
 	handler := c.Handler(r)
 

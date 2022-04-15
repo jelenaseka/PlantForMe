@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { UsersContext } from '../../context/users/UsersContext'
 import UsersPage from '../../pages/users/UsersPage'
 import { UserService } from "../../services/users/UserService"
 
 const UsersContainer = () => {
   const [users, setUsers] = useState([])
+  let navigate = useNavigate();
 
   useEffect(() => {
     getAllHandler()
@@ -12,12 +14,21 @@ const UsersContainer = () => {
 
   const getAllHandler = () => {
     // TODO promeniti da returnuje fetch
-    const getData = async () => {
-      try {
-        setUsers(await UserService.getUsers())
-      } catch(err) { console.log(err) }
-    }
-    getData()
+    UserService.getUsers()
+      .then(res => {
+        if(res.status >= 400 && res.status < 500) {
+          return navigate("/login");
+        } else {
+          return res.json().then(data => {
+            setUsers(data);
+          });
+          
+        }
+      })
+      .catch(err => {
+        console.log('err: ',err)
+      })
+    // return getData;
   }
 
   const createUserHandler = (user) => {

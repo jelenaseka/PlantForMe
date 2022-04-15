@@ -31,7 +31,7 @@ func (this *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	token, err := this.IAuthService.IssueToken(user)
 	var bearer = "Bearer " + token
 
-	json.NewEncoder(w).Encode(bearer)
+	json.NewEncoder(w).Encode(dto.NewUserWithToken(user.Username, user.Role, bearer))
 	w.WriteHeader(http.StatusOK)
 }
 

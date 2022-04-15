@@ -82,28 +82,33 @@ func MiddlewareAuthentication(next http.Handler) http.Handler {
 	})
 }
 
-func MiddlewareAuthorization(cas *casbin.Enforcer) func(next http.Handler) http.Handler {
-	return func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			fmt.Println("Middleware Authorization called")
+// func MiddlewareAuthorization(cas *casbin.Enforcer) func(next http.Handler) http.Handler {
+// 	return func(next http.Handler) http.Handler {
+// 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// 			fmt.Println("Middleware Authorization called")
 
-			principal := r.Context().Value(ContextClaimsKey{}).(Principal)
+// 			principal := r.Context().Value(ContextClaimsKey{}).(Principal)
 
-			sub := principal.Role.String()
-			obj := r.URL.String()
-			act := r.Method
+// 			sub := principal.Role.String()
+// 			obj := r.URL.String()
+// 			act := r.Method
 
-			if res, _ := cas.Enforce(sub, obj, act); res {
-				next.ServeHTTP(w, r)
-			} else {
-				json.NewEncoder(w).Encode("Not authorized.")
-				w.WriteHeader(http.StatusUnauthorized)
-				return
-			}
+// 			if res, _ := cas.Enforce(sub, obj, act); res {
+// 				next.ServeHTTP(w, r)
+// 			} else {
+// 				if principal.Role == data.Public {
+// 					w.WriteHeader(http.StatusUnauthorized)
+// 				} else {
+// 					w.WriteHeader(http.StatusForbidden)
+// 				}
 
-		})
-	}
-}
+// 				json.NewEncoder(w).Encode("Not authorized.")
+// 				return
+// 			}
+
+// 		})
+// 	}
+// }
 
 func MiddlewareAuthorizationFromAPIGateway(cas *casbin.Enforcer) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
@@ -127,8 +132,9 @@ func MiddlewareAuthorizationFromAPIGateway(cas *casbin.Enforcer) func(next http.
 			if res, _ := cas.Enforce(sub, obj, act); res {
 				next.ServeHTTP(w, r)
 			} else {
-				json.NewEncoder(w).Encode("Not authorized.")
 				w.WriteHeader(http.StatusUnauthorized)
+				json.NewEncoder(w).Encode("Not authorized.")
+
 				return
 			}
 

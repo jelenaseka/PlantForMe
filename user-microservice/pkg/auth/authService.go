@@ -38,7 +38,7 @@ func (this *authService) ValidateCredentials(credentials Credentials) (*data.Use
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, error_utils.NewNotFoundError(fmt.Sprintf("User with username %s don't exist.", credentials.Username))
+			return nil, error_utils.NewConflictError(fmt.Sprintf("User with username %s don't exist.", credentials.Username))
 		} else {
 			return nil, error_utils.NewInternalServerError(fmt.Sprintf("Error when trying to retrieve user: %s", err.Error()))
 		}
