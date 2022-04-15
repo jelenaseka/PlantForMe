@@ -6,15 +6,6 @@ import (
 
 type Configurations struct {
 	ServerAddress string `mapstructure:"SERVER_ADDRESS"`
-	DBName        string `mapstructure:"DB_NAME"`
-	DBUser        string `mapstructure:"DB_USER"`
-	DBPassword    string `mapstructure:"DB_PASSWORD"`
-	DSN           string `mapstructure:"DSN"`
-	JWTSecretKey  string `mapstructure:"JWT_SECRET_KEY"`
-}
-
-type ServerConfigurations struct {
-	Port int
 }
 
 func LoadConfig(path string) (config Configurations, err error) {

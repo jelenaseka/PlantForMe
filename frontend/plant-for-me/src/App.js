@@ -1,13 +1,15 @@
 import React from 'react';
 import './App.css';
 import { Route, Routes } from 'react-router-dom';
-import CreatePlantContainer from './containers/CreatePlantContainer'
-import PlantsContainer from './containers/PlantsContainer'
+import CreatePlantContainer from './containers/plants/CreatePlantContainer'
+import PlantsContainer from './containers/plants/PlantsContainer'
 import Header from './components/Header';
-import CategoriesContainer from './containers/CategoriesContainer';
-import UpdatePlantContainer from './containers/UpdatePlantContainer';
-import PlantContainer from './containers/PlantContainer';
-import NotFoundPage from './pages/NotFoundPage';
+import CategoriesContainer from './containers/plants/CategoriesContainer';
+import UpdatePlantContainer from './containers/plants/UpdatePlantContainer';
+import PlantContainer from './containers/plants/PlantContainer';
+import NotFoundPage from './utils/pages/NotFoundPage';
+import UsersContainer from './containers/users/UsersContainer';
+import LoginContainer from './containers/login/LoginContainer';
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
           <Route path="/plants" element={<PlantsContainer/>}/>
           <Route path="/plants/:id" element={<PlantContainer/>}/>
           <Route path="/categories" element={<CategoriesContainer/>}/>
+          <Route path="/users" element={<UsersContainer/>}/>
+          <Route path="/login" element={<LoginContainer/>}/>
           <Route path="/404" element={<NotFoundPage/>} />
         </Routes>
       {/* </Container> */}

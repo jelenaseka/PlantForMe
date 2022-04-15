@@ -105,3 +105,18 @@ export const lifeTime = [
 ]
 
 export const months = ["January","February","March","April","May","June","July","August","September","October","November","December"]
+
+export const roles = [
+    {
+        id: 1,
+        name: "Member"
+    }
+    ,{
+        id: 2,
+        name: "Moderator"
+    },
+    {
+        id: 3,
+        name: "Admin"
+    }
+]

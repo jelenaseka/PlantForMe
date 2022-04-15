@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { CreatePlantContext} from '../context/CreatePlantContext'
-import CreatePlantPage from '../pages/CreatePlantPage';
-import { CategoryService } from '../services/CategoryService';
-import { PlantService } from '../services/PlantService';
+import { CreatePlantContext} from '../../context/plants/CreatePlantContext'
+import CreatePlantPage from '../../pages/plants/CreatePlantPage';
+import { CategoryService } from '../../services/plants/CategoryService';
+import { PlantService } from '../../services/plants/PlantService';
 
 const CreatePlantContainer = () => {
   const [categories, setCategories] = useState([])

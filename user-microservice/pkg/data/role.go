@@ -4,7 +4,7 @@ type Role int
 
 const (
 	Public Role = iota
-	RegisteredUser
+	Member
 	Moderator
 	Admin
 )
@@ -13,8 +13,8 @@ func (r Role) String() string {
 	switch r {
 	case Public:
 		return "Public"
-	case RegisteredUser:
-		return "Registered user"
+	case Member:
+		return "Member"
 	case Moderator:
 		return "Moderator"
 	case Admin:

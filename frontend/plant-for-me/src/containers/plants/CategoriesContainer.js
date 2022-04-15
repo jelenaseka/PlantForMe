@@ -1,8 +1,8 @@
 import React from "react"
 import { useEffect, useState } from "react"
-import { CategoryService } from "../services/CategoryService"
-import { CategoriesContext } from "../context/CategoriesContext"
-import CategoriesPage from "../pages/CategoriesPage"
+import { CategoryService } from "../../services/plants/CategoryService"
+import { CategoriesContext } from "../../context/plants/CategoriesContext"
+import CategoriesPage from "../../pages/plants/CategoriesPage"
 
 const CategoriesContainer = () => {
   const [categories, setCategories] = useState([])
@@ -20,6 +20,7 @@ const CategoriesContainer = () => {
     getData()
   }
 
+  //TODO popravi ovo
   const createCategoryHandler = (category) => {
     const createCategory = CategoryService.createCategory(category)
       .then(response => response.text())
@@ -44,6 +45,7 @@ const CategoriesContainer = () => {
     return createCategory;
   }
 
+  // TODO popravi
   const deleteCategoryHandler = (categoryID) => {
     const deleteCategory = async () => {
       try {
