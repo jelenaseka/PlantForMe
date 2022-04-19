@@ -1,12 +1,21 @@
 package handlers
 
 import (
+	"api-gateway/pkg/data"
+	"context"
 	"encoding/json"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"time"
 )
+
+type Principal struct {
+	Username string
+	Role     data.Role
+}
+
+type ContextClaimsKey struct{}
 
 func MiddlewareAuthorization(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -31,13 +40,22 @@ func MiddlewareAuthorization(next http.Handler) http.Handler {
 
 		if resp.StatusCode == 200 {
 			log.Println("200 ok")
+
+			data, _ := ioutil.ReadAll(resp.Body)
+
+			var principal Principal
+
+			json.Unmarshal([]byte(string(data)), &principal)
+
+			ctx := context.WithValue(r.Context(), ContextClaimsKey{}, principal)
+			r = r.WithContext(ctx)
 			next.ServeHTTP(w, r)
 			return
 		}
 
 		data, _ := ioutil.ReadAll(resp.Body)
 		w.WriteHeader(resp.StatusCode)
-		json.NewEncoder(w).Encode(string(data))
+		w.Write([]byte(string(data)))
 
 	})
 }

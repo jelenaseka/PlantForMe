@@ -1,40 +1,36 @@
-const baseUrl = "http://localhost:8085/api/plants"
+import getHeaders from "../auth/auth-header";
+
+const baseUrl = "http://localhost:8080/api/plants"
 
 export const PlantService = {
-    getPlants: async (url) => {
+    getPlants: (url) => {
       if(url === undefined) {
         url = ""
       }
       var fullUrl = baseUrl + "?" + url;
-      console.log(fullUrl)
-      const response = await fetch(fullUrl)
-      const data = await response.json()
-      return data
+      return fetch(fullUrl, {headers: getHeaders()})
     },
     getOne: async (id) => {
-      return fetch(baseUrl + `/${id}`)
+      return fetch(baseUrl + `/${id}`, {headers: getHeaders()})
     },
     createPlant: (plant) => {
       return fetch(baseUrl, {
         method: 'POST',
-        headers: {
-          'Content-type': 'application/json'
-        },
+        headers: getHeaders(),
         body: JSON.stringify(plant)
       })
     },
-    updatePlant: async (plant) => {
+    updatePlant: (plant) => {
       return fetch(baseUrl + `/${plant.id}`, {
         method: 'PUT',
-        headers: {
-          'Content-type':'application/json'
-        },
+        headers: getHeaders(),
         body: JSON.stringify(plant)
       })
     },
-    deletePlant: async (id) => {
-      await fetch(baseUrl + `/${id}`, {
-        method: 'DELETE'
+    deletePlant: (id) => {
+      return fetch(baseUrl + `/${id}`, {
+        method: 'DELETE', 
+        headers: getHeaders()
       })
     }
   }

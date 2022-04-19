@@ -1,14 +1,15 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { roles } from "../../data/enums";
 import MySelect from "../../utils/components/MySelect";
 
-const SaveUserDialog = ({title, handleOpen, handleClose, handleSaveUser}) => {
-  const [user, setUser] = useState({
-    username: "",
-    password: "",
-    role: 1
-  })
+const SaveUserDialog = ({title, handleOpen, handleClose, handleSaveUser, user}) => {
+  const [newUser, setNewUser] = useState({})
+
+  useEffect(() => {
+    console.log(user)
+    setNewUser(user)
+  }, [user])
   return (
     <Dialog open={handleOpen} onClose={handleClose}>
       <DialogTitle>{title}</DialogTitle>
@@ -20,8 +21,8 @@ const SaveUserDialog = ({title, handleOpen, handleClose, handleSaveUser}) => {
           label="Username"
           type="text"
           fullWidth
-          value={user.username}
-          onChange={(e) => setUser({...user, username: e.target.value})}
+          value={newUser.username}
+          onChange={(e) => setNewUser({...newUser, username: e.target.value})}
           variant="standard"
         />
         <TextField
@@ -31,24 +32,24 @@ const SaveUserDialog = ({title, handleOpen, handleClose, handleSaveUser}) => {
           label="Password"
           type="text"
           fullWidth
-          value={user.password}
-          onChange={(e) => setUser({...user, password: e.target.value})}
+          value={newUser.password}
+          onChange={(e) => setNewUser({...newUser, password: e.target.value})}
           variant="standard"
           sx={{marginBottom: '2em'}}
         />
-        <MySelect label="Role" options={roles} selected={user.role} onValueChange={(role) => setUser({...user, role})} isFiltering={false}/>
+        <MySelect label="Role" options={roles} selected={newUser.role} onValueChange={(role) => setNewUser({...newUser, role})} isFiltering={false}/>
       
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
         <Button onClick={() => 
-          {setUser(
+          {setNewUser(
             {
               username: "",
               password: "",
               role: 1
             }); 
-          return handleSaveUser(user)}}>Submit</Button>
+          return handleSaveUser(newUser)}}>Submit</Button>
       </DialogActions>
     </Dialog>
   )

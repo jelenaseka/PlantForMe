@@ -1,6 +1,6 @@
 import { Snackbar } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react"
-import PlantEditPanel from "../../components/PlantEditPanel";
+import PlantEditPanel from "../../components/plants/PlantEditPanel";
 import { UpdatePlantContext } from "../../context/plants/UpdatePlantContext";
 import MuiAlert from '@mui/material/Alert';
 

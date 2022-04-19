@@ -55,10 +55,12 @@ func (this *AuthHandler) Me(w http.ResponseWriter, r *http.Request) {
 	this.l.Print("Me")
 	w.Header().Add("Content-Type", "application/json")
 
-	principal := r.Context().Value(ContextClaimsKey{}).(Principal)
+	var principal Principal
+
+	_ = json.NewDecoder(r.Body).Decode(&principal)
 
 	if principal.Username == "" {
-		http.Error(w, "Not logged in.", http.StatusUnauthorized)
+		http.Error(w, "Not logged in", http.StatusUnauthorized)
 		return
 	}
 
@@ -76,6 +78,8 @@ func (this *AuthHandler) IsAuthorized(w http.ResponseWriter, r *http.Request) {
 	this.l.Print("Is authorized")
 	w.Header().Add("Content-Type", "application/json")
 
-	json.NewEncoder(w).Encode("Authorized")
+	principal := r.Context().Value(ContextClaimsKey{}).(Principal)
+
+	json.NewEncoder(w).Encode(principal)
 	w.WriteHeader(http.StatusOK)
 }

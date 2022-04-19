@@ -17,32 +17,9 @@ type ContextUserCredentialsKey struct{}
 type ContextClaimsKey struct{}
 type ContextRegisterUserKey struct{}
 
-func (u *AuthHandler) MiddlewareUserCredentialsValidation(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
-		var credentials Credentials
-		err := json.NewDecoder(r.Body).Decode(&credentials)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-		err = credentials.Validate()
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-		ctx := context.WithValue(r.Context(), ContextUserCredentialsKey{}, credentials)
-		r = r.WithContext(ctx)
-		next.ServeHTTP(w, r)
-	})
-}
-
 func MiddlewareAuthentication(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Middleware Authentication called")
-
 		if r.Header["Authorization"] != nil {
-
 			authStr := r.Header["Authorization"][0]
 			authStrParts := strings.Split(authStr, " ")
 			if authStrParts[0] != "Bearer" {
@@ -56,6 +33,8 @@ func MiddlewareAuthentication(next http.Handler) http.Handler {
 			tkn, err := jwt.ParseWithClaims(tokenStr, claims, func(token *jwt.Token) (interface{}, error) {
 				return JwtKey, nil
 			})
+
+			fmt.Println("claims: ", claims.Username)
 
 			if err != nil {
 				if err == jwt.ErrSignatureInvalid {
@@ -82,34 +61,6 @@ func MiddlewareAuthentication(next http.Handler) http.Handler {
 	})
 }
 
-// func MiddlewareAuthorization(cas *casbin.Enforcer) func(next http.Handler) http.Handler {
-// 	return func(next http.Handler) http.Handler {
-// 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-// 			fmt.Println("Middleware Authorization called")
-
-// 			principal := r.Context().Value(ContextClaimsKey{}).(Principal)
-
-// 			sub := principal.Role.String()
-// 			obj := r.URL.String()
-// 			act := r.Method
-
-// 			if res, _ := cas.Enforce(sub, obj, act); res {
-// 				next.ServeHTTP(w, r)
-// 			} else {
-// 				if principal.Role == data.Public {
-// 					w.WriteHeader(http.StatusUnauthorized)
-// 				} else {
-// 					w.WriteHeader(http.StatusForbidden)
-// 				}
-
-// 				json.NewEncoder(w).Encode("Not authorized.")
-// 				return
-// 			}
-
-// 		})
-// 	}
-// }
-
 func MiddlewareAuthorizationFromAPIGateway(cas *casbin.Enforcer) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -129,11 +80,21 @@ func MiddlewareAuthorizationFromAPIGateway(cas *casbin.Enforcer) func(next http.
 			obj := ra
 			act := meth
 
+			fmt.Println(sub, obj, act)
+
 			if res, _ := cas.Enforce(sub, obj, act); res {
+				ctx := context.WithValue(r.Context(), ContextClaimsKey{}, principal)
+				r = r.WithContext(ctx)
 				next.ServeHTTP(w, r)
 			} else {
-				w.WriteHeader(http.StatusUnauthorized)
-				json.NewEncoder(w).Encode("Not authorized.")
+
+				if sub == "Public" {
+					w.WriteHeader(http.StatusUnauthorized)
+					w.Write([]byte("Not authorized"))
+				} else {
+					w.WriteHeader(http.StatusForbidden)
+					w.Write([]byte("Forbidden"))
+				}
 
 				return
 			}
@@ -157,6 +118,26 @@ func (u *AuthHandler) MiddlewareRegisterUserValidation(next http.Handler) http.H
 			return
 		}
 		ctx := context.WithValue(r.Context(), ContextRegisterUserKey{}, registerUserRequest)
+		r = r.WithContext(ctx)
+		next.ServeHTTP(w, r)
+	})
+}
+
+func (u *AuthHandler) MiddlewareUserCredentialsValidation(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		var credentials Credentials
+		err := json.NewDecoder(r.Body).Decode(&credentials)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		err = credentials.Validate()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		ctx := context.WithValue(r.Context(), ContextUserCredentialsKey{}, credentials)
 		r = r.WithContext(ctx)
 		next.ServeHTTP(w, r)
 	})

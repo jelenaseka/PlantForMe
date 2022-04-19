@@ -16,14 +16,8 @@ import (
 )
 
 func main() {
-	configuration, err := config.LoadConfig("../../")
-	if err != nil {
-		log.Fatal("cannot load config:", err)
-	}
-	fmt.Println("Reading variables using the model..")
-	fmt.Println("Database is\t", configuration.DBName)
+	configuration, _ := config.LoadConfig("../../")
 	fmt.Println("Port is\t\t", configuration.ServerAddress)
-	fmt.Println("DSN\t", configuration.DSN)
 
 	auth.JwtKey = []byte(configuration.JWTSecretKey)
 
@@ -32,8 +26,6 @@ func main() {
 	e, _ := casbin.NewEnforcer("../../auth_model.conf", "../../policy.csv")
 
 	r := mux.NewRouter()
-	r.Use(auth.MiddlewareAuthentication)
-
 	l := log.Default()
 
 	userRepository := repository.NewUserRepository()
@@ -51,6 +43,7 @@ func main() {
 
 	getAuthGatewayR := r.Methods(http.MethodGet).Subrouter()
 	getAuthGatewayR.HandleFunc("/api/auth/authorized", authHandler.IsAuthorized)
+	getAuthGatewayR.Use(auth.MiddlewareAuthentication)
 	getAuthGatewayR.Use(auth.MiddlewareAuthorizationFromAPIGateway(e))
 
 	getAuthR := r.Methods(http.MethodGet).Subrouter()
@@ -82,7 +75,7 @@ func main() {
 	deleteUserR.HandleFunc("/api/users/{id}", userHandler.Delete)
 
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000"},
+		AllowedOrigins:   []string{"http://localhost:8080"},
 		AllowCredentials: true,
 		AllowedMethods:   []string{"GET", "OPTIONS", "POST", "DELETE", "PUT"},
 		AllowedHeaders:   []string{"*"},

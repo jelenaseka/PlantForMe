@@ -2,8 +2,8 @@ import { Button } from "@mui/material";
 import { Box } from "@mui/system"
 import React from "react"
 import NavbarLink from "./NavbarLink";
-import '../assets/css/header.css';
-import { AuthService } from "../services/auth/AuthService";
+import '../../assets/css/header.css';
+import { AuthService } from "../../services/auth/AuthService";
 import { useNavigate } from "react-router-dom";
 
 const Header = () => {

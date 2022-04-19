@@ -56,8 +56,3 @@ func (p *Plant) String() string {
 
 	return string(out)
 }
-
-func (p *Plant) Validate() error {
-	// TODO
-	return nil
-}

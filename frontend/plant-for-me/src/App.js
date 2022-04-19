@@ -3,7 +3,7 @@ import './App.css';
 import { Route, Routes } from 'react-router-dom';
 import CreatePlantContainer from './containers/plants/CreatePlantContainer'
 import PlantsContainer from './containers/plants/PlantsContainer'
-import Header from './components/Header';
+import Header from './utils/components/Header';
 import CategoriesContainer from './containers/plants/CategoriesContainer';
 import UpdatePlantContainer from './containers/plants/UpdatePlantContainer';
 import PlantContainer from './containers/plants/PlantContainer';

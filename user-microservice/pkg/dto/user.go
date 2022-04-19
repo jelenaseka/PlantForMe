@@ -9,7 +9,7 @@ import (
 type UserRequest struct {
 	Username string `json:"username" validate:"required,min=3"`
 	Password string `json:"password" validate:"required,min=3"`
-	Role     int    `json:"role" validate:"min=0,max=3"`
+	Role     int    `json:"role" validate:"min=1,max=3"`
 }
 
 type UserResponse struct {

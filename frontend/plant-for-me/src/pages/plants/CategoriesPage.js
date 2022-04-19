@@ -4,8 +4,8 @@ import React, { useContext, useState } from "react"
 import { CategoriesContext } from "../../context/plants/CategoriesContext"
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import SaveCategoryDialog from "../../components/SaveCategoryDialog";
-import AreYouSureDialog from "../../components/AreYouSureDialog";
+import SaveCategoryDialog from "../../components/plants/SaveCategoryDialog";
+import AreYouSureDialog from "../../utils/components/AreYouSureDialog";
 
 const CategoriesPage = () => {
   const categoriesContext = useContext(CategoriesContext)

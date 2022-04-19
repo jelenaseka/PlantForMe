@@ -1,8 +1,8 @@
 import { Grid } from "@mui/material"
 import { Box } from "@mui/system"
 import React, { useContext } from "react"
-import FilterPanel from "../../components/FilterPanel"
-import PlantListItem from "../../components/PlantListItem"
+import FilterPanel from "../../components/plants/FilterPanel"
+import PlantListItem from "../../components/plants/PlantListItem"
 import { PlantsContext } from "../../context/plants/PlantsContext"
 
 const PlantsPage = () => {

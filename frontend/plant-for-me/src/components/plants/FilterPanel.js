@@ -1,10 +1,10 @@
 import { Button, Divider, FormControl,  Grid, TextField, Typography } from "@mui/material"
 import { Box } from "@mui/system"
 import React, { useContext, useEffect, useState } from "react"
-import { PlantsContext } from "../context/plants/PlantsContext"
-import { growthRate, hardiness, lifeTime, light, months, watering, height } from "../data/enums"
-import MyCheckboxList from "../utils/components/MyCheckboxList"
-import MySelect from "../utils/components/MySelect"
+import { PlantsContext } from "../../context/plants/PlantsContext"
+import { growthRate, hardiness, lifeTime, light, months, watering, height } from "../../data/enums"
+import MyCheckboxList from "../../utils/components/MyCheckboxList"
+import MySelect from "../../utils/components/MySelect"
 
 const FilterPanel = () => {
   const plantsContext = useContext(PlantsContext)
@@ -63,7 +63,7 @@ const FilterPanel = () => {
     
     var url = params.toString()
 
-    plantsContext.handleGetAll(url)
+    plantsContext.handleGetPlants(url)
   }
 
   return (
@@ -74,7 +74,10 @@ const FilterPanel = () => {
       <Divider sx={{marginBottom:'1em'}}/>
       {filterParameters && <div>
         <FormControl fullWidth>
-        <TextField sx={{ marginBottom: '10px'}} id="outlined-basic" label="Plant name" variant="outlined" value={filterParameters.name} onChange={(e) => setFilterParameters({...filterParameters, name: e.target.value})} />
+        <TextField sx={{ marginBottom: '10px'}} id="outlined-basic" label="Plant name" variant="outlined" value={filterParameters.name} 
+        onChange={(e) => setFilterParameters({...filterParameters, name: e.target.value})} 
+        onBlur={() => setFilterParameters({...filterParameters, name: filterParameters.name.trim()})}
+        />
       </FormControl>
 
       <Grid item sx={{ padding:'20px 0'}}>

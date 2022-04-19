@@ -1,4 +1,4 @@
-const baseUrl = "http://localhost:8086/api/auth"
+const baseUrl = "http://localhost:8080/api/auth"
 
 export const AuthService = {
   login: (userCredentials) => {

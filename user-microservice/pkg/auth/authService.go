@@ -46,7 +46,7 @@ func (this *authService) ValidateCredentials(credentials Credentials) (*data.Use
 
 	hashedPassword := crypto.NewSHA256([]byte(credentials.Password))
 	if hex.EncodeToString(hashedPassword) != user.Password {
-		return nil, error_utils.NewNotFoundError(fmt.Sprintf("Wrong password."))
+		return nil, error_utils.NewForbiddenError(fmt.Sprintf("Wrong password."))
 	}
 
 	return user, nil

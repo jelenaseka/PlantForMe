@@ -1,32 +1,28 @@
-const baseUrl = "http://localhost:8085/api/categories"
+import getHeaders from "../auth/auth-header"
+
+const baseUrl = "http://localhost:8080/api/categories"
 
 export const CategoryService = {
-    getCategories: async () => {
-      const response = await fetch(baseUrl)
-      const data = await response.json()
-      return data
+    getCategories: () => {
+      return fetch(baseUrl, {headers: getHeaders()})
     },
     createCategory: (category) => {
       return fetch(baseUrl, {
         method: 'POST',
-        headers: {
-          'Content-type': 'application/json'
-        },
+        headers: getHeaders(),
         body: JSON.stringify(category)
       })
     },
     updateCategory: (category) => {
       return fetch(baseUrl + `/${category.id}`, {
         method: 'PUT',
-        headers: {
-          'Content-type':'application/json'
-        },
+        headers: getHeaders(),
         body: JSON.stringify(category)
       })
     },
-    deleteCategory: async (id) => {
-      await fetch(baseUrl + `/${id}`, {
+    deleteCategory: (id) => {
+      return fetch(baseUrl + `/${id}`, {
         method: 'DELETE'
-      })
+      }, {headers: getHeaders()})
     }
   }

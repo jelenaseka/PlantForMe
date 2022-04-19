@@ -23,7 +23,6 @@ func NewPlantHandler(l *log.Logger, s service.PlantServiceInterface) *Plant {
 
 func (this *Plant) GetAll(w http.ResponseWriter, r *http.Request) {
 	this.l.Print("Get all plants")
-	this.l.Print("\n----------------------------\n")
 	values := r.URL.Query()
 
 	w.Header().Add("Content-Type", "application/json")

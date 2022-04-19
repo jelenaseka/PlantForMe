@@ -23,14 +23,21 @@ const PlantContainer = () => {
   }, [id])
 
   const deletePlantHandler = () => {
-    console.log(id)
-    PlantService.deletePlant(id)
-      .then(() => {
-        return navigate("/plants");
-      }).catch(err => {
-        console.log('err: ',err)
+    
+    const deletePlant = PlantService.deletePlant(id)
+      .then(async res => {
+        if(res.status >= 400 && res.status < 500) {
+          const data = await res.text();
+          return { ok: false, err: data };
+        } else {
+          await res.text();
+          return { ok: true, err: null };
+        }
       })
-
+      .catch(err => {
+        console.log('err: ',err)
+      });
+    return deletePlant;
   }
 
   return (

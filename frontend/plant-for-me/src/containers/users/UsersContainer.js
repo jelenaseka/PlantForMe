@@ -1,26 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { UsersContext } from '../../context/users/UsersContext'
 import UsersPage from '../../pages/users/UsersPage'
 import { UserService } from "../../services/users/UserService"
 
 const UsersContainer = () => {
   const [users, setUsers] = useState([])
-  let navigate = useNavigate();
 
   useEffect(() => {
     getAllHandler()
   }, [])
 
   const getAllHandler = () => {
-    // TODO promeniti da returnuje fetch
-    UserService.getUsers()
-      .then(res => {
+    const getData = UserService.getUsers()
+      .then(async res => {
         if(res.status >= 400 && res.status < 500) {
-          return navigate("/login");
+          const data = await res.text();
+          return { ok: false, err: data };
         } else {
           return res.json().then(data => {
             setUsers(data);
+            return { ok: true, err: null };
           });
           
         }
@@ -28,7 +27,7 @@ const UsersContainer = () => {
       .catch(err => {
         console.log('err: ',err)
       })
-    // return getData;
+    return getData;
   }
 
   const createUserHandler = (user) => {
@@ -70,7 +69,6 @@ const UsersContainer = () => {
   }
 
   const deleteUserHandler = (id) => {
-    console.log(id)
     const deleteUser = UserService.deleteUser(id)
       .then(async res => {
         if(res.status >= 400 && res.status < 500) {

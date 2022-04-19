@@ -15,23 +15,10 @@ import (
 )
 
 func main() {
-	configuration, err := config.LoadConfig("../../")
-	if err != nil {
-		log.Fatal("cannot load config:", err)
-	}
-	fmt.Println("Reading variables using the model..")
-	fmt.Println("Database is\t", configuration.DBName)
+	configuration, _ := config.LoadConfig("../../")
 	fmt.Println("Port is\t\t", configuration.ServerAddress)
-	fmt.Println("DSN\t", configuration.DSN)
 
 	config.Connect(configuration.DSN)
-	// db := config.GetDB()
-
-	// db.AutoMigrate(&data.Plant{})
-	// db.AutoMigrate(&data.Category{})
-	// db.AutoMigrate(&data.BloomingMonth{})
-
-	// config.InitDatabase(db)
 
 	r := mux.NewRouter()
 	l := log.Default()
@@ -90,7 +77,7 @@ func main() {
 	deleteCategoryR.HandleFunc("/api/categories/{id}", categoryHandler.Delete)
 
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000"},
+		AllowedOrigins:   []string{"http://localhost:8080"},
 		AllowCredentials: true,
 		AllowedMethods:   []string{"GET", "OPTIONS", "POST", "DELETE", "PUT"},
 	})

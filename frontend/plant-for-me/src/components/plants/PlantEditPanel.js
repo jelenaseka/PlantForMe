@@ -2,9 +2,9 @@ import { Button, Divider, FormControl, Grid, TextField, Typography } from "@mui/
 import { Box } from "@mui/system"
 import React, { useEffect, useState } from "react"
 import { useStateWithCallbackLazy } from "use-state-with-callback"
-import { growthRate, hardiness, lifeTime, light, months, watering, height } from "../data/enums"
-import MyCheckboxList from "../utils/components/MyCheckboxList"
-import MySelect from "../utils/components/MySelect"
+import { growthRate, hardiness, lifeTime, light, months, watering, height } from "../../data/enums"
+import MyCheckboxList from "../../utils/components/MyCheckboxList"
+import MySelect from "../../utils/components/MySelect"
 const PlantEditPanel = ({plant, categories, handlePlantOperation, title}) => {
   const [newPlant, setNewPlant] = useStateWithCallbackLazy(plant)
   const [checkedBloomingMonths, setCheckedBloomingMonths] = useState(

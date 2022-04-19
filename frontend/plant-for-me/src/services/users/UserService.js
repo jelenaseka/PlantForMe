@@ -1,6 +1,6 @@
 import getHeaders from "../auth/auth-header";
 
-const baseUrl = "http://localhost:8086/api/users"
+const baseUrl = "http://localhost:8080/api/users"
 
 export const UserService = {
     getUsers: () => {

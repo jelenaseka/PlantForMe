@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Box } from "@mui/system"
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { Button, Grid } from "@mui/material"
 import CategoryIcon from '@mui/icons-material/Category';
 import OpacityIcon from '@mui/icons-material/Opacity';
@@ -11,12 +11,14 @@ import HeightIcon from '@mui/icons-material/Height';
 import FilterVintageIcon from '@mui/icons-material/FilterVintage';
 import Divider from '@mui/material/Divider';
 import '../../assets/css/layout.css';
-import ListItem from '../../components/ListItem'
+import ListItem from '../../components/plants/ListItem'
 import { watering, light, lifeTime, growthRate, hardiness, height, months } from "../../data/enums";
 import { PlantContext } from '../../context/plants/PlantContext';
+import { toast, ToastContainer } from 'react-toastify';
 
 const PlantPage = () => {
-  const plantContext = useContext(PlantContext)
+  const plantContext = useContext(PlantContext);
+  let navigate = useNavigate();
 
   const getBloomingMonths = () => {
     var blm = "";
@@ -25,6 +27,16 @@ const PlantPage = () => {
       blm += months[bm.month] + ", "
     })
     return blm
+  }
+
+  const deletePlant = () => {
+    plantContext.deletePlantHandler().then(res => {
+      if(!res.ok) {
+        toast.error(res.err);
+      } else {
+        navigate("/plants");
+      }
+    })
   }
 
   return (
@@ -54,7 +66,7 @@ const PlantPage = () => {
                 Edit plant
               </NavLink>
             </Button>
-            <Button variant="contained" onClick={() => plantContext.deletePlantHandler()}>
+            <Button variant="contained" onClick={() => deletePlant()}>
                 Delete plant
             </Button>
             <h1 className="center">{plantContext.plant.name}</h1>
@@ -68,8 +80,9 @@ const PlantPage = () => {
             {plantContext.plant.description}
           </Grid>
         </Grid>
-        
+        <ToastContainer />
       </Box>}
+      
     </div>
   )
 }

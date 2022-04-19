@@ -3,7 +3,7 @@ import { CreatePlantContext } from "../../context/plants/CreatePlantContext";
 import '../../assets/css/layout.css';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
-import PlantEditPanel from "../../components/PlantEditPanel";
+import PlantEditPanel from "../../components/plants/PlantEditPanel";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;

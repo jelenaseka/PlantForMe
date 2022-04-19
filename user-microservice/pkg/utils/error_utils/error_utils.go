@@ -37,6 +37,14 @@ func NewNotFoundError(message string) MessageErr {
 	}
 }
 
+func NewForbiddenError(message string) MessageErr {
+	return &messageErr{
+		ErrMessage: message,
+		ErrStatus:  http.StatusForbidden,
+		ErrError:   "forbidden",
+	}
+}
+
 func NewConflictError(message string) MessageErr {
 	return &messageErr{
 		ErrMessage: message,
