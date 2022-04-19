@@ -52,6 +52,7 @@ func MiddlewareAuthentication(next http.Handler) http.Handler {
 
 			ctx := context.WithValue(r.Context(), ContextClaimsKey{}, NewPrincipal(claims.Username, claims.Role))
 			r = r.WithContext(ctx)
+
 		} else {
 			ctx := context.WithValue(r.Context(), ContextClaimsKey{}, NewPrincipal("", 0))
 			r = r.WithContext(ctx)
