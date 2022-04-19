@@ -12,3 +12,12 @@ type Comment struct {
 	Username string
 	PostID   uuid.UUID `gorm:"type:varchar(36)"`
 }
+
+func NewComment(id uuid.UUID, content string, username string, postID uuid.UUID) *Comment {
+	return &Comment{
+		ID:       id,
+		Content:  content,
+		Username: username,
+		PostID:   postID,
+	}
+}
