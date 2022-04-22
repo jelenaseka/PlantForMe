@@ -13,7 +13,8 @@ import (
 )
 
 type postService struct {
-	IPostRepository repository.PostRepositoryInterface
+	IPostRepository  repository.PostRepositoryInterface
+	ICategoryService CategoryServiceInterface
 }
 
 type PostServiceInterface interface {
@@ -22,10 +23,14 @@ type PostServiceInterface interface {
 	Create(postRequest *dto.PostRequest) (*uuid.NullUUID, error_utils.MessageErr)
 	Update(postRequest *dto.PostRequest, id uuid.UUID) error_utils.MessageErr
 	Delete(id uuid.UUID) error_utils.MessageErr
+	GetAllCountComments() ([]dto.PostCountCommentsResponse, error_utils.MessageErr)
+	GetAllOrderByCreatedAt() ([]dto.PostResponse, error_utils.MessageErr)
+	GetAllPageable(page int, category string) ([]dto.PostCountCommentsResponse, error_utils.MessageErr)
+	GetPostsCount(category string) (int, error_utils.MessageErr)
 }
 
-func NewPostService(r repository.PostRepositoryInterface) PostServiceInterface {
-	return &postService{r}
+func NewPostService(r repository.PostRepositoryInterface, s CategoryServiceInterface) PostServiceInterface {
+	return &postService{r, s}
 }
 
 func (this *postService) GetAll() ([]dto.PostResponse, error_utils.MessageErr) {
@@ -62,8 +67,12 @@ func (this *postService) GetOneById(id uuid.UUID) (*dto.PostResponseWithComments
 func (this *postService) Create(postRequest *dto.PostRequest) (*uuid.NullUUID, error_utils.MessageErr) {
 	id := uuid.New()
 
-	post := data.NewPost(id, postRequest.Heading, postRequest.Content, postRequest.Username)
+	post := data.NewPost(id, postRequest.Heading, postRequest.Content, postRequest.Username, uuid.Must(uuid.Parse(postRequest.CategoryID)))
 
+	_, catError := this.ICategoryService.GetOneById(uuid.Must(uuid.Parse(postRequest.CategoryID)))
+	if catError != nil {
+		return nil, error_utils.NewConflictError(fmt.Sprintf("The category with the id %s is not found in the database.", postRequest.CategoryID))
+	}
 	//validacija za username
 
 	err := this.IPostRepository.Create(post)
@@ -75,7 +84,12 @@ func (this *postService) Create(postRequest *dto.PostRequest) (*uuid.NullUUID, e
 }
 
 func (this *postService) Update(postRequest *dto.PostRequest, id uuid.UUID) error_utils.MessageErr {
-	post := data.NewPost(id, postRequest.Heading, postRequest.Content, postRequest.Username)
+	_, catError := this.ICategoryService.GetOneById(uuid.Must(uuid.Parse(postRequest.CategoryID)))
+	if catError != nil {
+		error_utils.NewConflictError(fmt.Sprintf("The category with the id %s is not found in the database.", postRequest.CategoryID))
+	}
+
+	post := data.NewPost(id, postRequest.Heading, postRequest.Content, postRequest.Username, uuid.Must(uuid.Parse(postRequest.CategoryID)))
 
 	_, err := this.IPostRepository.FindById(post.ID)
 	if err != nil {
@@ -97,4 +111,55 @@ func (this *postService) Delete(id uuid.UUID) error_utils.MessageErr {
 
 	this.IPostRepository.Delete(id)
 	return nil
+}
+
+func (this *postService) GetAllCountComments() ([]dto.PostCountCommentsResponse, error_utils.MessageErr) {
+	posts, err := this.IPostRepository.FindAllCountComments()
+
+	if err != nil {
+		return nil, error_utils.NewInternalServerError(fmt.Sprintf("Error when trying to retrieve posts: %s", err.Error()))
+	}
+
+	postsResponse := make([]dto.PostCountCommentsResponse, 0)
+	for _, v := range posts {
+		postsResponse = append(postsResponse, *dto.NewPostCountCommentsResponse(v))
+	}
+	return postsResponse, nil
+}
+
+func (this *postService) GetAllPageable(page int, category string) ([]dto.PostCountCommentsResponse, error_utils.MessageErr) {
+	posts, err := this.IPostRepository.FindAllByCategoryPageable(page, category)
+	fmt.Println("post service")
+
+	if err != nil {
+		return nil, error_utils.NewInternalServerError(fmt.Sprintf("Error when trying to retrieve posts: %s", err.Error()))
+	}
+
+	postsResponse := make([]dto.PostCountCommentsResponse, 0)
+	for _, v := range posts {
+		postsResponse = append(postsResponse, *dto.NewPostCountCommentsResponse(v))
+	}
+	return postsResponse, nil
+}
+
+func (this *postService) GetAllOrderByCreatedAt() ([]dto.PostResponse, error_utils.MessageErr) {
+	posts, err := this.IPostRepository.FindAllOrderByCreatedAt()
+
+	if err != nil {
+		return nil, error_utils.NewInternalServerError(fmt.Sprintf("Error when trying to retrieve posts: %s", err.Error()))
+	}
+
+	postsResponse := make([]dto.PostResponse, 0)
+	for _, v := range posts {
+		postsResponse = append(postsResponse, *dto.NewPostResponse(v))
+	}
+	return postsResponse, nil
+}
+
+func (this *postService) GetPostsCount(category string) (int, error_utils.MessageErr) {
+	count, err := this.IPostRepository.GetPostsCount(category)
+	if err != nil {
+		return 0, error_utils.NewInternalServerError(fmt.Sprintf("Error when trying to retrieve posts: %s", err.Error()))
+	}
+	return count, nil
 }

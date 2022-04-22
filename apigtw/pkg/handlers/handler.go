@@ -3,8 +3,8 @@ package handlers
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"time"
 )
@@ -25,7 +25,8 @@ func Me(address string) http.HandlerFunc {
 
 		res, err := client.Do(req)
 		if err != nil {
-			log.Fatalln(err)
+			// log.Fatalln(err)
+			return
 		}
 		defer res.Body.Close()
 
@@ -41,7 +42,9 @@ func Get(address string) http.HandlerFunc {
 
 		res, err := http.Get(address + r.URL.String())
 		if err != nil {
-			log.Fatalln(err)
+			fmt.Println("udje ovde")
+			// log.Fatalln(err)
+			return
 		}
 		defer res.Body.Close()
 
@@ -58,7 +61,8 @@ func Post(address string) http.HandlerFunc {
 		data, _ := ioutil.ReadAll(r.Body)
 		res, err := http.Post(address+r.URL.String(), "application/json", bytes.NewBuffer(data))
 		if err != nil {
-			log.Fatalln(err)
+			// log.Fatalln(err)
+			return
 		}
 		defer res.Body.Close()
 
@@ -85,7 +89,8 @@ func Put(address string) http.HandlerFunc {
 
 		res, err := client.Do(req)
 		if err != nil {
-			log.Fatalln(err)
+			// log.Fatalln(err)
+			return
 		}
 		defer res.Body.Close()
 
@@ -111,7 +116,8 @@ func Delete(address string) http.HandlerFunc {
 
 		res, err := client.Do(req)
 		if err != nil {
-			log.Fatalln(err)
+			// log.Fatalln(err)
+			return
 		}
 		defer res.Body.Close()
 

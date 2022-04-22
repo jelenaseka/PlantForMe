@@ -55,6 +55,34 @@ func main() {
 	deletePlantR.HandleFunc("/api/plants/{id}", handlers.Delete(configuration.PlantAddress))
 	deletePlantR.HandleFunc("/api/categories/{id}", handlers.Delete(configuration.PlantAddress))
 
+	// FORUM-MICROSERVICE
+
+	getForumR := r.Methods(http.MethodGet).Subrouter()
+	getForumR.HandleFunc("/api/posts", handlers.Get(configuration.ForumAddress))
+	getForumR.HandleFunc("/api/posts/{id}", handlers.Get(configuration.ForumAddress))
+	getForumR.HandleFunc("/api/comments", handlers.Get(configuration.ForumAddress))
+	getForumR.HandleFunc("/api/comments/{id}", handlers.Get(configuration.ForumAddress))
+	getForumR.HandleFunc("/api/forum/categories", handlers.Get(configuration.ForumAddress))
+	getForumR.HandleFunc("/api/forum/categories/{id}", handlers.Get(configuration.ForumAddress))
+	getForumR.HandleFunc("/api/forum/categories/count/posts", handlers.Get(configuration.ForumAddress))
+	getForumR.HandleFunc("/api/posts/count/comments", handlers.Get(configuration.ForumAddress))
+	getForumR.HandleFunc("/api/posts/all/count", handlers.Get(configuration.ForumAddress))
+
+	postForumR := r.Methods(http.MethodPost).Subrouter()
+	postForumR.HandleFunc("/api/posts", handlers.Post(configuration.ForumAddress))
+	postForumR.HandleFunc("/api/comments", handlers.Post(configuration.ForumAddress))
+	postForumR.HandleFunc("/api/forum/categories", handlers.Post(configuration.ForumAddress))
+
+	putForumR := r.Methods(http.MethodPut).Subrouter()
+	putForumR.HandleFunc("/api/posts/{id}", handlers.Put(configuration.ForumAddress))
+	putForumR.HandleFunc("/api/comments/{id}", handlers.Put(configuration.ForumAddress))
+	putForumR.HandleFunc("/api/forum/categories/{id}", handlers.Put(configuration.ForumAddress))
+
+	deleteForumR := r.Methods(http.MethodDelete).Subrouter()
+	deleteForumR.HandleFunc("/api/posts/{id}", handlers.Delete(configuration.ForumAddress))
+	deleteForumR.HandleFunc("/api/comments/{id}", handlers.Delete(configuration.ForumAddress))
+	deleteForumR.HandleFunc("/api/forum/categories/{id}", handlers.Delete(configuration.ForumAddress))
+
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{configuration.FrontendAddress},
 		AllowCredentials: true,

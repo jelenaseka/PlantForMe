@@ -10,6 +10,7 @@ import PlantContainer from './containers/plants/PlantContainer';
 import NotFoundPage from './utils/pages/NotFoundPage';
 import UsersContainer from './containers/users/UsersContainer';
 import LoginContainer from './containers/login/LoginContainer';
+import ForumsContainer from './containers/forums/ForumsContainer';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="/plants/:id" element={<PlantContainer/>}/>
           <Route path="/categories" element={<CategoriesContainer/>}/>
           <Route path="/users" element={<UsersContainer/>}/>
+          <Route path="/forums" element={<ForumsContainer/>}/>
           <Route path="/login" element={<LoginContainer/>}/>
           <Route path="/404" element={<NotFoundPage/>} />
         </Routes>

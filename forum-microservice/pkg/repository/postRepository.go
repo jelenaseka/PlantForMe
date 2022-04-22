@@ -1,8 +1,10 @@
 package repository
 
 import (
+	"fmt"
 	"forum-microservice/pkg/config"
 	"forum-microservice/pkg/data"
+	"strconv"
 
 	"github.com/google/uuid"
 )
@@ -16,6 +18,10 @@ type PostRepositoryInterface interface {
 	Create(post *data.Post) error
 	Update(post *data.Post) error
 	Delete(id uuid.UUID)
+	FindAllCountComments() ([]data.PostCountComments, error)
+	FindAllOrderByCreatedAt() ([]data.Post, error)
+	FindAllByCategoryPageable(page int, category string) ([]data.PostCountComments, error)
+	GetPostsCount(category string) (int, error)
 }
 
 func NewPostRepository() PostRepositoryInterface {
@@ -25,7 +31,7 @@ func NewPostRepository() PostRepositoryInterface {
 func (this *postRepository) FindAll() ([]data.Post, error) {
 	db := config.GetDB()
 	var posts []data.Post
-	result := db.Debug().Find(&posts)
+	result := db.Debug().Preload("Category").Find(&posts)
 
 	if result.Error != nil {
 		return nil, result.Error
@@ -79,4 +85,64 @@ func (this *postRepository) Update(post *data.Post) error {
 func (this *postRepository) Delete(id uuid.UUID) {
 	db := config.GetDB()
 	db.Debug().Delete(&data.Post{}, "id = ?", id.String())
+}
+
+func (this *postRepository) FindAllCountComments() ([]data.PostCountComments, error) {
+	db := config.GetDB()
+	var posts []data.PostCountComments
+	result := db.Debug().Preload("Comments").Raw("select p.*, count(c.id) as comments_count from forumdb.posts p left join forumdb.comments c on p.id = c.post_id where p.deleted_at is null group by p.id order by comments_count desc limit 6;").Scan(&posts)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return posts, nil
+}
+
+func (this *postRepository) FindAllOrderByCreatedAt() ([]data.Post, error) {
+	db := config.GetDB()
+	var posts []data.Post
+	result := db.Debug().Preload("Category").Order("created_at desc").Limit(5).Find(&posts)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return posts, nil
+}
+
+func (this *postRepository) FindAllByCategoryPageable(page int, category string) ([]data.PostCountComments, error) {
+	db := config.GetDB()
+	limit := 3
+	offset := limit * (page - 1)
+
+	query := "select p.*, count(c.id) as comments_count from forumdb.posts p left join forumdb.comments c on p.id = c.post_id left join forumdb.categories cat on cat.id = p.category_id where p.deleted_at is null "
+	if category != "" {
+		query += " and cat.name = '" + category + "'"
+	}
+	query += " group by p.id order by comments_count desc limit " + strconv.Itoa(limit) + " offset " + strconv.Itoa(offset) + ";"
+	var posts []data.PostCountComments
+	result := db.Debug().Preload("Comments").Raw(query).Scan(&posts)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return posts, nil
+}
+
+func (this *postRepository) GetPostsCount(category string) (int, error) {
+	db := config.GetDB()
+	var count int
+	query := "select count(p.id) from forumdb.posts p left join forumdb.categories cat on cat.id = p.category_id where p.deleted_at is null "
+	fmt.Println("cat u repo: ", category)
+	if category != "" {
+		query += " and cat.name = '" + category + "';"
+	}
+	result := db.Debug().Raw(query).Scan(&count)
+
+	if result.Error != nil {
+		return 0, result.Error
+	}
+
+	return count, nil
 }
