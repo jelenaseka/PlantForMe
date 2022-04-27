@@ -8,7 +8,6 @@ import { Link, NavLink } from "react-router-dom";
 const ForumCategoriesList = ({categories}) => {
   const [selectedCategory, setSelectedCategory] = React.useState("-1");
   const handleListItemClick = (event, categoryId) => {
-    console.log(categoryId)
     setSelectedCategory(categoryId);
   };
 

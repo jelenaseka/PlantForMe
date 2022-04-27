@@ -1,7 +1,8 @@
-import { Divider, Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemText,  Typography } from "@mui/material";
+import { Divider, Grid, List, ListItem, ListItemButton, ListItemIcon,  ListItemText,  Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import React from "react";
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import { Link, NavLink } from "react-router-dom";
 
 const ForumPostsList = ({posts, title}) => {
   return (
@@ -17,7 +18,7 @@ const ForumPostsList = ({posts, title}) => {
                 <ListItem disablePadding>
                   <Grid container alignItems="center" justifyContent="space-between">
                     <Grid item md={8}>
-                      <ListItemButton>
+                      <ListItemButton component={NavLink} to={`/forums/${post.id}`}>
                         <ListItemIcon>
                           <ChatBubbleOutlineIcon />
                         </ListItemIcon>

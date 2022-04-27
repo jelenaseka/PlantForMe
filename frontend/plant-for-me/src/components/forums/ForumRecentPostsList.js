@@ -2,6 +2,7 @@ import React from "react";
 import { Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import { NavLink } from "react-router-dom";
 
 const ForumRecentPostsList = ({posts, title}) => {
   return (
@@ -21,9 +22,8 @@ const ForumRecentPostsList = ({posts, title}) => {
             posts.map((post, index) => (
               <div key={index}>
                 <ListItem disablePadding>
-                  <ListItemButton>
+                  <ListItemButton component={NavLink} to={`/forums/${post.id}`}>
                     <ListItemText primary={post.heading} secondary={`by ${post.username} in category ${post.categoryResponse.name}`} />
-                    
                   </ListItemButton>
                   </ListItem>
                   <Divider/>

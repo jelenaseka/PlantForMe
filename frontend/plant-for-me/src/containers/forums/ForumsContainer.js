@@ -62,6 +62,7 @@ const ForumsContainer = () => {
   }
 
   const getPostsCount = () => {
+    //TODO change 
     const getData = async () => {
       try {
         const postsCountResponse = await ForumPostService.getPostsCount(currentCategory)
@@ -73,6 +74,8 @@ const ForumsContainer = () => {
           var count = parseInt(data)
           if (count % 3 !== 0) {
             count = Math.floor(count / 3) + 1
+          } else {
+            count = Math.floor(count / 3)
           }
           setPostsCount(count)
         }

@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"fmt"
 	"forum-microservice/pkg/config"
 	"forum-microservice/pkg/data"
 	"strconv"
@@ -55,7 +54,7 @@ func (this *postRepository) FindAllWithComments() ([]data.Post, error) {
 func (this *postRepository) FindById(id uuid.UUID) (*data.Post, error) {
 	db := config.GetDB()
 	var post data.Post
-	result := db.Preload("Comments").First(&post, "id = ?", id.String())
+	result := db.First(&post, "id = ?", id.String())
 
 	if result.Error != nil {
 		return nil, result.Error
@@ -134,7 +133,6 @@ func (this *postRepository) GetPostsCount(category string) (int, error) {
 	db := config.GetDB()
 	var count int
 	query := "select count(p.id) from forumdb.posts p left join forumdb.categories cat on cat.id = p.category_id where p.deleted_at is null "
-	fmt.Println("cat u repo: ", category)
 	if category != "" {
 		query += " and cat.name = '" + category + "';"
 	}

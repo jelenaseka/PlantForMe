@@ -62,6 +62,8 @@ func main() {
 	getForumR.HandleFunc("/api/posts/{id}", handlers.Get(configuration.ForumAddress))
 	getForumR.HandleFunc("/api/comments", handlers.Get(configuration.ForumAddress))
 	getForumR.HandleFunc("/api/comments/{id}", handlers.Get(configuration.ForumAddress))
+	getForumR.HandleFunc("/api/comments/{id}/count", handlers.Get(configuration.ForumAddress))
+	getForumR.HandleFunc("/api/comments/post/{id}", handlers.Get(configuration.ForumAddress))
 	getForumR.HandleFunc("/api/forum/categories", handlers.Get(configuration.ForumAddress))
 	getForumR.HandleFunc("/api/forum/categories/{id}", handlers.Get(configuration.ForumAddress))
 	getForumR.HandleFunc("/api/forum/categories/count/posts", handlers.Get(configuration.ForumAddress))

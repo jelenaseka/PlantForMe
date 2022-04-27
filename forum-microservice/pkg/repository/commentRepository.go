@@ -16,6 +16,8 @@ type CommentRepositoryInterface interface {
 	Create(comment *data.Comment) error
 	Update(comment *data.Comment) error
 	Delete(id uuid.UUID)
+	GetCommentsCountByPostId(id string) (int, error)
+	GetCommentsByPostIdPageable(page int, postId string) ([]data.Comment, error)
 }
 
 func NewCommentRepository() CommentRepositoryInterface {
@@ -67,4 +69,33 @@ func (this *commentRepository) Update(comment *data.Comment) error {
 func (this *commentRepository) Delete(id uuid.UUID) {
 	db := config.GetDB()
 	db.Debug().Delete(&data.Comment{}, "id = ?", id.String())
+}
+
+func (this *commentRepository) GetCommentsCountByPostId(id string) (int, error) {
+	db := config.GetDB()
+	var count int
+	query := "select count(c.id) from forumdb.comments c where c.post_id = '" + id + "';"
+
+	result := db.Debug().Raw(query).Scan(&count)
+
+	if result.Error != nil {
+		return 0, result.Error
+	}
+
+	return count, nil
+}
+
+func (this *commentRepository) GetCommentsByPostIdPageable(page int, postId string) ([]data.Comment, error) {
+	db := config.GetDB()
+	limit := 3
+	offset := limit * (page - 1)
+
+	var comments []data.Comment
+	result := db.Debug().Where("post_id = ?", postId).Limit(limit).Offset(offset).Find(&comments)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return comments, nil
 }

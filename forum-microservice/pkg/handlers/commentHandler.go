@@ -7,6 +7,7 @@ import (
 	"forum-microservice/pkg/utils"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -106,4 +107,48 @@ func (this *CommentHandler) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusNoContent)
+}
+
+func (this *CommentHandler) GetCommentsCountByPostId(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+
+	if !utils.IsValidUUID(id) {
+		http.Error(w, "Bad request. Id format error", http.StatusBadRequest)
+		return
+	}
+
+	count, err := this.ICommentService.GetCommentsCountByPostId(id)
+
+	if err != nil {
+		http.Error(w, err.Message(), err.Status())
+		return
+	}
+
+	json.NewEncoder(w).Encode(count)
+}
+
+func (this *CommentHandler) GetCommentsByPostIdPageable(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+	page := r.URL.Query().Get("page")
+
+	if !utils.IsValidUUID(id) {
+		http.Error(w, "Bad request. Id format error", http.StatusBadRequest)
+		return
+	}
+
+	if pageNum, errconv := strconv.Atoi(page); errconv == nil {
+		comments, err := this.ICommentService.GetCommentsByPostIdPageable(pageNum, id)
+		if err != nil {
+			http.Error(w, err.Message(), err.Status())
+			return
+		} else {
+			json.NewEncoder(w).Encode(comments)
+			return
+		}
+	} else {
+		http.Error(w, "Page path variable not good.", http.StatusBadRequest)
+		return
+	}
 }

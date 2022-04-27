@@ -43,6 +43,8 @@ func main() {
 	getCommentsR := r.Methods(http.MethodGet).Subrouter()
 	getCommentsR.HandleFunc("/api/comments", commentHandler.GetAll)
 	getCommentsR.HandleFunc("/api/comments/{id}", commentHandler.GetOne)
+	getCommentsR.HandleFunc("/api/comments/{id}/count", commentHandler.GetCommentsCountByPostId)
+	getCommentsR.HandleFunc("/api/comments/post/{id}", commentHandler.GetCommentsByPostIdPageable)
 
 	getCategoryR := r.Methods(http.MethodGet).Subrouter()
 	getCategoryR.HandleFunc("/api/forum/categories", categoryHandler.GetAll)

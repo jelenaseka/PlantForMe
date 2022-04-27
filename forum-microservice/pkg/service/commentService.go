@@ -23,6 +23,8 @@ type CommentServiceInterface interface {
 	Create(commentRequest *dto.CommentRequest) (*uuid.NullUUID, error_utils.MessageErr)
 	Update(commentRequest *dto.CommentRequest, id uuid.UUID) error_utils.MessageErr
 	Delete(id uuid.UUID) error_utils.MessageErr
+	GetCommentsCountByPostId(id string) (int, error_utils.MessageErr)
+	GetCommentsByPostIdPageable(page int, postId string) ([]dto.CommentResponse, error_utils.MessageErr)
 }
 
 func NewCommentService(r repository.CommentRepositoryInterface, s PostServiceInterface) CommentServiceInterface {
@@ -116,4 +118,26 @@ func (this *commentService) Delete(id uuid.UUID) error_utils.MessageErr {
 
 	this.ICommentRepository.Delete(id)
 	return nil
+}
+
+func (this *commentService) GetCommentsCountByPostId(id string) (int, error_utils.MessageErr) {
+	count, err := this.ICommentRepository.GetCommentsCountByPostId(id)
+	if err != nil {
+		return 0, error_utils.NewInternalServerError(fmt.Sprintf("Error when trying to retrieve posts: %s", err.Error()))
+	}
+	return count, nil
+}
+
+func (this *commentService) GetCommentsByPostIdPageable(page int, postId string) ([]dto.CommentResponse, error_utils.MessageErr) {
+	comments, err := this.ICommentRepository.GetCommentsByPostIdPageable(page, postId)
+
+	if err != nil {
+		return nil, error_utils.NewInternalServerError(fmt.Sprintf("Error when trying to retrieve posts: %s", err.Error()))
+	}
+
+	commentsResponse := make([]dto.CommentResponse, 0)
+	for _, v := range comments {
+		commentsResponse = append(commentsResponse, *dto.NewCommentResponse(v))
+	}
+	return commentsResponse, nil
 }

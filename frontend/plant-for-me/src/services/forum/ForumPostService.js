@@ -23,7 +23,6 @@ export const ForumPostService = {
       if (category !== undefined && category !== null) {
         params.append("category", category)
       }
-      console.log('evo',params.toString())
       var fullUrl = baseUrl + "?" + params.toString();
       return fetch(fullUrl, {headers: getHeaders()})
     },
@@ -34,5 +33,9 @@ export const ForumPostService = {
         fullUrl += "?category=" + category;
       }
       return fetch(fullUrl, {headers: getHeaders()})
+    },
+
+    getOne: (id) => {
+      return fetch(`${baseUrl}/${id}`, {headers: getHeaders()})
     }
   }

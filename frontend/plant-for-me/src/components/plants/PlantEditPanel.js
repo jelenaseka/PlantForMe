@@ -12,15 +12,11 @@ const PlantEditPanel = ({plant, categories, handlePlantOperation, title}) => {
   );
 
   useEffect(() => {
-    console.log('??',plant)
     setNewPlant(plant, (p) => {
-      console.log('kjdskjf',p)
       var updatedCheckedState = checkedBloomingMonths;
-      console.log('hhh',plant.bloomingMonths)
       plant.bloomingMonths.forEach(item => {
         updatedCheckedState[item] = true
       });
-      console.log('updated: ', updatedCheckedState)
       setCheckedBloomingMonths(updatedCheckedState);
     })
   }, [plant])

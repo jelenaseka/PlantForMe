@@ -21,12 +21,13 @@ func (pr *PostRequest) Validate() error {
 }
 
 type PostResponseWithComments struct {
-	ID         string `json:"id"`
-	Heading    string `json:"heading"`
-	Content    string `json:"content"`
-	Username   string `json:"username"`
-	CategoryID string `json:"categoryID"`
-	Comments   []CommentResponse
+	ID         string            `json:"id"`
+	Heading    string            `json:"heading"`
+	Content    string            `json:"content"`
+	Username   string            `json:"username"`
+	CategoryID string            `json:"categoryID"`
+	Comments   []CommentResponse `json:"comments"`
+	CreatedAt  string            `json:"createdAt"`
 }
 
 type PostResponse struct {
@@ -35,7 +36,7 @@ type PostResponse struct {
 	Content          string            `json:"content"`
 	Username         string            `json:"username"`
 	CategoryResponse *CategoryResponse `json:"categoryResponse"`
-	CreatedAt        string
+	CreatedAt        string            `json:"createdAt"`
 }
 
 type PostCountCommentsResponse struct {
@@ -84,5 +85,6 @@ func ConvertPostToPostResponseWithComments(post *data.Post) *PostResponseWithCom
 		Username:   post.Username,
 		Comments:   commentsResponse,
 		CategoryID: post.CategoryID.String(),
+		CreatedAt:  post.CreatedAt.Format(time.ANSIC),
 	}
 }

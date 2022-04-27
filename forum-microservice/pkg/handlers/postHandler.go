@@ -68,7 +68,6 @@ func (this *PostHandler) GetOne(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Bad request. Id format error", http.StatusBadRequest)
 		return
 	}
-
 	this.l.Println("Get post with the id ", id)
 
 	w.Header().Add("Content-Type", "application/json")
@@ -79,6 +78,7 @@ func (this *PostHandler) GetOne(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	json.NewEncoder(w).Encode(postResponse)
+
 }
 
 func (this *PostHandler) Create(w http.ResponseWriter, r *http.Request) {
