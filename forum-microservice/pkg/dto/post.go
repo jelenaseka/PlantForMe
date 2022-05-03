@@ -11,7 +11,8 @@ type PostRequest struct {
 	Heading    string `json:"heading" validate:"required"`
 	Content    string `json:"content" validate:"required"`
 	Username   string `json:"username" validate:"required"`
-	CategoryID string `json:"categoryID" validate:"required, uuid"`
+	CategoryID string `json:"categoryID" validate:"required"`
+	Image      string `json:"image"`
 }
 
 func (pr *PostRequest) Validate() error {
@@ -28,6 +29,7 @@ type PostResponseWithComments struct {
 	CategoryID string            `json:"categoryID"`
 	Comments   []CommentResponse `json:"comments"`
 	CreatedAt  string            `json:"createdAt"`
+	Image      string            `json:"image"`
 }
 
 type PostResponse struct {
@@ -37,6 +39,7 @@ type PostResponse struct {
 	Username         string            `json:"username"`
 	CategoryResponse *CategoryResponse `json:"categoryResponse"`
 	CreatedAt        string            `json:"createdAt"`
+	Image            string            `json:"image"`
 }
 
 type PostCountCommentsResponse struct {
@@ -58,6 +61,7 @@ func NewPostResponse(post data.Post) *PostResponse {
 		Username:         post.Username,
 		CategoryResponse: categoryResponse,
 		CreatedAt:        post.CreatedAt.Format(time.ANSIC),
+		Image:            post.Base64Image,
 	}
 }
 
@@ -86,5 +90,6 @@ func ConvertPostToPostResponseWithComments(post *data.Post) *PostResponseWithCom
 		Comments:   commentsResponse,
 		CategoryID: post.CategoryID.String(),
 		CreatedAt:  post.CreatedAt.Format(time.ANSIC),
+		Image:      post.Base64Image,
 	}
 }

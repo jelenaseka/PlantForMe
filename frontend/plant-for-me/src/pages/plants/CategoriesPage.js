@@ -31,6 +31,7 @@ const CategoriesPage = () => {
     }).then(() => categoriesContext.getAllHandler())
   }
 
+  //TODO change to toast
   const updateCategory = (name, category) => {
     validate(name) //nije dobro
     

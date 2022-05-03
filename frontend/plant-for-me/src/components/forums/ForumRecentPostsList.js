@@ -6,7 +6,7 @@ import { NavLink } from "react-router-dom";
 
 const ForumRecentPostsList = ({posts, title}) => {
   return (
-    <Box sx={{ bgcolor: '#fff', margin:'2em' ,boxShadow: '0 0 6px rgb(0 0 0 / 3%)',borderColor: '#EAEAEA'}}>
+    <Box sx={{ bgcolor: '#fff', marginTop:'2em', boxShadow: '0 0 6px rgb(0 0 0 / 3%)',borderColor: '#EAEAEA'}}>
       <Box sx={{display:'flex', flexDirection: 'row', alignItems: 'center',paddingTop:'1em'}}>
         <ListItemIcon sx={{marginLeft:'1em'}}>
           <ChatBubbleOutlineIcon />

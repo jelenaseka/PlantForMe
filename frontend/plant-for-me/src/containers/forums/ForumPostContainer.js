@@ -5,6 +5,7 @@ import ForumPostPage from "../../pages/forums/ForumPostPage";
 import { ForumPostService } from "../../services/forum/ForumPostService";
 import { useNavigate } from "react-router-dom";
 import { CommentsService } from "../../services/forum/CommentsService";
+import { AuthService } from "../../services/auth/AuthService"
 
 function useQuery() {
   const { search } = useLocation();
@@ -16,6 +17,7 @@ const ForumPostContainer = () => {
   const [comments, setComments] = useState([])
   const [commentsCount, setCommentsCount] = useState(0)
   const [pagesNum, setPagesNum] = useState(0)
+  const currentUser = AuthService.getCurrentUser()
   const { id } = useParams();
   let query = useQuery();
   const currentPage = query.get("page")
@@ -73,8 +75,29 @@ const ForumPostContainer = () => {
       .catch(err => console.log(err))
   }
 
+  const submitCommentHandler = (content) => {
+    const comment = {
+      content,
+      postId: id,
+      username: currentUser.username
+    }
+    const submitComment = CommentsService.submitComment(comment)
+        .then(async res => {
+          if (!res.ok) {
+            const data = await res.text();
+            return { ok: false, err: data };
+          } else {
+            await res.text();
+            return { ok: true, err: null };
+          }
+        })
+        .catch(err => console.log(err))
+
+    return submitComment;
+  }
+
   return (
-    <ForumPostContext.Provider value={{post, commentsCount, comments, pagesNum}}>
+    <ForumPostContext.Provider value={{post, commentsCount, comments, pagesNum, currentUser, submitCommentHandler, getCommentsHandler}}>
       <ForumPostPage />
     </ForumPostContext.Provider>
   )

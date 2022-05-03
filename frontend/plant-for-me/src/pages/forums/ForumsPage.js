@@ -1,10 +1,12 @@
-import { Grid, Pagination, PaginationItem, Stack } from "@mui/material";
+import { Button, Grid, Pagination, PaginationItem, Stack } from "@mui/material";
 import React, { useContext } from "react";
 import { ForumsContext } from "../../context/forums/ForumsContext";
 import { Link, useLocation } from "react-router-dom";
 import ForumPostsList from "../../components/forums/ForumPostsList";
 import ForumRecentPostsList from "../../components/forums/ForumRecentPostsList";
 import ForumCategoriesList from "../../components/forums/ForumCategoriesList";
+import CreatePostDialog from "../../components/forums/CreatePostDialog";
+import { ToastContainer, toast } from 'react-toastify';
 
 const ForumsPage = () => {
   const forumContext = useContext(ForumsContext)
@@ -12,6 +14,15 @@ const ForumsPage = () => {
   const location = useLocation();
   const query = new URLSearchParams(location.search);
   const page = parseInt(query.get('page') || '1', 10);
+  const [createPostDialogOpen, setCreatePostDialogOpen] = React.useState(false);
+
+  const handleCreatePostDialog = (isSuccessfull) => {
+    if(isSuccessfull) {
+      setCreatePostDialogOpen(false);
+      toast.success("Successfully created post!");
+      forumContext.getPostsDataHandler();
+    }
+  }
 
   const getCurrentLink = (page, category) => {
     const params = new URLSearchParams()
@@ -26,6 +37,7 @@ const ForumsPage = () => {
 
   return (
     <Grid container justifyContent="center" sx={{background:'#F8F8F8'}}>
+      <ToastContainer />
       <Grid item  md={8} >
         <ForumPostsList posts={forumContext.mostPopularPosts} title="Popular posts"/>
         <ForumPostsList posts={forumContext.allPosts} title="All posts"/>
@@ -42,7 +54,19 @@ const ForumsPage = () => {
           />
         </Stack>
       </Grid>
-      <Grid item md={4}>
+      <Grid item md={4} sx={{padding:'2em'}}>
+        {
+          forumContext.currentUser &&
+          <div>
+            <CreatePostDialog 
+              handleOpen={createPostDialogOpen} 
+              handleClose={(isSuccessfull) =>  handleCreatePostDialog(isSuccessfull)} 
+            />
+            <Button variant="contained" onClick={() => setCreatePostDialogOpen(true)}>Create post</Button>
+          </div>
+          
+        }
+        
         <ForumRecentPostsList posts={forumContext.latestPosts} title="Recent posts"/>
         <ForumCategoriesList categories={forumContext.categories}/>
       </Grid>

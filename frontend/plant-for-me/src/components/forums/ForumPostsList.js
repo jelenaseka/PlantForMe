@@ -2,7 +2,7 @@ import { Divider, Grid, List, ListItem, ListItemButton, ListItemIcon,  ListItemT
 import { Box } from "@mui/system";
 import React from "react";
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 const ForumPostsList = ({posts, title}) => {
   return (

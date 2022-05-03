@@ -37,5 +37,13 @@ export const ForumPostService = {
 
     getOne: (id) => {
       return fetch(`${baseUrl}/${id}`, {headers: getHeaders()})
+    },
+
+    createPost: (post) => {
+      return fetch(baseUrl, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify(post)
+      })
     }
   }

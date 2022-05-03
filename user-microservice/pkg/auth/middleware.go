@@ -41,7 +41,7 @@ func MiddlewareAuthentication(next http.Handler) http.Handler {
 					w.WriteHeader(http.StatusUnauthorized)
 					return
 				}
-				http.Error(w, err.Error(), http.StatusBadRequest)
+				http.Error(w, err.Error(), http.StatusUnauthorized)
 				return
 			}
 

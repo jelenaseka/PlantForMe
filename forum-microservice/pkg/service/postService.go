@@ -67,7 +67,7 @@ func (this *postService) GetOneById(id uuid.UUID) (*dto.PostResponseWithComments
 func (this *postService) Create(postRequest *dto.PostRequest) (*uuid.NullUUID, error_utils.MessageErr) {
 	id := uuid.New()
 
-	post := data.NewPost(id, postRequest.Heading, postRequest.Content, postRequest.Username, uuid.Must(uuid.Parse(postRequest.CategoryID)))
+	post := data.NewPost(id, postRequest.Heading, postRequest.Content, postRequest.Username, uuid.Must(uuid.Parse(postRequest.CategoryID)), postRequest.Image)
 
 	_, catError := this.ICategoryService.GetOneById(uuid.Must(uuid.Parse(postRequest.CategoryID)))
 	if catError != nil {
@@ -89,7 +89,7 @@ func (this *postService) Update(postRequest *dto.PostRequest, id uuid.UUID) erro
 		error_utils.NewConflictError(fmt.Sprintf("The category with the id %s is not found in the database.", postRequest.CategoryID))
 	}
 
-	post := data.NewPost(id, postRequest.Heading, postRequest.Content, postRequest.Username, uuid.Must(uuid.Parse(postRequest.CategoryID)))
+	post := data.NewPost(id, postRequest.Heading, postRequest.Content, postRequest.Username, uuid.Must(uuid.Parse(postRequest.CategoryID)), postRequest.Image)
 
 	_, err := this.IPostRepository.FindById(post.ID)
 	if err != nil {

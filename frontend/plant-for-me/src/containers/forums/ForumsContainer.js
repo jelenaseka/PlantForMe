@@ -4,6 +4,7 @@ import ForumsPage from "../../pages/forums/ForumsPage";
 import { ForumPostService } from "../../services/forum/ForumPostService";
 import { ForumCategoryService } from "../../services/forum/ForumCategoryService";
 import { useLocation } from "react-router-dom";
+import { AuthService } from "../../services/auth/AuthService"
 
 function useQuery() {
   const { search } = useLocation();
@@ -15,18 +16,23 @@ const ForumsContainer = () => {
   const [mostPopularPosts, setMostPopularPosts] = useState([])
   const [latestPosts, setLatestPosts] = useState([])
   const [allPosts, setAllPosts] = useState([])
-  const [postsCount, setPostsCount] = useState(0)
+  const [postsCount, setPostsCount] = useState(0);
+  const currentUser = AuthService.getCurrentUser();
   let query = useQuery();
   const currentPage = query.get("page")
   const currentCategory = query.get("category")
 
   useEffect(() => {
-    getAllPostsHandler(currentPage, currentCategory)
+    getPostsDataHandler()
     getMostPopularPostsHandler()
-    getLatestPostsHandler()
     getPostsCount()
     getCategoriesHandler()
   }, [currentPage, currentCategory])
+
+  const getPostsDataHandler = () => {
+    getAllPostsHandler(currentPage, currentCategory)
+    getLatestPostsHandler()
+  }
 
   const getMostPopularPostsHandler = () => {
     const getData = async () => {
@@ -117,8 +123,33 @@ const ForumsContainer = () => {
     getData();
   }
 
+  const createPostHandler = (post) => {
+    const createPost = ForumPostService.createPost(post)
+      .then(async res => {
+        if(res.ok) {
+          await res.text();
+          return { ok: true, err: null };
+        } else {
+          const data = await res.text();
+          return { ok: false, err: data };
+        }
+      })
+      .catch(err => console.log(err))
+      return createPost;
+  }
+
   return (
-    <ForumsContext.Provider value={{categories, mostPopularPosts, latestPosts, allPosts, postsCount, currentPage, currentCategory}}>
+    <ForumsContext.Provider value={{
+      categories, 
+      mostPopularPosts, 
+      latestPosts, 
+      allPosts, 
+      postsCount, 
+      currentPage, 
+      currentCategory, 
+      currentUser,
+      createPostHandler,
+      getPostsDataHandler}}>
       <ForumsPage />
     </ForumsContext.Provider>
   )

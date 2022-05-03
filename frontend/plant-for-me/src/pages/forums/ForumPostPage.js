@@ -1,18 +1,39 @@
-import { Avatar, Pagination, PaginationItem, Paper, Typography } from "@mui/material";
+import { Avatar, Button, FormControl, Pagination, PaginationItem, Paper, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { ForumPostContext } from "../../context/forums/ForumPostContext";
 import { Link, useLocation } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
 
 const ForumPostPage = () => {
   const postContext = useContext(ForumPostContext);
+  const [comment, setComment] = useState("")
 
   const location = useLocation();
   const query = new URLSearchParams(location.search);
   const page = parseInt(query.get('page') || '1', 10);
 
+  const handleSubmitComment = () => {
+    if(comment.trim() === "") {
+      toast.error("Comment must contain content");
+      return;
+    }
+
+    postContext.submitCommentHandler(comment)
+      .then(res => {
+        if(res.ok) {
+          postContext.getCommentsHandler();
+          setComment("");
+          toast.success("Successfully added comment!");
+        } else {
+          toast.error(res.err);
+        }
+      })
+  }
+
   return (
       <div>
+        <ToastContainer />
       {
         postContext.post && postContext.comments &&
         <Box sx={{padding:'1em 0'}}>
@@ -31,9 +52,13 @@ const ForumPostPage = () => {
             <Typography variant="h1" component="div" gutterBottom sx={{fontSize:'2em', marginTop:'1em'}}>
               {postContext.post.heading}
             </Typography>
+
             <Typography variant="overline" display="block" gutterBottom>
               {postContext.commentsCount} {postContext.commentsCount === 1 ? `comment` : `comments`}
             </Typography>
+            <div className="placeholder-post-image">
+              <img  src={postContext.post.image} alt="Your post"/>
+            </div>
             <Typography variant="body1" gutterBottom>
               {postContext.post.content} 
             </Typography>
@@ -59,6 +84,27 @@ const ForumPostPage = () => {
             ))
           }
           {
+            postContext.currentUser &&
+            <Paper elevation={3} sx={{margin:'2em', padding:'2em'}}>
+              Leave a comment
+              <FormControl fullWidth sx={{ m: 1 }}>
+                <TextField
+                  id="standard-multiline-flexible"
+                  multiline
+                  maxRows={25}
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  onBlur={() => setComment(comment.trim())}
+                  variant="standard"
+                />
+              </FormControl>
+              <Box sx={{display:'flex', flexDirection:'row', justifyContent: 'end'}}>
+                <Button variant="contained" onClick={() => handleSubmitComment()}>Submit</Button>
+              </Box>
+              
+            </Paper>
+          }
+          {
             postContext.commentsCount > 0 &&
             <Box sx={{display:'flex', flexDirection: 'row', justifyContent:'center'}}>
               <Pagination
@@ -74,6 +120,7 @@ const ForumPostPage = () => {
             </Box>
             
           }
+          
           
         </Box>
       }

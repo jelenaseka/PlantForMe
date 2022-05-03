@@ -13,7 +13,7 @@ const ForumCategoriesList = ({categories}) => {
 
 
   return (
-    <Box sx={{ bgcolor: '#fff', margin:'2em',boxShadow: '0 0 6px rgb(0 0 0 / 3%)',borderColor: '#EAEAEA' }}>
+    <Box sx={{ bgcolor: '#fff', marginTop:'2em',boxShadow: '0 0 6px rgb(0 0 0 / 3%)',borderColor: '#EAEAEA' }}>
       <Typography sx={{padding:'1em', bgcolor:'#455A64', color:'#fff'}} variant="button" gutterBottom component="div">
         Categories
       </Typography>

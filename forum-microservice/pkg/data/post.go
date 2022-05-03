@@ -10,13 +10,14 @@ import (
 
 type Post struct {
 	gorm.Model
-	ID         uuid.UUID `gorm:"type:varchar(36)"`
-	Heading    string    `gorm:"type:varchar(255);unique"`
-	Content    string
-	Username   string
-	CategoryID uuid.UUID `gorm:"type:varchar(36)"`
-	Category   Category
-	Comments   []Comment
+	ID          uuid.UUID `gorm:"type:varchar(36)"`
+	Heading     string    `gorm:"type:varchar(255);unique"`
+	Content     string
+	Username    string
+	CategoryID  uuid.UUID `gorm:"type:varchar(36)"`
+	Category    Category
+	Comments    []Comment
+	Base64Image string
 }
 
 type PostCountComments struct {
@@ -29,13 +30,14 @@ type PostCountComments struct {
 	CreatedAt     time.Time
 }
 
-func NewPost(id uuid.UUID, heading string, content string, username string, categoryID uuid.UUID) *Post {
+func NewPost(id uuid.UUID, heading string, content string, username string, categoryID uuid.UUID, image string) *Post {
 	return &Post{
-		ID:         id,
-		Heading:    heading,
-		Content:    content,
-		Username:   username,
-		CategoryID: categoryID,
+		ID:          id,
+		Heading:     heading,
+		Content:     content,
+		Username:    username,
+		CategoryID:  categoryID,
+		Base64Image: image,
 	}
 }
 

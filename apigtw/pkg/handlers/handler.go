@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"time"
 )
@@ -39,6 +40,7 @@ func Me(address string) http.HandlerFunc {
 func Get(address string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "application/json")
+		log.Println("GET")
 
 		res, err := http.Get(address + r.URL.String())
 		if err != nil {
@@ -57,6 +59,7 @@ func Get(address string) http.HandlerFunc {
 func Post(address string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "application/json")
+		log.Println("POST")
 
 		data, _ := ioutil.ReadAll(r.Body)
 		res, err := http.Post(address+r.URL.String(), "application/json", bytes.NewBuffer(data))
@@ -75,6 +78,7 @@ func Post(address string) http.HandlerFunc {
 func Put(address string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "application/json")
+		log.Println("PUT")
 
 		client := &http.Client{
 			Timeout: time.Second * 10,
@@ -103,6 +107,7 @@ func Put(address string) http.HandlerFunc {
 func Delete(address string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "application/json")
+		log.Println("DELETE")
 
 		client := &http.Client{
 			Timeout: time.Second * 10,

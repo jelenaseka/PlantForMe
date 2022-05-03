@@ -14,5 +14,12 @@ export const CommentsService = {
       }
       const fullUrl = `${baseUrl}/post/${postId}?page=${page}`
       return fetch(fullUrl, {headers: getHeaders()})
+    },
+    submitComment: (comment) => {
+      return fetch(baseUrl, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify(comment)
+      })
     }
   }
