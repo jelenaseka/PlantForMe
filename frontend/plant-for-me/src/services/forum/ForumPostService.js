@@ -45,5 +45,20 @@ export const ForumPostService = {
         headers: getHeaders(),
         body: JSON.stringify(post)
       })
+    },
+
+    deletePost: (id) => {
+      return fetch(baseUrl + `/${id}`, {
+        method: 'DELETE', 
+        headers: getHeaders()
+      })
+    },
+
+    updatePost: (post, id) => {
+      return fetch(baseUrl + `/${id}`, {
+        method: 'PUT',
+        headers: getHeaders(),
+        body: JSON.stringify(post)
+      })
     }
   }

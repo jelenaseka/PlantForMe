@@ -96,8 +96,78 @@ const ForumPostContainer = () => {
     return submitComment;
   }
 
+  const deletePostHandler = (id) => {
+    ForumPostService.deletePost(id)
+      .then(async res => {
+        return navigate("/forums");
+      })
+      .catch(err => console.log(err))
+  }
+
+  const updatePostHandler = (post, id) => {
+    const updatePost = ForumPostService.updatePost(post, id)
+      .then(async res => {
+        if(res.ok) {
+          await res.text();
+          return { ok: true, err: null };
+        } else {
+          const data = await res.text();
+          return { ok: false, err: data };
+        }
+      })
+      .catch(err => console.log(err))
+
+    return updatePost;
+  }
+
+  const updateCommentHandler = (comment, id) => {
+    const updateComment = CommentsService.updateComment(comment, id)
+      .then(async res => {
+        if(res.ok) {
+          await res.text();
+          return { ok: true, err: null };
+        } else {
+          const data = await res.text();
+          return { ok: false, err: data };
+        }
+      })
+      .catch(err => console.log(err))
+
+    return updateComment;
+  }
+
+  const deleteCommentHandler = (id) => {
+    const deleteComment = CommentsService.deleteComment(id)
+      .then(async res => {
+        if(res.ok) {
+          await res.text();
+          return { ok: true, err: null };
+        } else {
+          const data = await res.text();
+          return { ok: false, err: data };
+        }
+      })
+      .catch(err => console.log(err))
+
+    return deleteComment;
+  }
+
   return (
-    <ForumPostContext.Provider value={{post, commentsCount, comments, pagesNum, currentUser, submitCommentHandler, getCommentsHandler}}>
+    <ForumPostContext.Provider value={
+        {post, 
+        commentsCount, 
+        comments, 
+        pagesNum, 
+        currentUser, 
+        submitCommentHandler, 
+        getCommentsHandler,
+        getCommentsCountHandler,
+        getPostHandler,
+        deletePostHandler,
+        updatePostHandler,
+        updateCommentHandler,
+        deleteCommentHandler}
+      }>
       <ForumPostPage />
     </ForumPostContext.Provider>
   )

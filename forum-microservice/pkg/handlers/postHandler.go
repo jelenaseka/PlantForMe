@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"forum-microservice/pkg/data"
 	"forum-microservice/pkg/dto"
 	"forum-microservice/pkg/service"
 	"forum-microservice/pkg/utils"
@@ -118,6 +119,10 @@ func (this *PostHandler) Update(w http.ResponseWriter, r *http.Request) {
 func (this *PostHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
+	//username is here
+	var principal data.Principal
+
+	_ = json.NewDecoder(r.Body).Decode(&principal)
 
 	if !utils.IsValidUUID(id) {
 		http.Error(w, "Bad request. Id format error", http.StatusBadRequest)
@@ -126,7 +131,7 @@ func (this *PostHandler) Delete(w http.ResponseWriter, r *http.Request) {
 
 	this.l.Print("Delete post with the id ", id)
 
-	err := this.IPostService.Delete(uuid.Must(uuid.Parse(id)))
+	err := this.IPostService.Delete(uuid.Must(uuid.Parse(id)), principal)
 	if err != nil {
 		http.Error(w, err.Message(), err.Status())
 		return

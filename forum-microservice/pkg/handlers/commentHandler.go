@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"forum-microservice/pkg/data"
 	"forum-microservice/pkg/dto"
 	"forum-microservice/pkg/service"
 	"forum-microservice/pkg/utils"
@@ -99,9 +100,13 @@ func (this *CommentHandler) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var principal data.Principal
+
+	_ = json.NewDecoder(r.Body).Decode(&principal)
+
 	this.l.Print("Delete comment with the id ", id)
 
-	err := this.ICommentService.Delete(uuid.Must(uuid.Parse(id)))
+	err := this.ICommentService.Delete(uuid.Must(uuid.Parse(id)), principal)
 	if err != nil {
 		http.Error(w, err.Message(), err.Status())
 		return

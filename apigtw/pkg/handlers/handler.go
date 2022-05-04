@@ -109,11 +109,15 @@ func Delete(address string) http.HandlerFunc {
 		w.Header().Add("Content-Type", "application/json")
 		log.Println("DELETE")
 
+		principal := r.Context().Value(ContextClaimsKey{}).(Principal)
+
+		principalJSON, err := json.Marshal(principal)
+
 		client := &http.Client{
 			Timeout: time.Second * 10,
 		}
 
-		req, err := http.NewRequest(http.MethodDelete, address+r.URL.String(), nil)
+		req, err := http.NewRequest(http.MethodDelete, address+r.URL.String(), bytes.NewBuffer(principalJSON))
 		if err != nil {
 			panic(err)
 		}

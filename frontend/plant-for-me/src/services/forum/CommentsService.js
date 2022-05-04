@@ -21,5 +21,18 @@ export const CommentsService = {
         headers: getHeaders(),
         body: JSON.stringify(comment)
       })
+    },
+    updateComment: (comment, id) => {
+      return fetch(baseUrl + `/${id}`, {
+        method: 'PUT',
+        headers: getHeaders(),
+        body: JSON.stringify(comment)
+      })
+    },
+    deleteComment: (id) => {
+      return fetch(baseUrl + `/${id}`, {
+        method: 'DELETE', 
+        headers: getHeaders()
+      })
     }
   }

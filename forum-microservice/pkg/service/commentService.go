@@ -22,7 +22,7 @@ type CommentServiceInterface interface {
 	GetOneById(id uuid.UUID) (*dto.CommentResponse, error_utils.MessageErr)
 	Create(commentRequest *dto.CommentRequest) (*uuid.NullUUID, error_utils.MessageErr)
 	Update(commentRequest *dto.CommentRequest, id uuid.UUID) error_utils.MessageErr
-	Delete(id uuid.UUID) error_utils.MessageErr
+	Delete(id uuid.UUID, principal data.Principal) error_utils.MessageErr
 	GetCommentsCountByPostId(id string) (int, error_utils.MessageErr)
 	GetCommentsByPostIdPageable(page int, postId string) ([]dto.CommentResponse, error_utils.MessageErr)
 }
@@ -110,10 +110,14 @@ func (this *commentService) Update(commentRequest *dto.CommentRequest, id uuid.U
 	return nil
 }
 
-func (this *commentService) Delete(id uuid.UUID) error_utils.MessageErr {
-	_, err := this.ICommentRepository.FindById(id)
+func (this *commentService) Delete(id uuid.UUID, principal data.Principal) error_utils.MessageErr {
+	foundComment, err := this.ICommentRepository.FindById(id)
 	if err != nil {
 		return error_utils.NewNotFoundError(fmt.Sprintf("The comment with the id %s is not found in the database.", id.String()))
+	}
+
+	if foundComment.Username != principal.Username {
+		error_utils.NewConflictError(fmt.Sprintf("The user with the username %s does not have permission to delete the comment.", foundComment.Username))
 	}
 
 	this.ICommentRepository.Delete(id)

@@ -3,7 +3,7 @@ import { ForumsContext } from '../../context/forums/ForumsContext'
 import ForumsPage from "../../pages/forums/ForumsPage";
 import { ForumPostService } from "../../services/forum/ForumPostService";
 import { ForumCategoryService } from "../../services/forum/ForumCategoryService";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { AuthService } from "../../services/auth/AuthService"
 
 function useQuery() {
@@ -20,9 +20,11 @@ const ForumsContainer = () => {
   const currentUser = AuthService.getCurrentUser();
   let query = useQuery();
   const currentPage = query.get("page")
-  const currentCategory = query.get("category")
+  const currentCategory = query.get("category");
+  let navigate = useNavigate();
 
   useEffect(() => {
+    console.log(currentUser)
     getPostsDataHandler()
     getMostPopularPostsHandler()
     getPostsCount()
@@ -138,6 +140,37 @@ const ForumsContainer = () => {
       return createPost;
   }
 
+  const createCategoryHandler = (category) => {
+    const createCategory = ForumCategoryService.createCategory(category)
+      .then(async res => {
+        if(res.ok) {
+          await res.text();
+          return { ok: true, err: null };
+        } else {
+          const data = await res.text();
+          return { ok: false, err: data };
+        }
+      })
+      .catch(err => console.log(err))
+    return createCategory;
+  }
+
+  const deleteCategoryHandler = (id) => {
+    ForumCategoryService.deleteCategory(id)
+      .then(async res => {
+        return navigate("/forums");
+      })
+      .catch(err => console.log(err))
+  }
+
+  const editCategoryHandler = (category, id) => {
+    ForumCategoryService.updateCategory(category, id)
+      .then(async res => {
+        return navigate("/forums");
+      })
+      .catch(err => console.log(err))
+  }
+
   return (
     <ForumsContext.Provider value={{
       categories, 
@@ -149,7 +182,11 @@ const ForumsContainer = () => {
       currentCategory, 
       currentUser,
       createPostHandler,
-      getPostsDataHandler}}>
+      getPostsDataHandler,
+      getCategoriesHandler,
+      createCategoryHandler,
+      deleteCategoryHandler,
+      editCategoryHandler}}>
       <ForumsPage />
     </ForumsContext.Provider>
   )

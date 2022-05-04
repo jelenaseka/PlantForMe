@@ -22,7 +22,7 @@ type PostServiceInterface interface {
 	GetOneById(id uuid.UUID) (*dto.PostResponseWithComments, error_utils.MessageErr)
 	Create(postRequest *dto.PostRequest) (*uuid.NullUUID, error_utils.MessageErr)
 	Update(postRequest *dto.PostRequest, id uuid.UUID) error_utils.MessageErr
-	Delete(id uuid.UUID) error_utils.MessageErr
+	Delete(id uuid.UUID, principal data.Principal) error_utils.MessageErr
 	GetAllCountComments() ([]dto.PostCountCommentsResponse, error_utils.MessageErr)
 	GetAllOrderByCreatedAt() ([]dto.PostResponse, error_utils.MessageErr)
 	GetAllPageable(page int, category string) ([]dto.PostCountCommentsResponse, error_utils.MessageErr)
@@ -73,7 +73,7 @@ func (this *postService) Create(postRequest *dto.PostRequest) (*uuid.NullUUID, e
 	if catError != nil {
 		return nil, error_utils.NewConflictError(fmt.Sprintf("The category with the id %s is not found in the database.", postRequest.CategoryID))
 	}
-	//validacija za username
+	//validacija za username, da li postoji covek
 
 	err := this.IPostRepository.Create(post)
 	if err != nil {
@@ -91,9 +91,13 @@ func (this *postService) Update(postRequest *dto.PostRequest, id uuid.UUID) erro
 
 	post := data.NewPost(id, postRequest.Heading, postRequest.Content, postRequest.Username, uuid.Must(uuid.Parse(postRequest.CategoryID)), postRequest.Image)
 
-	_, err := this.IPostRepository.FindById(post.ID)
+	foundPost, err := this.IPostRepository.FindById(post.ID)
 	if err != nil {
 		return error_utils.NewNotFoundError(fmt.Sprintf("The post with the id %s is not found in the database.", id.String()))
+	}
+
+	if foundPost.Username != post.Username {
+		error_utils.NewConflictError(fmt.Sprintf("The user with the username %s does not have permission to update the post.", post.Username))
 	}
 
 	err = this.IPostRepository.Update(post)
@@ -103,10 +107,14 @@ func (this *postService) Update(postRequest *dto.PostRequest, id uuid.UUID) erro
 	return nil
 }
 
-func (this *postService) Delete(id uuid.UUID) error_utils.MessageErr {
-	_, err := this.IPostRepository.FindById(id)
+func (this *postService) Delete(id uuid.UUID, principal data.Principal) error_utils.MessageErr {
+	foundPost, err := this.IPostRepository.FindById(id)
 	if err != nil {
 		return error_utils.NewNotFoundError(fmt.Sprintf("The post with the id %s is not found in the database.", id.String()))
+	}
+
+	if foundPost.Username != principal.Username {
+		error_utils.NewConflictError(fmt.Sprintf("The user with the username %s does not have permission to delete the post.", foundPost.Username))
 	}
 
 	this.IPostRepository.Delete(id)
