@@ -8,6 +8,7 @@ type Configurations struct {
 	ServerAddress   string `mapstructure:"SERVER_ADDRESS"`
 	UserAddress     string `mapstructure:"USER_MICROSERVICE_SERVER_ADDRESS"`
 	PlantAddress    string `mapstructure:"PLANT_MICROSERVICE_SERVER_ADDRESS"`
+	ForumAddress    string `mapstructure:"FORUM_MICROSERVICE_SERVER_ADDRESS"`
 	FrontendAddress string `mapstructure:"FRONTEND_ADDRESS"`
 }
 

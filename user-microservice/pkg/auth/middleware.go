@@ -41,7 +41,7 @@ func MiddlewareAuthentication(next http.Handler) http.Handler {
 					w.WriteHeader(http.StatusUnauthorized)
 					return
 				}
-				http.Error(w, err.Error(), http.StatusBadRequest)
+				http.Error(w, err.Error(), http.StatusUnauthorized)
 				return
 			}
 
@@ -52,6 +52,7 @@ func MiddlewareAuthentication(next http.Handler) http.Handler {
 
 			ctx := context.WithValue(r.Context(), ContextClaimsKey{}, NewPrincipal(claims.Username, claims.Role))
 			r = r.WithContext(ctx)
+
 		} else {
 			ctx := context.WithValue(r.Context(), ContextClaimsKey{}, NewPrincipal("", 0))
 			r = r.WithContext(ctx)

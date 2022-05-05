@@ -5,6 +5,7 @@ import { useStateWithCallbackLazy } from "use-state-with-callback"
 import { growthRate, hardiness, lifeTime, light, months, watering, height } from "../../data/enums"
 import MyCheckboxList from "../../utils/components/MyCheckboxList"
 import MySelect from "../../utils/components/MySelect"
+
 const PlantEditPanel = ({plant, categories, handlePlantOperation, title}) => {
   const [newPlant, setNewPlant] = useStateWithCallbackLazy(plant)
   const [checkedBloomingMonths, setCheckedBloomingMonths] = useState(
@@ -12,15 +13,11 @@ const PlantEditPanel = ({plant, categories, handlePlantOperation, title}) => {
   );
 
   useEffect(() => {
-    console.log('??',plant)
     setNewPlant(plant, (p) => {
-      console.log('kjdskjf',p)
       var updatedCheckedState = checkedBloomingMonths;
-      console.log('hhh',plant.bloomingMonths)
       plant.bloomingMonths.forEach(item => {
         updatedCheckedState[item] = true
       });
-      console.log('updated: ', updatedCheckedState)
       setCheckedBloomingMonths(updatedCheckedState);
     })
   }, [plant])

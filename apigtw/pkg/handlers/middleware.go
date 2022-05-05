@@ -34,6 +34,7 @@ func MiddlewareAuthorization(next http.Handler) http.Handler {
 
 		resp, err := client.Do(req)
 		if err != nil {
+			log.Println("FATAL err")
 			log.Fatalln(err)
 		}
 		defer resp.Body.Close()
@@ -52,8 +53,11 @@ func MiddlewareAuthorization(next http.Handler) http.Handler {
 			next.ServeHTTP(w, r)
 			return
 		}
+		log.Println("nije ok")
 
 		data, _ := ioutil.ReadAll(resp.Body)
+		log.Println(string(data))
+		log.Println(resp.StatusCode)
 		w.WriteHeader(resp.StatusCode)
 		w.Write([]byte(string(data)))
 

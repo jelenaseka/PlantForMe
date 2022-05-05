@@ -14,6 +14,6 @@ export const AuthService = {
     localStorage.removeItem("user");
   },
   getCurrentUser() {
-    return localStorage.getItem('user');
+    return JSON.parse(localStorage.getItem('user'));
   }
 }

@@ -3,6 +3,7 @@ package handlers
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -25,7 +26,8 @@ func Me(address string) http.HandlerFunc {
 
 		res, err := client.Do(req)
 		if err != nil {
-			log.Fatalln(err)
+			// log.Fatalln(err)
+			return
 		}
 		defer res.Body.Close()
 
@@ -38,10 +40,13 @@ func Me(address string) http.HandlerFunc {
 func Get(address string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "application/json")
+		log.Println("GET")
 
 		res, err := http.Get(address + r.URL.String())
 		if err != nil {
-			log.Fatalln(err)
+			fmt.Println("udje ovde")
+			// log.Fatalln(err)
+			return
 		}
 		defer res.Body.Close()
 
@@ -54,11 +59,13 @@ func Get(address string) http.HandlerFunc {
 func Post(address string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "application/json")
+		log.Println("POST")
 
 		data, _ := ioutil.ReadAll(r.Body)
 		res, err := http.Post(address+r.URL.String(), "application/json", bytes.NewBuffer(data))
 		if err != nil {
-			log.Fatalln(err)
+			// log.Fatalln(err)
+			return
 		}
 		defer res.Body.Close()
 
@@ -71,6 +78,7 @@ func Post(address string) http.HandlerFunc {
 func Put(address string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "application/json")
+		log.Println("PUT")
 
 		client := &http.Client{
 			Timeout: time.Second * 10,
@@ -85,7 +93,8 @@ func Put(address string) http.HandlerFunc {
 
 		res, err := client.Do(req)
 		if err != nil {
-			log.Fatalln(err)
+			// log.Fatalln(err)
+			return
 		}
 		defer res.Body.Close()
 
@@ -98,12 +107,17 @@ func Put(address string) http.HandlerFunc {
 func Delete(address string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "application/json")
+		log.Println("DELETE")
+
+		principal := r.Context().Value(ContextClaimsKey{}).(Principal)
+
+		principalJSON, err := json.Marshal(principal)
 
 		client := &http.Client{
 			Timeout: time.Second * 10,
 		}
 
-		req, err := http.NewRequest(http.MethodDelete, address+r.URL.String(), nil)
+		req, err := http.NewRequest(http.MethodDelete, address+r.URL.String(), bytes.NewBuffer(principalJSON))
 		if err != nil {
 			panic(err)
 		}
@@ -111,7 +125,8 @@ func Delete(address string) http.HandlerFunc {
 
 		res, err := client.Do(req)
 		if err != nil {
-			log.Fatalln(err)
+			// log.Fatalln(err)
+			return
 		}
 		defer res.Body.Close()
 

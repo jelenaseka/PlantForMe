@@ -27,6 +27,9 @@ const Header = () => {
             <NavbarLink link="/users" title="Users" />
           </Button>
           <Button>
+            <NavbarLink link="/forums" title="Forums" />
+          </Button>
+          <Button>
             <NavbarLink link="/login" title="Login" />
           </Button>
           <Button variant="contained" onClick={() => logout()}>
