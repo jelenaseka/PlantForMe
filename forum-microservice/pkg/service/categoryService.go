@@ -14,6 +14,7 @@ import (
 
 type categoryService struct {
 	ICategoryRepository repository.CategoryRepositoryInterface
+	IPostRepository     repository.PostRepositoryInterface
 }
 
 type CategoryServiceInterface interface {
@@ -25,8 +26,8 @@ type CategoryServiceInterface interface {
 	GetAllCountPosts() ([]dto.CategoryCountPostsResponse, error_utils.MessageErr)
 }
 
-func NewCategoryService(r repository.CategoryRepositoryInterface) CategoryServiceInterface {
-	return &categoryService{r}
+func NewCategoryService(r repository.CategoryRepositoryInterface, rp repository.PostRepositoryInterface) CategoryServiceInterface {
+	return &categoryService{r, rp}
 }
 
 func (this *categoryService) GetAll() ([]dto.CategoryResponse, error_utils.MessageErr) {
@@ -104,6 +105,7 @@ func (this *categoryService) Delete(id uuid.UUID) error_utils.MessageErr {
 	}
 
 	this.ICategoryRepository.Delete(id)
+	this.IPostRepository.SetCategoryToNull(id)
 	return nil
 }
 

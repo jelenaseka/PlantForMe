@@ -21,6 +21,7 @@ type PostRepositoryInterface interface {
 	FindAllOrderByCreatedAt() ([]data.Post, error)
 	FindAllByCategoryPageable(page int, category string) ([]data.PostCountComments, error)
 	GetPostsCount(category string) (int, error)
+	SetCategoryToNull(id uuid.UUID) error
 }
 
 func NewPostRepository() PostRepositoryInterface {
@@ -143,4 +144,14 @@ func (this *postRepository) GetPostsCount(category string) (int, error) {
 	}
 
 	return count, nil
+}
+
+func (this *postRepository) SetCategoryToNull(categoryId uuid.UUID) error {
+	db := config.GetDB()
+	result := db.Debug().Model(&data.Post{}).Where("category_id = ?", categoryId.String()).Update("category_id", nil)
+
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
 }

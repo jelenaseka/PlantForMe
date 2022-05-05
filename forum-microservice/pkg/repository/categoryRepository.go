@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"forum-microservice/pkg/config"
 	"forum-microservice/pkg/data"
 
@@ -25,6 +26,7 @@ func NewCategoryRepository() CategoryRepositoryInterface {
 }
 
 func (this *categoryRepository) FindAll() ([]data.Category, error) {
+	fmt.Println("OVDE SAM")
 	db := config.GetDB()
 	var categories []data.Category
 	result := db.Debug().Find(&categories)
@@ -87,7 +89,7 @@ func (this *categoryRepository) Delete(id uuid.UUID) {
 func (this *categoryRepository) FindAllCountPosts() ([]data.CategoryCountPosts, error) {
 	db := config.GetDB()
 	var categories []data.CategoryCountPosts
-	result := db.Debug().Preload("Posts").Raw("select c.id, c.name, count(p.id) as posts_count from forumdb.categories c left join forumdb.posts p on p.category_id = c.id group by c.id order by posts_count desc;").Scan(&categories)
+	result := db.Debug().Preload("Posts").Raw("select c.id, c.name, count(p.id) as posts_count from forumdb.categories c left join forumdb.posts p on p.category_id = c.id where c.deleted_at is null and p.deleted_at is null group by c.id order by posts_count desc;").Scan(&categories)
 
 	if result.Error != nil {
 		return nil, result.Error

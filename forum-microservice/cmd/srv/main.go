@@ -23,10 +23,9 @@ func main() {
 	l := log.Default()
 
 	categoryRepository := repository.NewCategoryRepository()
-	categoryService := service.NewCategoryService(categoryRepository)
-	categoryHandler := handlers.NewCategoryHandler(l, categoryService)
-
 	postRepository := repository.NewPostRepository()
+	categoryService := service.NewCategoryService(categoryRepository, postRepository)
+	categoryHandler := handlers.NewCategoryHandler(l, categoryService)
 	postService := service.NewPostService(postRepository, categoryService)
 	postHandler := handlers.NewPostHandler(l, postService)
 
