@@ -22,7 +22,8 @@ export const CategoryService = {
     },
     deleteCategory: (id) => {
       return fetch(baseUrl + `/${id}`, {
-        method: 'DELETE'
-      }, {headers: getHeaders()})
+        method: 'DELETE', 
+        headers: getHeaders()
+      })
     }
   }

@@ -8,72 +8,86 @@ const CategoriesContainer = () => {
   const [categories, setCategories] = useState([])
 
   useEffect(() => {
-    getAllHandler()
+    getCategoriesHandler()
   }, [])
 
-  const getAllHandler = () => {
-    const getData = async () => {
-      try {
-        setCategories(await CategoryService.getCategories())
-      } catch(err) { console.log(err) }
-    }
-    getData()
+  const getCategoriesHandler = () => {
+    const getData = CategoryService.getCategories()
+      .then(async res => {
+        if(res.ok) {
+          console.log('soooo')
+          const data = await res.json();
+          setCategories(data);
+        } else {
+          //TODO sorry, something went wrong
+        }
+      })
+      .catch(err => {
+        console.log('err: ',err)
+      })
+    return getData;
   }
 
-  //TODO popravi ovo
   const createCategoryHandler = (category) => {
     const createCategory = CategoryService.createCategory(category)
-      .then(response => response.text())
-      .then(data => {
-        const regexExp = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
-        if(data.startsWith("\"")) {
-          data = data.slice(1, -2)
-        }
-        
-        if(regexExp.test(data)) {
-          
-          return { ok: true, err: null}
-          
+      .then(async res => {
+        if(res.ok) {
+          getCategoriesHandler();
+          return { ok: true, err: null };
         } else {
-          return { ok: false, err: data}
+          const data = await res.text();
+          return { ok: false, err: data };
         }
-
-    }).catch(err => {
-      console.log('err: ',err)
-    })
+      })
+      .catch(err => {
+        console.log('err: ',err)
+      })
         
     return createCategory;
   }
 
-  // TODO popravi
-  const deleteCategoryHandler = (categoryID) => {
-    const deleteCategory = async () => {
-      try {
-        await CategoryService.deleteCategory(categoryID)
-        setCategories(await CategoryService.getCategories())
-        return true
-      } catch (err) { console.log(err);return false }
-    }
-    return deleteCategory()
-  }
-
   const updateCategoryHandler = (category) => {
     const updateCategory = CategoryService.updateCategory(category)
-    .then(response => response.text())
-    .then(data => {
-      if(data === "") {
+    .then(async res => {
+      if(res.ok) {
+        getCategoriesHandler();
         return { ok: true, err: null}
       } else {
+        const data = await res.text();
         return { ok: false, err: data}
       }
-    }).catch(err => {
+    })
+    .catch(err => {
       console.log('err: ',err)
     })
-    return updateCategory
+    return updateCategory;
+  }
+
+  const deleteCategoryHandler = (categoryID) => {
+    const deleteCategory = CategoryService.deleteCategory(categoryID)
+      .then(async res => {
+        if(res.ok) {
+          getCategoriesHandler();
+          return { ok: true, err: null };
+        } else {
+          //TODO sorry, something went wrong
+        }
+      })
+      .catch(err => {
+        console.log('err: ',err)
+      })
+    return deleteCategory;
   }
 
   return (
-    <CategoriesContext.Provider value={{categories, createCategoryHandler, deleteCategoryHandler, updateCategoryHandler, getAllHandler}}>
+    <CategoriesContext.Provider value={
+      {
+        categories, 
+        createCategoryHandler, 
+        deleteCategoryHandler, 
+        updateCategoryHandler, 
+      }
+      }>
       <CategoriesPage />
     </CategoriesContext.Provider>
   )

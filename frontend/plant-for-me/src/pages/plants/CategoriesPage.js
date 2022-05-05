@@ -1,4 +1,4 @@
-import { Alert, Button, Paper, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material"
+import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material"
 import { Box } from "@mui/system"
 import React, { useContext, useState } from "react"
 import { CategoriesContext } from "../../context/plants/CategoriesContext"
@@ -6,68 +6,37 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SaveCategoryDialog from "../../components/plants/SaveCategoryDialog";
 import AreYouSureDialog from "../../utils/components/AreYouSureDialog";
+import { ToastContainer, toast } from 'react-toastify';
 
 const CategoriesPage = () => {
   const categoriesContext = useContext(CategoriesContext)
-  const [createCategoryDialog, setCreateCategoryDialogOpen] = useState(false)
-  const [updateCategoryDialog, setUpdateCategoryDialogOpen] = useState(false)
+  const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
   const [deleteCategoryDialog, setDeleteCategoryDialogOpen] = useState(false)
-  const [alertOpen, setAlertOpen] = useState(false);
-  const [severity, setSeverity] = useState("success")
-  const [errorMsg, setErrorMsg] = useState("Successfully added category!")
-  const [selectedCategory, setSelectedCategory] = useState({})
+  const [selectedCategory, setSelectedCategory] = useState({name: 'ha'})
 
-  const createCategory = (name) => {
-    validate(name) //nije dobro
-    
-    categoriesContext.createCategoryHandler({name: name.trim()}).then(res => {
-      if(res.ok) {
-        setupAlert("success", "Successfully added category!")
-      } else {
-        setupAlert("error", res.err)
-      }
-      setAlertOpen(true);
-      setCreateCategoryDialogOpen(false);
-    }).then(() => categoriesContext.getAllHandler())
-  }
-
-  //TODO change to toast
-  const updateCategory = (name, category) => {
-    validate(name) //nije dobro
-    
-    var categoryToUpdate = JSON.parse(JSON.stringify(category));
-    categoryToUpdate.name = name.trim()
-    
-    categoriesContext.updateCategoryHandler(categoryToUpdate)
-    .then(res => {
-      if(res.ok) {
-        setupAlert("success", "Successfully updated category!")
-      } else {
-        setupAlert("error", res.err)
-      }
-      setAlertOpen(true);
-      setUpdateCategoryDialogOpen(false);
-    }).then(() => categoriesContext.getAllHandler())
-    
+  const handleFeedback = (feedback) => {
+    if (feedback.ok) {
+      toast.success(feedback.message);
+      setCategoryDialogOpen(false);
+    } else {
+      toast.error(feedback.message);
+    }
   }
 
   const deleteCategory = (categoryID) => {
-    var isDeleted = categoriesContext.deleteCategoryHandler(categoryID)
-    if(isDeleted) {
-      setupAlert("success", "Successfully deleted category!")
-    } else {
-      setupAlert("error", "Error when deleting category")
-    }
-    setDeleteCategoryDialogOpen(false)
-    setAlertOpen(true);
+    categoriesContext.deleteCategoryHandler(categoryID).then(res => {
+      if(res.ok) {
+        toast.success("Successfully deleted category!");
+        setDeleteCategoryDialogOpen(false);
+      } else {
+        //todo something went wrong
+      }
+    })
   }
 
-  const validate = (name) => {
-    if(name.trim() === "") {
-      setupAlert("warning", "Name should not be empty!")
-      setAlertOpen(true);
-      return
-    }
+  const handleClickCreate = () => {
+    setSelectedCategory({name:""})
+    setCategoryDialogOpen(true)
   }
 
   const handleClickDelete = (category) => {
@@ -77,35 +46,28 @@ const CategoriesPage = () => {
 
   const handleClickUpdate = (category) => {
     setSelectedCategory(category)
-    setUpdateCategoryDialogOpen(true)
-  }
-
-  const setupAlert = (severity, msg) => {
-    setSeverity(severity);
-    setErrorMsg(msg);
+    setCategoryDialogOpen(true)
   }
 
   return (
     <div>
+      <ToastContainer />
       <Box sx={{padding:'5em'}}>
-        <Snackbar open={alertOpen} autoHideDuration={4000} onClose={() => setAlertOpen(false)}>
-          <Alert onClose={() => setAlertOpen(false)} severity={severity} sx={{ width: '100%' }}>
-            {errorMsg}
-          </Alert>
-        </Snackbar>
         <Box sx={{ justifyContent: 'flex-end', marginBottom:'1em' }}>
-          <Button variant="contained" onClick={() => setCreateCategoryDialogOpen(true)}>Add category</Button>
+          <Button variant="contained" onClick={() => handleClickCreate()}>Add category</Button>
         </Box>
 
         <AreYouSureDialog handleOpen={deleteCategoryDialog} 
                   handleClose={() => setDeleteCategoryDialogOpen(false)} 
                   handleOperation={() => deleteCategory(selectedCategory.id)}
                   title="Delete category" content={"Are you sure you want to delete category " + selectedCategory.name + "?"}/>
-        <SaveCategoryDialog title="Create new category" handleOpen={createCategoryDialog} handleClose={() => setCreateCategoryDialogOpen(false)}
-        handleSaveCategory={(name) => createCategory(name)}/>
 
-        <SaveCategoryDialog title="Edit category" handleOpen={updateCategoryDialog} handleClose={() => setUpdateCategoryDialogOpen(false)}
-        handleSaveCategory={(name) => updateCategory(name, selectedCategory)}/>
+        <SaveCategoryDialog
+          category={selectedCategory}
+          title="Edit category" 
+          handleOpen={categoryDialogOpen} 
+          handleClose={() => setCategoryDialogOpen(false)}
+          handleFeedback={(category) => handleFeedback(category)}/>
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
