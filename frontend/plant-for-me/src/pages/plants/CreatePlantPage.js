@@ -2,30 +2,22 @@ import React, { useContext, useEffect, useState } from "react"
 import { CreatePlantContext } from "../../context/plants/CreatePlantContext";
 import '../../assets/css/layout.css';
 import Snackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
 import PlantEditPanel from "../../components/plants/PlantEditPanel";
-
-const Alert = React.forwardRef(function Alert(props, ref) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
+import { ToastContainer, toast } from 'react-toastify';
+import { useNavigate } from "react-router-dom";
 
 const CreatePlantPage = () => {
   const createPlantContext = useContext(CreatePlantContext)
-  const [severity, setSeverity] = useState("success")
-  const [alertMsg, setAlertMsg] = useState("")
-  const [alertOpen, setAlertOpen] = useState(false);
   const [plant, setPlant] = useState(null);
+  let navigate = useNavigate();
 
   useEffect(() => {
     reset()
   }, [])
 
-  const handleClose = (reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setAlertOpen(false);
-  };
+  const handleBack = () => {
+    navigate("/plants");
+  }
 
   const reset = () => {
     setPlant({
@@ -45,39 +37,25 @@ const CreatePlantPage = () => {
   }
 
   const createNewPlant = (plant) => {
-    console.log(plant)
-    if(plant === null) {
-      setupAlert("error", "All fields required")
-      setAlertOpen(true);
-    }
-    
     createPlantContext.createPlantHandler(plant).then(res => {
       if(res.ok) {
-        setupAlert("success", "Successfully created plant!")
-        reset()
+        reset();
+        toast.success("Successfully added plant!");
       } else {
-        setupAlert("error", res.err)
+        toast.error(res.err);
       }
-      setAlertOpen(true);
     })
-  }
-
-  const setupAlert = (severity, msg) => {
-    setSeverity(severity);
-    setAlertMsg(msg);
   }
 
   return (
     <div>
-      <Snackbar open={alertOpen} autoHideDuration={4000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity={severity} sx={{ width: '100%' }}>
-          {alertMsg}
-        </Alert>
-      </Snackbar>
-      <PlantEditPanel plant={plant}
-      categories={createPlantContext.categories}
-      handlePlantOperation={(plant) => createNewPlant(plant)}
-      title="Create a plant"/>
+      <ToastContainer />
+      <PlantEditPanel 
+        plant={plant}
+        categories={createPlantContext.categories}
+        handlePlantOperation={(plant) => createNewPlant(plant)}
+        handleBack={handleBack}
+        title="Create a plant"/>
     </div>
   )
 }

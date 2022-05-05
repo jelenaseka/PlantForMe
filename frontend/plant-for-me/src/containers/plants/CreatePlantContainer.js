@@ -8,24 +8,31 @@ const CreatePlantContainer = () => {
   const [categories, setCategories] = useState([])
 
   useEffect(() => {
-    const getData = async () => {
-      try {
-        setCategories(await CategoryService.getCategories())
-      } catch(err) { console.log(err) }
-    }
-    getData()
+    getCategoriesHandler()
   }, [])
 
+  const getCategoriesHandler = () => {
+    const getData = CategoryService.getCategories()
+      .then(async res => {
+        if(res.ok) {
+          return await res.json().then(data => setCategories(data))
+        } else {
+          //todo error
+        }
+      })
+      .catch(err => console.log(err))
+    return getData;
+  }
+
   const createPlantHandler = (plant) => {
-    
     const createPlant = PlantService.createPlant(plant)
       .then(async res => {
-        if(res.status === 409) {
-          const data = await res.text();
-          return { ok: false, err: data };
-        } else {
+        if(res.ok) {
           await res.text();
           return { ok: true, err: null };
+        } else {
+          const data = await res.text();
+          return { ok: false, err: data };
         }
       })
       .catch(err => {

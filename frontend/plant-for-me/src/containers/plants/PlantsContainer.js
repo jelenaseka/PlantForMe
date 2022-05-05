@@ -9,56 +9,51 @@ const PlantsContainer = () => {
   const [categories, setCategories] = useState([])
 
   useEffect(() => {
-    handleGetAll()
+    getCategoriesHandler()
+    getPlantsHandler()
   }, [])
 
-  const handleGetPlants = (url) => {
-    const getData = async () => {
-      try {
-        const plantResponse = await PlantService.getPlants(url)
-        if(!plantResponse.ok) {
-          const err = await plantResponse.text();
-          return {ok: false, err: err};
+  const getCategoriesHandler = () => {
+    const getData = CategoryService.getCategories()
+      .then(async res => {
+        if(res.ok) {
+          const data = await res.json();
+          setCategories(data)
         } else {
-          const data = await plantResponse.json();
-          setPlants(data)
+          //todo error
+          const err = await res.text();
+          return {ok: false, err: err};
         }
-        
-      } catch(err) { console.log(err) }
-    }
-    getData();
+      })
+      .catch(err => console.log(err) )
+    return getData;
   }
 
-  const handleGetAll = () => {
-    const getData = async () => {
-      try {
-        const plantResponse = await PlantService.getPlants()
-        if(!plantResponse.ok) {
-          const err = await plantResponse.text();
-          console.log(err)
-          return {ok: false, err: err};
-        } else {
-          const data = await plantResponse.json();
-          console.log(data)
+  const getPlantsHandler = (url) => {
+    const getData =  PlantService.getPlants(url)
+      .then(async res => {
+        if(res.ok) {
+          const data = await res.json();
           setPlants(data)
-        }
-        
-        const categoriesResponse = await CategoryService.getCategories()
-        if(!categoriesResponse.ok) {
-          const err = await categoriesResponse.text();
-          console.log(err)
-          return {ok: false, err: err};
         } else {
-          const data = await categoriesResponse.json();
-          setCategories(data)
+          //todo error
+          const err = await res.text();
+          return {ok: false, err: err};
         }
-      } catch(err) { console.log(err) }
-    }
-    getData();
+      })
+      .catch(err => console.log(err) )
+    return getData;
   }
 
   return (
-    <PlantsContext.Provider value={{plants, categories, handleGetPlants}}>
+    <PlantsContext.Provider value={
+      {
+        plants, 
+        categories, 
+        getPlantsHandler, 
+        getCategoriesHandler
+        }
+      }>
       <PlantsPage />
     </PlantsContext.Provider>
   )

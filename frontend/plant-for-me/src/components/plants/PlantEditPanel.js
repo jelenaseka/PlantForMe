@@ -1,25 +1,26 @@
 import { Button, Divider, FormControl, Grid, TextField, Typography } from "@mui/material"
 import { Box } from "@mui/system"
 import React, { useEffect, useState } from "react"
-import { useStateWithCallbackLazy } from "use-state-with-callback"
 import { growthRate, hardiness, lifeTime, light, months, watering, height } from "../../data/enums"
 import MyCheckboxList from "../../utils/components/MyCheckboxList"
 import MySelect from "../../utils/components/MySelect"
+import { ToastContainer, toast } from 'react-toastify';
 
-const PlantEditPanel = ({plant, categories, handlePlantOperation, title}) => {
-  const [newPlant, setNewPlant] = useStateWithCallbackLazy(plant)
+const PlantEditPanel = ({plant, categories, handlePlantOperation, handleBack, title}) => {
+  const [newPlant, setNewPlant] = useState(null)
   const [checkedBloomingMonths, setCheckedBloomingMonths] = useState(
     new Array(months.length).fill(false)
   );
 
   useEffect(() => {
-    setNewPlant(plant, (p) => {
+    setNewPlant(plant)
+    if(plant) {
       var updatedCheckedState = checkedBloomingMonths;
       plant.bloomingMonths.forEach(item => {
-        updatedCheckedState[item] = true
+        updatedCheckedState[item.month] = true;
       });
       setCheckedBloomingMonths(updatedCheckedState);
-    })
+    }
   }, [plant])
 
 
@@ -28,10 +29,10 @@ const PlantEditPanel = ({plant, categories, handlePlantOperation, title}) => {
       if (index === position) {
         item = !item
         if(item === true) {
-          setNewPlant({...newPlant, isBlooming: true})
+          setNewPlant({...newPlant, isBlooming: true});
         }
       } 
-      return item
+      return item;
       }
     );
 
@@ -50,13 +51,15 @@ const PlantEditPanel = ({plant, categories, handlePlantOperation, title}) => {
   };
 
   const handleNewPlant = () => {
+    
     if(!validateForm(newPlant)) {
-      handlePlantOperation(null);
+      toast.error("Form not valid");
       return
     }
     
     newPlant.bloomingMonths = []
     checkedBloomingMonths.forEach((bm, index) => bm === true && newPlant.bloomingMonths.push(index))
+    
     handlePlantOperation(newPlant);
     
   }
@@ -92,7 +95,7 @@ const PlantEditPanel = ({plant, categories, handlePlantOperation, title}) => {
   return (
     <div>{newPlant &&
       <Box sx={{ padding: '2em' }}>
-        
+        <ToastContainer />
         <Typography variant="h1" sx={{ fontSize: '30px'}} component="div" gutterBottom>
           {title}
         </Typography>
@@ -163,6 +166,7 @@ const PlantEditPanel = ({plant, categories, handlePlantOperation, title}) => {
             
           </Grid>
           <Grid container justifyContent="flex-end">
+            <Button variant="contained" onClick={() => handleBack()}>Back</Button>
             <Button variant="contained" onClick={() => handleNewPlant(newPlant)}>Submit</Button>
           </Grid>
         </Grid>
