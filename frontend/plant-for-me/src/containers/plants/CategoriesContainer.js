@@ -3,11 +3,18 @@ import { useEffect, useState } from "react"
 import { CategoryService } from "../../services/plants/CategoryService"
 import { CategoriesContext } from "../../context/plants/CategoriesContext"
 import CategoriesPage from "../../pages/plants/CategoriesPage"
+import { AuthService } from "../../services/auth/AuthService"
+import { useNavigate } from 'react-router-dom';
 
 const CategoriesContainer = () => {
   const [categories, setCategories] = useState([])
+  const currentUser = AuthService.getCurrentUser()
+  let navigate = useNavigate();
 
   useEffect(() => {
+    if(currentUser === null || currentUser.role !== 3) {
+      navigate('/404');
+    }
     getCategoriesHandler()
   }, [])
 
@@ -15,11 +22,10 @@ const CategoriesContainer = () => {
     const getData = CategoryService.getCategories()
       .then(async res => {
         if(res.ok) {
-          console.log('soooo')
           const data = await res.json();
           setCategories(data);
         } else {
-          //TODO sorry, something went wrong
+          navigate('/404');
         }
       })
       .catch(err => {
@@ -66,11 +72,14 @@ const CategoriesContainer = () => {
   const deleteCategoryHandler = (categoryID) => {
     const deleteCategory = CategoryService.deleteCategory(categoryID)
       .then(async res => {
+        console.log(res)
         if(res.ok) {
           getCategoriesHandler();
           return { ok: true, err: null };
         } else {
+          console.log(res)
           //TODO sorry, something went wrong
+          //check if 401 - navigate to login page
         }
       })
       .catch(err => {

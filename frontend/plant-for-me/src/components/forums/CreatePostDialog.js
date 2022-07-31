@@ -16,6 +16,7 @@ const CreatePostDialog = ({handleOpen, handleClose}) => {
   })
 
   const createPost = () => {
+    console.log('smth')
     if(!isFormValid()) {
       console.log('nije validna')
       return;
@@ -30,7 +31,7 @@ const CreatePostDialog = ({handleOpen, handleClose}) => {
             categoryId: "",
             image: ""
           })
-          handleClose(true)
+          handleClose(true) //TODO - ako klikne sa strane i dalje je true - syntetic base event
         } else {
           //error
         }

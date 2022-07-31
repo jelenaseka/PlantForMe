@@ -1,43 +1,66 @@
-import { Button } from "@mui/material";
+import { AppBar, Button } from "@mui/material";
 import { Box } from "@mui/system"
-import React from "react"
+import React, { useEffect } from "react"
 import NavbarLink from "./NavbarLink";
 import '../../assets/css/header.css';
 import { AuthService } from "../../services/auth/AuthService";
 import { useNavigate } from "react-router-dom";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { Link, Navigate, NavLink } from "react-router-dom";
 
 const Header = () => {
   let navigate = useNavigate();
+  let currentUser = AuthService.getCurrentUser()
 
   const logout = () => {
     AuthService.logout();
     navigate("/login");
   }
   return (
-    <nav className="navigation">
+    <AppBar position="static">
       <Box >
-        <ul className="nav-ul">
           <Button>
             <NavbarLink link="/plants" title="Plants" />
           </Button>
-          <Button>
-            <NavbarLink link="/categories" title="Categories" />
-          </Button>
-          <Button>
-            <NavbarLink link="/users" title="Users" />
-          </Button>
+          {
+            currentUser && currentUser.role === 3 &&
+            <Button>
+              <NavbarLink link="/categories" title="Categories" />
+            </Button>
+          }
+          {
+            currentUser && currentUser.role === 3 &&
+            <Button>
+              <NavbarLink link="/users" title="Users" />
+            </Button>
+          }
           <Button>
             <NavbarLink link="/forums" title="Forums" />
           </Button>
-          <Button>
-            <NavbarLink link="/login" title="Login" />
-          </Button>
-          <Button variant="contained" onClick={() => logout()}>
-            Logout
-          </Button>
-        </ul>
+          {
+            !currentUser && 
+            <Button>
+              <NavbarLink link="/login" title="Login" />
+            </Button>
+          }
+          
+          {
+            currentUser &&
+            <Button sx={{color:'white'}} onClick={() => logout()}>
+              Logout
+            </Button>
+          }
+          {
+            currentUser &&
+            <Button sx={{color:'white'}} component={NavLink} to="/me">
+              <AccountCircleIcon />
+            </Button>
+          }
+          
+
       </Box>
-    </nav>
+    </AppBar>
+    
   )
 }
 

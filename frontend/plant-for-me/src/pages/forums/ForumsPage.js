@@ -17,6 +17,7 @@ const ForumsPage = () => {
   const [createPostDialogOpen, setCreatePostDialogOpen] = React.useState(false);
 
   const handleCreatePostDialog = (isSuccessfull) => {
+    //TODO - CHANGE
     if(isSuccessfull) {
       setCreatePostDialogOpen(false);
       toast.success("Successfully created post!");

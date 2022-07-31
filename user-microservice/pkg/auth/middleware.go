@@ -84,11 +84,12 @@ func MiddlewareAuthorizationFromAPIGateway(cas *casbin.Enforcer) func(next http.
 			fmt.Println(sub, obj, act)
 
 			if res, _ := cas.Enforce(sub, obj, act); res {
+				fmt.Println("okje")
 				ctx := context.WithValue(r.Context(), ContextClaimsKey{}, principal)
 				r = r.WithContext(ctx)
 				next.ServeHTTP(w, r)
 			} else {
-
+				fmt.Println("nijeee ok")
 				if sub == "Public" {
 					w.WriteHeader(http.StatusUnauthorized)
 					w.Write([]byte("Not authorized"))

@@ -187,7 +187,7 @@ const ForumPostPage = () => {
               </Box>
               <Box sx={{display:'flex', flexDirection:'row', alignItems:'center'}}>
                 <Typography variant="caption" display="block" sx={{margin:'0'}} gutterBottom>
-                  {postContext.post.createdAt} //TODO if updatedAt stavi to
+                  {postContext.post.createdAt}
                 </Typography>
                 {
                   getCurrentUserForPost() &&

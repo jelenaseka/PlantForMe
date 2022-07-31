@@ -8,14 +8,14 @@ const LoginContainer = () => {
   const loginHandler = (userCredentials) => {
     const login = AuthService.login(userCredentials)
       .then(async res => {
-        if(res.status >= 400 && res.status < 500) {
-          const data = await res.text();
-          return { ok: false, err: data };
-        } else {
+        if(res.ok) {
           return res.json().then(data => {
             localStorage.setItem("user", JSON.stringify(data))
-            return { ok: true, err: null };
+            return { ok: true, err: null, user: data };
           });
+        } else {
+          const data = await res.text();
+          return { ok: false, err: data };
         }
       })
       .catch(err => {

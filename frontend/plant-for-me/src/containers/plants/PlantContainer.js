@@ -18,7 +18,7 @@ const PlantContainer = () => {
     const getData = PlantService.getOne(id)
       .then(async res => {
         if(res.ok) {
-          return await res.json().then(data => setPlant(data));
+          return await res.json().then(data => {setPlant(data)});
         } else {
           return navigate("/404");
         }

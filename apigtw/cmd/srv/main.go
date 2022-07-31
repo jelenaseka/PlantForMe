@@ -31,6 +31,8 @@ func main() {
 
 	putUserR := r.Methods(http.MethodPut).Subrouter()
 	putUserR.HandleFunc("/api/users/{id}", handlers.Put(configuration.UserAddress))
+	putUserR.HandleFunc("/api/auth/username", handlers.Put(configuration.UserAddress))
+	putUserR.HandleFunc("/api/auth/password", handlers.Put(configuration.UserAddress))
 
 	deleteUserR := r.Methods(http.MethodDelete).Subrouter()
 	deleteUserR.HandleFunc("/api/users/{id}", handlers.Delete(configuration.UserAddress))

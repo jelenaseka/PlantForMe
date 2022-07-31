@@ -27,6 +27,8 @@ type AuthServiceInterface interface {
 	IssueToken(user *data.User) (string, error_utils.MessageErr)
 	Me(username string) (*data.User, error_utils.MessageErr)
 	Registration(registerUserRequest *dto.RegisterUserRequest) (*uuid.NullUUID, error_utils.MessageErr)
+	ChangeUsername(newUsername string, currentUsername string) (*data.User, error_utils.MessageErr)
+	ChangePassword(newPassword string, currentUsername string) (*data.User, error_utils.MessageErr)
 }
 
 func NewAuthService(r repository.UserRepositoryInterface) AuthServiceInterface {
@@ -99,4 +101,39 @@ func (this *authService) Registration(registerUserRequest *dto.RegisterUserReque
 	}
 
 	return &uuid.NullUUID{UUID: id, Valid: true}, nil
+}
+
+func (this *authService) ChangeUsername(newUsername string, currentUsername string) (*data.User, error_utils.MessageErr) {
+	user, err := this.IUserRepository.FindByUsername(currentUsername)
+	if err != nil {
+		return nil, error_utils.NewNotFoundError(fmt.Sprintf("The user with the username %s is not found in the database.", currentUsername))
+	}
+
+	foundUser, err := this.IUserRepository.FindByUsername(newUsername)
+	if err == nil && foundUser.ID != user.ID {
+		return nil, error_utils.NewConflictError(fmt.Sprintf("User with the username %s already exists in the database.", user.Username))
+	}
+
+	user.Username = newUsername
+	err = this.IUserRepository.Update(user)
+	if err != nil {
+		return nil, error_utils.NewInternalServerError(fmt.Sprintf("Error when trying to change user username: %s", err.Error()))
+	}
+	return user, nil
+}
+
+func (this *authService) ChangePassword(newPassword string, currentUsername string) (*data.User, error_utils.MessageErr) {
+	user, err := this.IUserRepository.FindByUsername(currentUsername)
+	if err != nil {
+		return nil, error_utils.NewNotFoundError(fmt.Sprintf("The user with the username %s is not found in the database.", currentUsername))
+	}
+
+	hashedPassword := crypto.NewSHA256([]byte(newPassword))
+
+	user.Password = hex.EncodeToString(hashedPassword)
+	err = this.IUserRepository.Update(user)
+	if err != nil {
+		return nil, error_utils.NewInternalServerError(fmt.Sprintf("Error when trying to change user password: %s", err.Error()))
+	}
+	return user, nil
 }
