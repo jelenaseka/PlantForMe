@@ -11,27 +11,31 @@ const PlantContainer = () => {
   let navigate = useNavigate();
 
   useEffect(() => {
-    PlantService.getOne(id)
-      .then(async res => {
-        if(res.status >= 400 && res.status < 500) {
-          return navigate("/404");
-        } else {
-          return await res.json().then(data => setPlant(data));
-        }
-      })
-    
+    getPlantHandler();
   }, [id])
 
+  const getPlantHandler = () => {
+    const getData = PlantService.getOne(id)
+      .then(async res => {
+        if(res.ok) {
+          return await res.json().then(data => {setPlant(data)});
+        } else {
+          return navigate("/404");
+        }
+      })
+      .catch(err => console.log(err))
+    return getData;
+  }
+
   const deletePlantHandler = () => {
-    
     const deletePlant = PlantService.deletePlant(id)
       .then(async res => {
-        if(res.status >= 400 && res.status < 500) {
-          const data = await res.text();
-          return { ok: false, err: data };
-        } else {
+        if(res.ok) {
           await res.text();
           return { ok: true, err: null };
+        } else {
+          const data = await res.text();
+          return { ok: false, err: data };
         }
       })
       .catch(err => {

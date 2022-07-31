@@ -3,7 +3,7 @@ package data
 type Role int
 
 const (
-	Public Role = iota
+	Public Role = iota //TODO delete
 	Member
 	Moderator
 	Admin

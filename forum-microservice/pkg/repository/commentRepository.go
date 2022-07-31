@@ -91,7 +91,7 @@ func (this *commentRepository) GetCommentsByPostIdPageable(page int, postId stri
 	offset := limit * (page - 1)
 
 	var comments []data.Comment
-	result := db.Debug().Where("post_id = ?", postId).Limit(limit).Offset(offset).Find(&comments)
+	result := db.Debug().Where("post_id = ?", postId).Order("created_at").Limit(limit).Offset(offset).Find(&comments)
 
 	if result.Error != nil {
 		return nil, result.Error

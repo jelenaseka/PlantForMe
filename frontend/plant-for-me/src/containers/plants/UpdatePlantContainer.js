@@ -3,79 +3,69 @@ import { CategoryService } from "../../services/plants/CategoryService"
 import { UpdatePlantContext} from '../../context/plants/UpdatePlantContext'
 import UpdatePlantPage from '../../pages/plants/UpdatePlantPage';
 import { PlantService } from '../../services/plants/PlantService';
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const UpdatePlantContainer = () => {
   const [categories, setCategories] = useState([])
   const { id } = useParams();
   const [plant, setPlant] = useState(null);
+  let navigate = useNavigate();
 
   useEffect(() => {
-    const getData = async () => {
-      try {
-        setCategories(await CategoryService.getCategories())
-        reset()
-      } catch(err) { console.log(err) }
-    }
-    getData()
-  }, [])
+    getCategoriesHandler()
+    getPlantHandler()
+  }, [id])
 
-  const reset = async () => {
-    
-    PlantService.getOne(id)
+  const getCategoriesHandler = () => {
+    const getData = CategoryService.getCategories()
       .then(async res => {
-        if(res.status === 404) {
-          return await res.text();
+        if(res.ok) {
+          return await res.json().then(data => setCategories(data))
         } else {
-          return await res.json().then(data => {
-            var plant = data
-            var bm = []; 
-            plant.bloomingMonths.forEach(b => {
-              bm.push(b.month)
-            })
-            setPlant({
-              id: plant.id,
-              name: plant.name,
-              description: plant.description,
-              image: plant.image,
-              categoryID: "",
-              light: plant.light,
-              watering: plant.watering,
-              isBlooming: plant.isBlooming,
-              bloomingMonths: bm,
-              growthRate: plant.growthRate,
-              hardiness: plant.hardiness,
-              height: plant.height,
-              lifeTime: plant.lifeTime,
-            })
-          });
+          //todo error
         }
       })
-    
+      .catch(err => console.log(err))
+    return getData;
+  }
+
+  const getPlantHandler = () => {
+    const getData = PlantService.getOne(id)
+      .then(async res => {
+        if(res.ok) {
+          return await res.json().then(data => setPlant(data));
+        } else {
+          return navigate("/404");
+        }
+      })
+      .catch(err => console.log(err))
+    return getData;
   }
 
   const updatePlantHandler = (plant) => {
-    
     const updatePlant = PlantService.updatePlant(plant)
       .then(async res => {
-        if(res.status === 409) {
+        if(res.ok) {
+          getPlantHandler();
+          return { ok: true, err: null };
+        } else {
           const data = await res.text();
           return { ok: false, err: data };
-        } else {
-          await res.text();
-          return { ok: true, err: null };
         }
       })
       .catch(err => {
         console.log('err: ',err)
       })
 
-    return updatePlant;
-    
+  return updatePlant;
   }
 
   return (
-    <UpdatePlantContext.Provider value={{categories, plant, reset, updatePlantHandler}}>
+    <UpdatePlantContext.Provider value={
+      {
+        categories, 
+        plant,
+        updatePlantHandler}}>
       <UpdatePlantPage />
     </UpdatePlantContext.Provider>
   )

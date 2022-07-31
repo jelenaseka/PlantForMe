@@ -24,7 +24,6 @@ const ForumsContainer = () => {
   let navigate = useNavigate();
 
   useEffect(() => {
-    console.log(currentUser)
     getPostsDataHandler()
     getMostPopularPostsHandler()
     getPostsCount()
@@ -40,12 +39,13 @@ const ForumsContainer = () => {
     const getData = async () => {
       try {
         const mostPopularPostsResponse = await ForumPostService.getMostPopularPostsCountComments()
-        if(!mostPopularPostsResponse.ok) {
-          const err = await mostPopularPostsResponse.text();
-          return {ok: false, err: err};
-        } else {
+        if(mostPopularPostsResponse.ok) {
           const data = await mostPopularPostsResponse.json();
           setMostPopularPosts(data)
+          
+        } else {
+          const err = await mostPopularPostsResponse.text();
+          return {ok: false, err: err};
         }
       } catch(err) { console.log(err) }
     }
@@ -56,12 +56,13 @@ const ForumsContainer = () => {
     const getData = async () => {
       try {
         const categoriesResponse = await ForumCategoryService.getCategoriesCountPosts()
-        if(!categoriesResponse.ok) {
-          const err = await categoriesResponse.text();
-          return {ok: false, err: err};
-        } else {
+        if(categoriesResponse.ok) {
           const data = await categoriesResponse.json();
           setCategories(data)
+        } else {
+          const err = await categoriesResponse.text();
+          return {ok: false, err: err};
+          
         }
         
       } catch(err) { console.log(err) }
@@ -74,10 +75,7 @@ const ForumsContainer = () => {
     const getData = async () => {
       try {
         const postsCountResponse = await ForumPostService.getPostsCount(currentCategory)
-        if(!postsCountResponse.ok) {
-          const err = await postsCountResponse.text();
-          return {ok: false, err: err};
-        } else {
+        if(postsCountResponse.ok) {
           const data = await postsCountResponse.text();
           var count = parseInt(data)
           if (count % 3 !== 0) {
@@ -86,6 +84,10 @@ const ForumsContainer = () => {
             count = Math.floor(count / 3)
           }
           setPostsCount(count)
+          
+        } else {
+          const err = await postsCountResponse.text();
+          return {ok: false, err: err};
         }
       } catch(err) { console.log(err) }
     }
@@ -97,12 +99,12 @@ const ForumsContainer = () => {
     const getData = async () => {
       try {
         const allPostsResponse = await ForumPostService.getAllPostsCountComments(page, category)
-        if(!allPostsResponse.ok) {
-          const err = await allPostsResponse.text();
-          return {ok: false, err: err};
-        } else {
+        if(allPostsResponse.ok) {
           const data = await allPostsResponse.json();
           setAllPosts(data)
+        } else {
+          const err = await allPostsResponse.text();
+          return {ok: false, err: err};
         }
       } catch(err) { console.log(err) }
     }
@@ -113,12 +115,12 @@ const ForumsContainer = () => {
     const getData = async () => {
       try {
         const latestPostsResponse = await ForumPostService.getLatestPostsCountComments()
-        if(!latestPostsResponse.ok) {
-          const err = await latestPostsResponse.text();
-          return {ok: false, err: err};
-        } else {
+        if(latestPostsResponse.ok) {
           const data = await latestPostsResponse.json();
           setLatestPosts(data)
+        } else {
+          const err = await latestPostsResponse.text();
+          return {ok: false, err: err};
         }
       } catch(err) { console.log(err) }
     }

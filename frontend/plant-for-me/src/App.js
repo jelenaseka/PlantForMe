@@ -12,10 +12,16 @@ import UsersContainer from './containers/users/UsersContainer';
 import LoginContainer from './containers/login/LoginContainer';
 import ForumsContainer from './containers/forums/ForumsContainer';
 import ForumPostContainer from './containers/forums/ForumPostContainer';
+import { ThemeProvider } from '@emotion/react';
+import { theme } from './assets/theme/theme';
+import 'react-toastify/dist/ReactToastify.css';
+import RegistrationContainer from './containers/registration/RegistrationContainer';
+import ProfileContainer from './containers/profile/ProfileContainer';
 
 function App() {
   return (
     <div className="App">
+      <ThemeProvider theme={theme}>
       <Header></Header>
       {/* <Container maxWidth="lg"> */}
         <Routes>
@@ -28,9 +34,13 @@ function App() {
           <Route path="/forums" element={<ForumsContainer/>}/>
           <Route path="/forums/:id" element={<ForumPostContainer/>}/>
           <Route path="/login" element={<LoginContainer/>}/>
+          <Route path="/registration" element={<RegistrationContainer/>}/>
+          <Route path='/me' element={<ProfileContainer/>}/>
           <Route path="/404" element={<NotFoundPage/>} />
         </Routes>
       {/* </Container> */}
+      </ThemeProvider>
+     
     </div>
   );
 }

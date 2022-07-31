@@ -8,7 +8,7 @@ import MySelect from "../../utils/components/MySelect"
 
 const FilterPanel = () => {
   const plantsContext = useContext(PlantsContext)
-  const [categories, setCategories] = useState([])
+  const [categoryNames, setCategoryNames] = useState([])
   const [filterParameters, setFilterParameters] = useState(null)
   const [checkedBloomingMonths, setCheckedBloomingMonths] = useState(
     new Array(months.length).fill(false)
@@ -27,7 +27,7 @@ const FilterPanel = () => {
       lifeTime: "-1"
     })
     setCheckedCategories(new Array(plantsContext.categories.length).fill(false))
-    setCategories(plantsContext.categories.map(cat => cat.name))
+    setCategoryNames(plantsContext.categories.map(cat => cat.name))
   }, [plantsContext.categories])
 
   const handleOnChangeCheckedCategories = (position) => {
@@ -58,12 +58,12 @@ const FilterPanel = () => {
       
     }
 
-    checkedCategories.forEach((cc, index) => cc === true && params.append('category', categories[index]))
+    checkedCategories.forEach((cc, index) => cc === true && params.append('category', categoryNames[index]))
     checkedBloomingMonths.forEach((bm, index) => bm === true && params.append('bloomingMonth', index))
     
     var url = params.toString()
 
-    plantsContext.handleGetPlants(url)
+    plantsContext.getPlantsHandler(url)
   }
 
   return (
@@ -72,46 +72,50 @@ const FilterPanel = () => {
         Filter plants
       </Typography>
       <Divider sx={{marginBottom:'1em'}}/>
-      {filterParameters && <div>
-        <FormControl fullWidth>
-        <TextField sx={{ marginBottom: '10px'}} id="outlined-basic" label="Plant name" variant="outlined" value={filterParameters.name} 
-        onChange={(e) => setFilterParameters({...filterParameters, name: e.target.value})} 
-        onBlur={() => setFilterParameters({...filterParameters, name: filterParameters.name.trim()})}
-        />
-      </FormControl>
+      {filterParameters && 
+        <div>
+          <TextField fullWidth 
+            sx={{ marginBottom: '10px'}} 
+            label="Plant name" 
+            variant="outlined" 
+            value={filterParameters.name} 
+            onChange={(e) => setFilterParameters({...filterParameters, name: e.target.value})} 
+            onBlur={() => setFilterParameters({...filterParameters, name: filterParameters.name.trim()})}
+          />
 
-      <Grid item sx={{ padding:'20px 0'}}>
-        <MyCheckboxList label="Popular Categories" options={categories} isChecked={(index) => checkedCategories[index]} onValueChange={(index) => handleOnChangeCheckedCategories(index)}/>
-      </Grid>
-      
-      <MySelect label="Watering" options={watering} selected={filterParameters.watering} onValueChange={(watering) => setFilterParameters({...filterParameters, watering})} isFiltering={true}/>
-      <MySelect label="Light" options={light} selected={filterParameters.light} onValueChange={(light) => setFilterParameters({...filterParameters, light})} isFiltering={true}/>
-      <MySelect label="Growth rate" options={growthRate} selected={filterParameters.growthRate} onValueChange={(growthRate) => setFilterParameters({...filterParameters, growthRate})} isFiltering={true}/>
-      <MySelect label="Hardiness" options={hardiness} selected={filterParameters.hardiness} onValueChange={(hardiness) => setFilterParameters({...filterParameters, hardiness})} isFiltering={true}/>
-      <MySelect label="Height" options={height} selected={filterParameters.height} onValueChange={(height) => setFilterParameters({...filterParameters, height})} isFiltering={true}/>
-      <MySelect label="Life time" options={lifeTime} selected={filterParameters.lifeTime} onValueChange={(lifeTime) => setFilterParameters({...filterParameters, lifeTime})} isFiltering={true}/>
-      <MySelect label="Blooming" options={[{id: 0, name: "Blooming"}, {id: 1, name: "Not blooming"}]} selected={filterParameters.isBlooming} onValueChange={(isBlooming) => setFilterParameters({...filterParameters, isBlooming})} isFiltering={true}/>
-      
-      <Grid item md={2} sx={{ padding:'0 20px'}}>
-        <MyCheckboxList label="Blooming months" options={months} isChecked={(index) => checkedBloomingMonths[index]} onValueChange={(index) => handleOnChangeCheckedBloomingMonths(index)}/>
-      </Grid>
-      
-      <Box
-        sx={{
-          display: 'grid',
-          bgcolor: (theme) =>
-            theme.palette.mode === 'dark' ? '#101010' : 'grey.100',
-          color: (theme) =>
-            theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
-          p: 1,
-          marginTop: '10px',
-          fontSize: '0.875rem',
-          fontWeight: '700',
-        }}
-      >
-        <Button variant="contained" onClick={() => filterPlants()}>Submit</Button>
-      </Box>
-      </div>}
+          <Box sx={{ padding:'20px 0'}}>
+            <MyCheckboxList label="Popular Categories" options={categoryNames} isChecked={(index) => checkedCategories[index]} onValueChange={(index) => handleOnChangeCheckedCategories(index)}/>
+          </Box>
+          
+          <MySelect label="Watering" options={watering} selected={filterParameters.watering} onValueChange={(watering) => setFilterParameters({...filterParameters, watering})} isFiltering={true}/>
+          <MySelect label="Light" options={light} selected={filterParameters.light} onValueChange={(light) => setFilterParameters({...filterParameters, light})} isFiltering={true}/>
+          <MySelect label="Growth rate" options={growthRate} selected={filterParameters.growthRate} onValueChange={(growthRate) => setFilterParameters({...filterParameters, growthRate})} isFiltering={true}/>
+          <MySelect label="Hardiness" options={hardiness} selected={filterParameters.hardiness} onValueChange={(hardiness) => setFilterParameters({...filterParameters, hardiness})} isFiltering={true}/>
+          <MySelect label="Height" options={height} selected={filterParameters.height} onValueChange={(height) => setFilterParameters({...filterParameters, height})} isFiltering={true}/>
+          <MySelect label="Life time" options={lifeTime} selected={filterParameters.lifeTime} onValueChange={(lifeTime) => setFilterParameters({...filterParameters, lifeTime})} isFiltering={true}/>
+          <MySelect label="Blooming" options={[{id: 0, name: "Blooming"}, {id: 1, name: "Not blooming"}]} selected={filterParameters.isBlooming} onValueChange={(isBlooming) => setFilterParameters({...filterParameters, isBlooming})} isFiltering={true}/>
+        
+          <Box sx={{ padding:'20px 0'}}>
+            <MyCheckboxList label="Blooming months" options={months} isChecked={(index) => checkedBloomingMonths[index]} onValueChange={(index) => handleOnChangeCheckedBloomingMonths(index)}/>
+          </Box>
+        
+          <Box
+            sx={{
+              display: 'grid',
+              bgcolor: (theme) =>
+                theme.palette.mode === 'dark' ? '#101010' : 'grey.100',
+              color: (theme) =>
+                theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
+              p: 1,
+              marginTop: '10px',
+              fontSize: '0.875rem',
+              fontWeight: '700',
+            }}
+          >
+            <Button variant="contained" onClick={() => filterPlants()}>Submit</Button>
+          </Box>
+        </div>
+      }
       
     </div>
   )

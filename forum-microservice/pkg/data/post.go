@@ -18,6 +18,7 @@ type Post struct {
 	Category    Category
 	Comments    []Comment
 	Base64Image string
+	CreatedAt   time.Time
 }
 
 type PostCountComments struct {
@@ -38,6 +39,7 @@ func NewPost(id uuid.UUID, heading string, content string, username string, cate
 		Username:    username,
 		CategoryID:  categoryID,
 		Base64Image: image,
+		CreatedAt:   time.Now(),
 	}
 }
 

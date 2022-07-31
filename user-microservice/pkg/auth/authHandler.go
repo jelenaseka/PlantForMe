@@ -55,22 +55,22 @@ func (this *AuthHandler) Me(w http.ResponseWriter, r *http.Request) {
 	this.l.Print("Me")
 	w.Header().Add("Content-Type", "application/json")
 
-	var principal Principal
+	username := r.Header["Username"][0]
 
-	_ = json.NewDecoder(r.Body).Decode(&principal)
-
-	if principal.Username == "" {
+	if username == "" {
 		http.Error(w, "Not logged in", http.StatusUnauthorized)
 		return
 	}
 
-	user, err := this.IAuthService.Me(principal.Username)
+	user, err := this.IAuthService.Me(username)
 	if err != nil {
 		http.Error(w, err.Message(), err.Status())
 		return
 	}
 
-	json.NewEncoder(w).Encode(user)
+	userResponse := dto.ConvertUserToUserResponse(user)
+
+	json.NewEncoder(w).Encode(userResponse)
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -79,7 +79,55 @@ func (this *AuthHandler) IsAuthorized(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
 	principal := r.Context().Value(ContextClaimsKey{}).(Principal)
+	this.l.Print("princ:username: ", principal.Username)
 
 	json.NewEncoder(w).Encode(principal)
 	w.WriteHeader(http.StatusOK)
+}
+
+func (this *AuthHandler) ChangeUsername(w http.ResponseWriter, r *http.Request) {
+	this.l.Print("Update username of the current user")
+
+	var user dto.ChangeUsernameRequest
+
+	_ = json.NewDecoder(r.Body).Decode(&user)
+
+	username := r.Header["Username"][0]
+
+	if username == "" {
+		http.Error(w, "Not logged in", http.StatusUnauthorized)
+		return
+	}
+
+	returnedUser, err := this.IAuthService.ChangeUsername(user.NewUsername, username)
+	if err != nil {
+		http.Error(w, err.Message(), err.Status())
+	}
+
+	token, err := this.IAuthService.IssueToken(returnedUser)
+	var bearer = "Bearer " + token
+
+	json.NewEncoder(w).Encode(dto.NewUserWithToken(returnedUser.Username, returnedUser.Role, bearer))
+	w.WriteHeader(http.StatusOK)
+
+}
+
+func (this *AuthHandler) ChangePassword(w http.ResponseWriter, r *http.Request) {
+	this.l.Print("Update password of the current user")
+
+	var user dto.ChangePasswordRequest
+
+	_ = json.NewDecoder(r.Body).Decode(&user)
+
+	username := r.Header["Username"][0]
+
+	if username == "" {
+		http.Error(w, "Not logged in", http.StatusUnauthorized)
+		return
+	}
+
+	_, err := this.IAuthService.ChangePassword(user.NewPassword, username)
+	if err != nil {
+		http.Error(w, err.Message(), err.Status())
+	}
 }

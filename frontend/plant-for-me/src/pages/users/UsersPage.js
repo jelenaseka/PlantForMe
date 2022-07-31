@@ -6,7 +6,6 @@ import { UsersContext } from "../../context/users/UsersContext";
 import SaveUserDialog from "../../components/users/SaveUserDialog";
 import AreYouSureDialog from "../../utils/components/AreYouSureDialog";
 import { toast, ToastContainer } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 
 const UsersPage = () => {
   const usersContext = useContext(UsersContext)
@@ -14,17 +13,7 @@ const UsersPage = () => {
   const [updateUserDialog, setUpdateUserDialogOpen] = useState(false)
   const [deleteUserDialog, setDeleteUserDialogOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState({})
-  const roles = ["Public","Member","Moderator","Admin"];
-  let navigate = useNavigate();
-
-  useEffect(() => {
-    usersContext.getAllHandler().then(res => {
-      if(!res.ok) {
-        //check local storage
-        navigate("/login");
-      }
-    })
-  }, [])
+  const roles = ["Public","Member","Moderator","Admin"]; //todo remove public role
   
   const handleClickUpdate = (user) => {
     setSelectedUser(user)

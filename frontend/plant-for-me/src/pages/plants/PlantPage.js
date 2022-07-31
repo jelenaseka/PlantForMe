@@ -31,10 +31,11 @@ const PlantPage = () => {
 
   const deletePlant = () => {
     plantContext.deletePlantHandler().then(res => {
-      if(!res.ok) {
-        toast.error(res.err);
-      } else {
+      if(res.ok) {
         navigate("/plants");
+      } else {
+        //todo error
+        toast.error(res.err);
       }
     })
   }
@@ -48,7 +49,8 @@ const PlantPage = () => {
             <h2 className="center">Plant parameters</h2>
             <Divider/>
             <ul className="plant-parameters-list">
-              <ListItem icon={<CategoryIcon/>} name="Category" value={plantContext.plant.category.name}/>
+              //TODO
+              {/* <ListItem icon={<CategoryIcon/>} name="Category" value={plantContext.plant.category.name}/> */}
               <ListItem icon={<OpacityIcon/>} name="Watering" value={watering[plantContext.plant.watering].name}/>
               <ListItem icon={<WbSunnyIcon/>} name="Light" value={light[plantContext.plant.light].name}/>
               <ListItem icon={<ExpandIcon/>} name="Growth rate" value={growthRate[plantContext.plant.growthRate].name}/>
@@ -59,20 +61,19 @@ const PlantPage = () => {
             </ul>
           </Grid>
           <Grid container item md={6} justifyContent="center" >
-            
             <Box >
-            <Button variant="contained">
-              <NavLink to={"/plants/update/" + plantContext.plant.id} className="plant-edit-button">
-                Edit plant
-              </NavLink>
-            </Button>
-            <Button variant="contained" onClick={() => deletePlant()}>
-                Delete plant
-            </Button>
-            <h1 className="center">{plantContext.plant.name}</h1>
-            <div className="placeholder-one-plant">
-              <img  src={plantContext.plant.image} alt="Your plant"/>
-            </div>
+              <Button variant="contained">
+                <NavLink to={"/plants/update/" + plantContext.plant.id} className="plant-edit-button">
+                  Edit plant
+                </NavLink>
+              </Button>
+              <Button variant="contained" onClick={() => deletePlant()}>
+                  Delete plant
+              </Button>
+              <h1 className="center">{plantContext.plant.name}</h1>
+              <div className="placeholder-one-plant">
+                <img  src={plantContext.plant.image} alt="Your plant"/>
+              </div>
             </Box>
           </Grid>
           <Grid item md={12}>

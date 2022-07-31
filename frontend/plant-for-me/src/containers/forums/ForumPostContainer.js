@@ -32,11 +32,11 @@ const ForumPostContainer = () => {
   const getCommentsHandler = () => {
     CommentsService.getCommentsByPostId(id, currentPage)
       .then(async res => {
-        if (!res.ok) {
-          return navigate("/plants");
-        } else {
+        if (res.ok) {
           const data = await res.json();
           setComments(data);
+        } else {
+          return navigate("/plants");
         }
       })
       .catch(err => console.log(err))
@@ -45,9 +45,7 @@ const ForumPostContainer = () => {
   const getCommentsCountHandler = () => {
     CommentsService.getCommentsCountByPostId(id)
       .then(async res => {
-        if (!res.ok) {
-          return navigate("/plants");
-        } else {
+        if (res.ok) {
           const data = await res.text();
           var count = parseInt(data)
           setCommentsCount(count)
@@ -57,6 +55,9 @@ const ForumPostContainer = () => {
             count = Math.floor(count / 3)
           }
           setPagesNum(count)
+          
+        } else {
+          return navigate("/plants");
         }
       })
       .catch(err => console.log(err))
@@ -65,11 +66,11 @@ const ForumPostContainer = () => {
   const getPostHandler = () => {
     ForumPostService.getOne(id)
       .then(async res => {
-        if (!res.ok) {
-          return navigate("/404");
-        } else {
+        if (res.ok) {
           const data = await res.json();
           return setPost(data);
+        } else {
+          return navigate("/404");
         }
       })
       .catch(err => console.log(err))
@@ -83,12 +84,13 @@ const ForumPostContainer = () => {
     }
     const submitComment = CommentsService.submitComment(comment)
         .then(async res => {
-          if (!res.ok) {
-            const data = await res.text();
-            return { ok: false, err: data };
-          } else {
+          if (res.ok) {
             await res.text();
             return { ok: true, err: null };
+            
+          } else {
+            const data = await res.text();
+            return { ok: false, err: data };
           }
         })
         .catch(err => console.log(err))

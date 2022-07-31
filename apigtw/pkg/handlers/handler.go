@@ -16,13 +16,15 @@ func Me(address string) http.HandlerFunc {
 
 		principal := r.Context().Value(ContextClaimsKey{}).(Principal)
 
-		principalJSON, err := json.Marshal(principal)
+		// principalJSON, err := json.Marshal(principal)
 
 		client := &http.Client{
 			Timeout: time.Second * 10,
 		}
 
-		req, _ := http.NewRequest(http.MethodGet, address+r.URL.String(), bytes.NewBuffer(principalJSON))
+		req, _ := http.NewRequest(http.MethodGet, address+r.URL.String(), nil)
+		req.Header.Add("Username", principal.Username)
+		req.Header.Add("Role", principal.Role.String())
 
 		res, err := client.Do(req)
 		if err != nil {
@@ -61,8 +63,18 @@ func Post(address string) http.HandlerFunc {
 		w.Header().Add("Content-Type", "application/json")
 		log.Println("POST")
 
+		client := &http.Client{
+			Timeout: time.Second * 10,
+		}
+
 		data, _ := ioutil.ReadAll(r.Body)
-		res, err := http.Post(address+r.URL.String(), "application/json", bytes.NewBuffer(data))
+
+		principal := r.Context().Value(ContextClaimsKey{}).(Principal)
+		req, _ := http.NewRequest(http.MethodPost, address+r.URL.String(), bytes.NewBuffer(data))
+		req.Header.Add("Username", principal.Username)
+		req.Header.Add("Role", principal.Role.String())
+
+		res, err := client.Do(req)
 		if err != nil {
 			// log.Fatalln(err)
 			return
@@ -84,8 +96,14 @@ func Put(address string) http.HandlerFunc {
 			Timeout: time.Second * 10,
 		}
 		data, _ := ioutil.ReadAll(r.Body)
+		log.Print("data ovde:", bytes.NewBuffer(data))
 
 		req, err := http.NewRequest(http.MethodPut, address+r.URL.String(), bytes.NewBuffer(data))
+
+		principal := r.Context().Value(ContextClaimsKey{}).(Principal)
+		req.Header.Add("Username", principal.Username)
+		req.Header.Add("Role", principal.Role.String())
+
 		if err != nil {
 			panic(err)
 		}

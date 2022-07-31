@@ -69,6 +69,12 @@ func main() {
 	putUserR.Use(userHandler.MiddlewareUserValidation)
 	putUserR.HandleFunc("/api/users/{id}", userHandler.Update)
 
+	// PUT AUTH
+
+	putAuthR := r.Methods(http.MethodPut).Subrouter()
+	putAuthR.HandleFunc("/api/auth/username", authHandler.ChangeUsername)
+	putAuthR.HandleFunc("/api/auth/password", authHandler.ChangePassword)
+
 	// DELETE
 
 	deleteUserR := r.Methods(http.MethodDelete).Subrouter()
