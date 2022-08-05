@@ -4,11 +4,13 @@ import { PlantContext} from '../../context/plants/PlantContext'
 import PlantPage from "../../pages/plants/PlantPage";
 import { PlantService } from "../../services/plants/PlantService";
 import { useNavigate } from "react-router-dom";
+import { AuthService } from "../../services/auth/AuthService";
 
 const PlantContainer = () => {
   const { id } = useParams();
   const [plant, setPlant] = useState(null)
   let navigate = useNavigate();
+  const currentUser = AuthService.getCurrentUser()
 
   useEffect(() => {
     getPlantHandler();
@@ -45,7 +47,7 @@ const PlantContainer = () => {
   }
 
   return (
-    <PlantContext.Provider value={{plant, deletePlantHandler}}>
+    <PlantContext.Provider value={{plant, deletePlantHandler, currentUser}}>
       <PlantPage/>
     </PlantContext.Provider>
   )

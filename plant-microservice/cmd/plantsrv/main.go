@@ -28,17 +28,20 @@ func main() {
 	plantRepository := repository.NewPlantRepository()
 	bloomingMonthRepository := repository.NewBloomingMonthRepository()
 	categoryRepository := repository.NewCategoryRepository()
+	plantReviewRepository := repository.NewPlantReviewRepository()
 
 	// SERVICES
 
 	categoryService := service.NewCategoryService(categoryRepository)
 	bloomingMonthService := service.NewBloomingMonthService(bloomingMonthRepository)
 	plantService := service.NewPlantService(plantRepository, categoryService, bloomingMonthService)
+	plantReviewService := service.NewPlantReviewService(plantReviewRepository, plantService)
 
 	// HANDLERS
 
 	plantHandler := handlers.NewPlantHandler(l, plantService)
 	categoryHandler := handlers.NewCategoryHandler(l, categoryService)
+	plantReviewHandler := handlers.NewPlantReviewHandler(l, plantReviewService)
 
 	// GET
 	getPlantsR := r.Methods(http.MethodGet).Subrouter()
@@ -49,6 +52,9 @@ func main() {
 	getCategoriesR.HandleFunc("/api/categories", categoryHandler.GetAll)
 	getCategoriesR.HandleFunc("/api/categories/{id}", categoryHandler.GetOne)
 
+	getPlantReviewsR := r.Methods(http.MethodGet).Subrouter()
+	getPlantReviewsR.HandleFunc("/api/plantreviews/plant/{id}", plantReviewHandler.GetAllByPlant)
+
 	// POST
 	postPlantR := r.Methods(http.MethodPost).Subrouter()
 	postPlantR.Use(plantHandler.MiddlewarePlantValidation)
@@ -57,6 +63,10 @@ func main() {
 	postCategoryR := r.Methods(http.MethodPost).Subrouter()
 	postCategoryR.Use(categoryHandler.MiddlewareCategoryValidation)
 	postCategoryR.HandleFunc("/api/categories", categoryHandler.Create)
+
+	postPlantReviewR := r.Methods(http.MethodPost).Subrouter()
+	postPlantReviewR.Use(plantReviewHandler.MiddlewarePlantReviewValidation)
+	postPlantReviewR.HandleFunc("/api/plantreviews", plantReviewHandler.Create)
 
 	// PUT
 
@@ -68,6 +78,10 @@ func main() {
 	putCategoryR.Use(categoryHandler.MiddlewareCategoryValidation)
 	putCategoryR.HandleFunc("/api/categories/{id}", categoryHandler.Update)
 
+	putPlantReviewR := r.Methods(http.MethodPut).Subrouter()
+	putPlantReviewR.Use(plantReviewHandler.MiddlewarePlantReviewUpdateValidation)
+	putPlantReviewR.HandleFunc("/api/plantreviews/{id}", plantReviewHandler.Update)
+
 	// DELETE
 
 	deletePlantR := r.Methods(http.MethodDelete).Subrouter()
@@ -75,6 +89,9 @@ func main() {
 
 	deleteCategoryR := r.Methods(http.MethodDelete).Subrouter()
 	deleteCategoryR.HandleFunc("/api/categories/{id}", categoryHandler.Delete)
+
+	deletePlantReviewR := r.Methods(http.MethodDelete).Subrouter()
+	deletePlantReviewR.HandleFunc("/api/plantreviews/{id}", plantReviewHandler.Delete)
 
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:8080"},

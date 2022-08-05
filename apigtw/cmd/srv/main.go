@@ -44,18 +44,22 @@ func main() {
 	getPlantsR.HandleFunc("/api/plants/{id}", handlers.Get(configuration.PlantAddress))
 	getPlantsR.HandleFunc("/api/categories", handlers.Get(configuration.PlantAddress))
 	getPlantsR.HandleFunc("/api/categories/{id}", handlers.Get(configuration.PlantAddress))
+	getPlantsR.HandleFunc("/api/plantreviews/plant/{id}", handlers.Get(configuration.PlantAddress))
 
 	postPlantR := r.Methods(http.MethodPost).Subrouter()
 	postPlantR.HandleFunc("/api/plants", handlers.Post(configuration.PlantAddress))
 	postPlantR.HandleFunc("/api/categories", handlers.Post(configuration.PlantAddress))
+	postPlantR.HandleFunc("/api/plantreviews", handlers.Post(configuration.PlantAddress))
 
 	putPlantR := r.Methods(http.MethodPut).Subrouter()
 	putPlantR.HandleFunc("/api/plants/{id}", handlers.Put(configuration.PlantAddress))
 	putPlantR.HandleFunc("/api/categories/{id}", handlers.Put(configuration.PlantAddress))
+	putPlantR.HandleFunc("/api/plantreviews/{id}", handlers.Put(configuration.PlantAddress))
 
 	deletePlantR := r.Methods(http.MethodDelete).Subrouter()
 	deletePlantR.HandleFunc("/api/plants/{id}", handlers.Delete(configuration.PlantAddress))
 	deletePlantR.HandleFunc("/api/categories/{id}", handlers.Delete(configuration.PlantAddress))
+	deletePlantR.HandleFunc("/api/plantreviews/{id}", handlers.Delete(configuration.PlantAddress))
 
 	// FORUM-MICROSERVICE
 

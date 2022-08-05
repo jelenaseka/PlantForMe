@@ -88,6 +88,7 @@ func (service *plantService) Update(plantRequest *dto.PlantRequest, id uuid.UUID
 	bloomMonths := service.IBloomingMonthService.FindByMonths(plantRequest.BloomingMonths)
 	plant := dto.ConvertPlantRequestToPlant(plantRequest, bloomMonths, id)
 
+	//TODO: check if the plant is by user which is logged in
 	_, err := service.IPlantRepository.FindById(plant.ID)
 	if err != nil {
 		return error_utils.NewNotFoundError(fmt.Sprintf("The plant with the id %s is not found in the database.", id.String()))
