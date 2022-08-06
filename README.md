@@ -46,11 +46,11 @@ Biljku definišu:
 Admin može kreirati nove korisnike i moderatore. On takođe ima uvid u izveštaje o moderatorima i biljkama.
 
 ## Arhitektura sistema 
-**API Gateway** – servis za grupisanje svih usluga dostupnih korisnicima. Tehnologija: Nginx
+**API Gateway** – Golang mikroservic za grupisanje svih usluga dostupnih korisnicima.
 
 **User service** – GoLang mikroservis i MySQL baza podataka. Zadužen za registraciju, prijavu, autentifikaciju i autorizaciju i dodavanje novih korisnika
 
-**Plant service** – GoLang mikroservis i MySQL baza podataka za CRUD operacije nad biljkama i za njihovu pretragu
+**Plant service** – GoLang mikroservis i MySQL baza podataka za CRUD operacije nad biljkama i za njihovu pretragu, kao i za ostavljanje ocene i komentara o biljkama
 
 **PlantCare service** – GoLang mikroservis i MySQL baza podataka za korisničko dodavanje svojih kolekcija i biljaka, kao i taskova za biljke
 
