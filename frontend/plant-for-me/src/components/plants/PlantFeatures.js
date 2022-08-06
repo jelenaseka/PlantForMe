@@ -14,7 +14,7 @@ import HeightIcon from '@mui/icons-material/Height';
 import FilterVintageIcon from '@mui/icons-material/FilterVintage';
 import ListItem from '../../components/plants/ListItem'
 import { Link, useNavigate } from "react-router-dom";
-import { green } from "@mui/material/colors";
+import { green, yellow } from "@mui/material/colors";
 import { toast } from 'react-toastify';
 
 const PlantFeatures = () => {
@@ -52,6 +52,7 @@ const PlantFeatures = () => {
   return (
     <Card >
       <CardHeader
+        
         action={
           <IconButton aria-label="settings" onClick={handleClick}>
             <MoreVertIcon />

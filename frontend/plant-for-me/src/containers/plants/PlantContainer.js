@@ -126,6 +126,19 @@ const PlantContainer = () => {
     return updateReview;
   }
 
+  const deleteReviewHandler = (reviewID) => {
+    const deleteReview = PlantReviewService.deleteReview(reviewID)
+      .then(async res => {
+        if(res.ok) {
+          return { ok: true };
+        } else {
+          const data = await res.text();
+          return { ok: false, err: data};
+        }
+      }).catch(err => console.log(err));
+    return deleteReview;
+  }
+
   return (
     <PlantContext.Provider value={{
       plant, 
@@ -135,7 +148,8 @@ const PlantContainer = () => {
       getAverageRatingHandler, 
       getAllReviewsHandler,
       submitReviewHandler,
-      updateReviewHandler}}>
+      updateReviewHandler,
+      deleteReviewHandler}}>
       <PlantPage/>
     </PlantContext.Provider>
   )

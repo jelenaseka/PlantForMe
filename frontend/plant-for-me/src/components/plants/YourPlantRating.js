@@ -5,6 +5,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CheckIcon from '@mui/icons-material/Check';
 import { PlantContext } from "../../context/plants/PlantContext";
 import { toast } from 'react-toastify';
+import { green, orange, red } from "@mui/material/colors";
 
 const YourPlantRating = ({userLeftReview, refresh, userReview}) => {
   const plantContext = useContext(PlantContext);
@@ -21,6 +22,17 @@ const YourPlantRating = ({userLeftReview, refresh, userReview}) => {
     plantContext.submitReviewHandler(review, rating).then(res => {
       if(res.ok) {
         toast.success("Successfully submitted review!")
+        refresh();
+      }
+    })
+  }
+
+  const deleteReview = () => {
+    plantContext.deleteReviewHandler(userReview.id).then(res => {
+      if(res.ok) {
+        setRating(0);
+        setReview("");
+        toast.success("Successfully deleted review!")
         refresh();
       }
     })
@@ -58,9 +70,15 @@ const YourPlantRating = ({userLeftReview, refresh, userReview}) => {
           />
           {
             (userLeftReview && !editing) &&
-            <Button onClick={() => setEditing(true)}>
-              <EditIcon/>
-            </Button>
+            <div>
+              <Button onClick={() => setEditing(true)}>
+                <EditIcon/>
+              </Button>
+              <Button sx={{color: red[700]}}>
+                <DeleteIcon onClick={() => deleteReview(true)}/>
+              </Button>
+            </div>
+            
           }
           {
             editing &&

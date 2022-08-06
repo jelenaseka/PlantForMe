@@ -26,4 +26,10 @@ export const PlantReviewService = {
       body: JSON.stringify(plantReview)
     })
   },
+  deleteReview: (id) => {
+    return fetch(baseUrl + `/${id}`, {
+      method: 'DELETE', 
+      headers: getHeaders()
+    })
+  }
 }

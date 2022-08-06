@@ -1,4 +1,5 @@
 import { Avatar, Button, Chip, Divider, FormControl, Paper, Rating, TextField, Typography } from "@mui/material";
+import { yellow } from "@mui/material/colors";
 import { Box } from "@mui/system";
 import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -55,7 +56,7 @@ const PlantRatings = () => {
   }
   
   return (
-    <div>
+    <Box sx={{ bgcolor: yellow[50], paddingTop:'2em'}}>
       {
         plantContext.currentUser ?
         <YourPlantRating userLeftReview={userLeftReview} refresh={refresh} userReview={userReview}/>
@@ -94,7 +95,7 @@ const PlantRatings = () => {
           ))
         }
       </Box>
-    </div>
+    </Box>
   )
 }
 
