@@ -3,7 +3,6 @@ package handlers
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -43,10 +42,18 @@ func Get(address string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "application/json")
 		log.Println("GET")
+		principal := r.Context().Value(ContextClaimsKey{}).(Principal)
 
-		res, err := http.Get(address + r.URL.String())
+		client := &http.Client{
+			Timeout: time.Second * 10,
+		}
+
+		req, _ := http.NewRequest(http.MethodGet, address+r.URL.String(), nil)
+		req.Header.Add("Username", principal.Username)
+		req.Header.Add("Role", principal.Role.String())
+
+		res, err := client.Do(req)
 		if err != nil {
-			fmt.Println("udje ovde")
 			// log.Fatalln(err)
 			return
 		}

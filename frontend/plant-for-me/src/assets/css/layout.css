@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital@0;1&display=swap');
+
 .image-placeholder {
     margin-top: 2em;
     border: 1px solid gainsboro
@@ -34,14 +36,12 @@
 }
 
 .plant-parameters-list {
-    /* border: 1px solid black; */
     list-style-type: none;
-    margin: 1em 5em;
 }
 
 .detail {
     padding: 1em 0;
-    border-bottom: 1px solid #eeeeee;
+    /* border-bottom: 1px solid #eeeeee; */
 }
 .detail b {
 font-size: 11px;
@@ -59,4 +59,10 @@ font-size: 15px;
 .plant-edit-button {
     color: white;
     text-decoration: none;
+}
+
+.plant-name-font {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 300;
 }
