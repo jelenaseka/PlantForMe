@@ -17,6 +17,7 @@ import { theme } from './assets/theme/theme';
 import 'react-toastify/dist/ReactToastify.css';
 import RegistrationContainer from './containers/registration/RegistrationContainer';
 import ProfileContainer from './containers/profile/ProfileContainer';
+import PlantCareContainer from './containers/plant-care/PlantCareContainer';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
           <Route path="/users" element={<UsersContainer/>}/>
           <Route path="/forums" element={<ForumsContainer/>}/>
           <Route path="/forums/:id" element={<ForumPostContainer/>}/>
+          <Route path="/plantcare" element={<PlantCareContainer/>}/>
           <Route path="/login" element={<LoginContainer/>}/>
           <Route path="/registration" element={<RegistrationContainer/>}/>
           <Route path='/me' element={<ProfileContainer/>}/>
