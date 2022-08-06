@@ -45,6 +45,8 @@ func main() {
 	getPlantsR.HandleFunc("/api/categories", handlers.Get(configuration.PlantAddress))
 	getPlantsR.HandleFunc("/api/categories/{id}", handlers.Get(configuration.PlantAddress))
 	getPlantsR.HandleFunc("/api/plantreviews/plant/{id}", handlers.Get(configuration.PlantAddress))
+	getPlantsR.HandleFunc("/api/plantreviews/plant/{id}/rating", handlers.Get(configuration.PlantAddress))
+	getPlantsR.HandleFunc("/api/plantreviews/plant/{id}/mine", handlers.Get(configuration.PlantAddress))
 
 	postPlantR := r.Methods(http.MethodPost).Subrouter()
 	postPlantR.HandleFunc("/api/plants", handlers.Post(configuration.PlantAddress))

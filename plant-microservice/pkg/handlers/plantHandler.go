@@ -59,9 +59,16 @@ func (plant *Plant) GetOne(w http.ResponseWriter, r *http.Request) {
 func (plant *Plant) Create(w http.ResponseWriter, r *http.Request) {
 	plant.l.Print("Create plant")
 
+	username := r.Header["Username"][0]
+
+	if username == "" {
+		http.Error(w, "Not logged in", http.StatusUnauthorized)
+		return
+	}
+
 	plantRequest := r.Context().Value(ContextPlantKey{}).(dto.PlantRequest)
 
-	id, err := plant.IPlantService.Create(&plantRequest)
+	id, err := plant.IPlantService.Create(&plantRequest, username)
 	if err != nil {
 		http.Error(w, err.Message(), err.Status())
 		return

@@ -1,21 +1,39 @@
 import { Box, Button, FormControl, Paper, Rating, TextField } from "@mui/material";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckIcon from '@mui/icons-material/Check';
+import { PlantContext } from "../../context/plants/PlantContext";
+import { toast } from 'react-toastify';
 
-const YourPlantRating = ({userLeftReview}) => {
+const YourPlantRating = ({userLeftReview, refresh, userReview}) => {
+  const plantContext = useContext(PlantContext);
   const [review, setReview] = useState("");
   const [rating, setRating] = useState(0);
   const [editing, setEditing] = useState(false);
 
+  useEffect(() => {
+    setReview(userReview.comment);
+    setRating(userReview.rating);
+  }, [userReview])
   
   const submitReview = () => {
-    console.log(review, rating)
+    plantContext.submitReviewHandler(review, rating).then(res => {
+      if(res.ok) {
+        toast.success("Successfully submitted review!")
+        refresh();
+      }
+    })
   }
 
-  const isEditing = () => {
-
+  const updateReview = () => {
+    setEditing(false);
+    plantContext.updateReviewHandler(review, rating, userReview.id).then(res=> {
+      if(res.ok) {
+        toast.success("Successfully edited review!")
+        refresh();
+      }
+    })
   }
 
   return (
@@ -46,7 +64,7 @@ const YourPlantRating = ({userLeftReview}) => {
           }
           {
             editing &&
-            <Button onClick={() => setEditing(false)}>
+            <Button onClick={updateReview}>
               <CheckIcon/>
             </Button>
           }

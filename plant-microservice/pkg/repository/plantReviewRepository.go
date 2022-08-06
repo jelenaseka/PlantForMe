@@ -11,7 +11,9 @@ type plantReviewRepository struct {
 }
 
 type PlantReviewRepositoryInterface interface {
-	FindAllByPlant(id uuid.UUID) ([]data.PlantReview, error)
+	FindAllByPlant(uuid.UUID) ([]data.PlantReview, error)
+	FindAverageRatingByPlant(uuid.UUID) (float64, error)
+	FindOneByPlantAndUsername(uuid.UUID, string) (*data.PlantReview, error)
 	Create(plantReview *data.PlantReview) error
 	FindById(id uuid.UUID) (*data.PlantReview, error)
 	Update(plantReview *data.PlantReview) error
@@ -44,6 +46,29 @@ func (repo *plantReviewRepository) FindAllByPlant(id uuid.UUID) ([]data.PlantRev
 	}
 
 	return plantReviews, nil
+}
+
+func (repo *plantReviewRepository) FindAverageRatingByPlant(id uuid.UUID) (float64, error) {
+	db := config.GetDB()
+	var averageRating float64
+	result := db.Where("plant_id = ?", id).Table("plant_reviews").Select("AVG(rating)").Find(&averageRating)
+	if result.Error != nil {
+		return -1, result.Error
+	}
+
+	return averageRating, nil
+}
+
+func (repo *plantReviewRepository) FindOneByPlantAndUsername(id uuid.UUID, username string) (*data.PlantReview, error) {
+	db := config.GetDB()
+	var plantReview data.PlantReview
+	result := db.Where("plant_id = ? AND username = ?", id, username).First(&plantReview)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &plantReview, nil
 }
 
 func (repo *plantReviewRepository) Create(plantReview *data.PlantReview) error {

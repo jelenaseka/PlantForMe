@@ -16,8 +16,10 @@ type plantReviewService struct {
 
 type PlantReviewServiceInterface interface {
 	GetAllByPlant(uuid.UUID) ([]dto.PlantReviewResponse, error_utils.MessageErr)
-	Create(plantReviewRequest *dto.PlantReviewRequest) (*uuid.NullUUID, error_utils.MessageErr)
-	Update(plantReviewUpdateRequest *dto.PlantReviewUpdateRequest, id uuid.UUID) error_utils.MessageErr
+	GetAverageRatingByPlant(uuid.UUID) (float64, error_utils.MessageErr)
+	GetUserReviewByPlant(uuid.UUID, string) (*dto.PlantReviewResponse, error_utils.MessageErr)
+	Create(*dto.PlantReviewRequest, string) (*uuid.NullUUID, error_utils.MessageErr)
+	Update(*dto.PlantReviewUpdateRequest, uuid.UUID) error_utils.MessageErr
 	Delete(id uuid.UUID) error_utils.MessageErr
 }
 
@@ -39,9 +41,33 @@ func (service *plantReviewService) GetAllByPlant(id uuid.UUID) ([]dto.PlantRevie
 	return plantReviewsResponse, nil
 }
 
-func (service *plantReviewService) Create(plantReviewRequest *dto.PlantReviewRequest) (*uuid.NullUUID, error_utils.MessageErr) {
+func (service *plantReviewService) GetAverageRatingByPlant(id uuid.UUID) (float64, error_utils.MessageErr) {
+	rating, err := service.IPlantReviewRepository.FindAverageRatingByPlant(id)
+
+	if err != nil {
+		return -1, error_utils.NewInternalServerError(fmt.Sprintf("Error when trying to retrieve plants: %s", err.Error()))
+	}
+
+	return rating, nil
+}
+
+func (service *plantReviewService) GetUserReviewByPlant(id uuid.UUID, username string) (*dto.PlantReviewResponse, error_utils.MessageErr) {
+	review, err := service.IPlantReviewRepository.FindOneByPlantAndUsername(id, username)
+	if err != nil {
+		if err.Error() == "record not found" {
+			return nil, nil
+		}
+		return nil, error_utils.NewInternalServerError(fmt.Sprintf("Error when trying to retrieve plants: %s", err.Error()))
+	}
+
+	plantReviewResponse := dto.NewPlantReviewResponseFromPlantReview(*review)
+	return plantReviewResponse, nil
+
+}
+
+func (service *plantReviewService) Create(plantReviewRequest *dto.PlantReviewRequest, username string) (*uuid.NullUUID, error_utils.MessageErr) {
 	id := uuid.New()
-	plantReview := dto.NewPlantReviewFromPlantReviewRequest(plantReviewRequest, id)
+	plantReview := dto.NewPlantReviewFromPlantReviewRequest(plantReviewRequest, id, username)
 
 	_, msg_err := service.IPlantService.GetOneById(plantReview.PlantID)
 	if msg_err != nil {
@@ -63,6 +89,7 @@ func (service *plantReviewService) Update(plantReviewUpdateRequest *dto.PlantRev
 		return error_utils.NewNotFoundError(fmt.Sprintf("The plant review with the id %s is not found in the database.", id.String()))
 	}
 	plantReview.Comment = plantReviewUpdateRequest.Comment
+	plantReview.Rating = plantReviewUpdateRequest.Rating
 
 	err = service.IPlantReviewRepository.Update(plantReview)
 	if err != nil {

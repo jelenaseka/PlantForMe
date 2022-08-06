@@ -14,6 +14,8 @@ type PlantReview struct {
 	Comment   string    `gorm:"type:varchar(500)"`
 	Plant     Plant
 	PlantID   uuid.UUID `gorm:"type:varchar(36)"`
+	Username  string    `gorm:"type:varchar(45)"`
+	Rating    int       `gorm:"type:int"`
 	CreatedAt time.Time
 }
 

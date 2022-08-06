@@ -21,7 +21,7 @@ type plantService struct {
 type PlantServiceInterface interface {
 	GetAll(url.Values) ([]dto.PlantResponse, error_utils.MessageErr)
 	GetOneById(uuid.UUID) (*dto.PlantResponse, error_utils.MessageErr)
-	Create(*dto.PlantRequest) (*uuid.NullUUID, error_utils.MessageErr)
+	Create(*dto.PlantRequest, string) (*uuid.NullUUID, error_utils.MessageErr)
 	Update(*dto.PlantRequest, uuid.UUID) error_utils.MessageErr
 	Delete(uuid.UUID) error_utils.MessageErr
 }
@@ -61,8 +61,9 @@ func (service *plantService) GetOneById(id uuid.UUID) (*dto.PlantResponse, error
 	return plantResponse, nil
 }
 
-func (service *plantService) Create(plantRequest *dto.PlantRequest) (*uuid.NullUUID, error_utils.MessageErr) {
+func (service *plantService) Create(plantRequest *dto.PlantRequest, username string) (*uuid.NullUUID, error_utils.MessageErr) {
 	id := uuid.New()
+	//TODO ovde ces dodati ko je kreirao
 	bloomMonths := service.IBloomingMonthService.FindByMonths(plantRequest.BloomingMonths)
 	plant := dto.ConvertPlantRequestToPlant(plantRequest, bloomMonths, id)
 

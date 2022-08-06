@@ -54,6 +54,8 @@ func main() {
 
 	getPlantReviewsR := r.Methods(http.MethodGet).Subrouter()
 	getPlantReviewsR.HandleFunc("/api/plantreviews/plant/{id}", plantReviewHandler.GetAllByPlant)
+	getPlantReviewsR.HandleFunc("/api/plantreviews/plant/{id}/rating", plantReviewHandler.GetAverageRatingByPlant)
+	getPlantReviewsR.HandleFunc("/api/plantreviews/plant/{id}/mine", plantReviewHandler.GetUserReviewByPlant)
 
 	// POST
 	postPlantR := r.Methods(http.MethodPost).Subrouter()
