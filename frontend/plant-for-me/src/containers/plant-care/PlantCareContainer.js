@@ -13,19 +13,23 @@ const PlantCareContainer = () => {
   useEffect(() => {
     setCollections([
       {
+        id: 1,
         image: null,
-        heading: 'Garden',
+        heading: 'Garden', //ovo je name
         description: 'This is place where I put my garden plants'
       },
       {
+        id: 2,
         heading: 'Indoor plants',
         description: 'Here are all of my indoor plants'
       },
       {
+        id: 3,
         heading: 'Adenium',
         description: 'Here are all of my adeniums'
       },
       {
+        id: 4,
         heading: 'Cactuses',
         description: ''
       }

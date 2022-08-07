@@ -1,11 +1,22 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from "@mui/material";
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 
 const AddCollectionDialog = ({open, handleCancel, handleSubmit}) => {
   const [collection, setCollection] = useState({
     name: "",
     description: ""
   })
+
+  const submit = () => {
+    if(collection.name.trim() === "") {
+      toast.error("Invalid data in the field.") //todo change to underline text
+      return;
+    }
+    collection.name = collection.name.trim();
+    //todo - make util function that goes through object and trims strings
+    handleSubmit(collection);
+  }
 
   return (
     <Dialog open={open} onClose={handleCancel}>
@@ -20,7 +31,7 @@ const AddCollectionDialog = ({open, handleCancel, handleSubmit}) => {
           label="Name"
           type="text"
           fullWidth
-          variant="standard"
+          variant="filled"
           value={collection.name}
           onChange={(e) => setCollection({...collection, name: e.target.value})}
           onBlur={() => setCollection({...collection, name: collection.name.trim()})}
@@ -31,7 +42,7 @@ const AddCollectionDialog = ({open, handleCancel, handleSubmit}) => {
           label="Description"
           type="text"
           fullWidth
-          variant="standard"
+          variant="filled"
           multiline
           value={collection.description}
           onChange={(e) => setCollection({...collection, description: e.target.value})}
@@ -40,7 +51,7 @@ const AddCollectionDialog = ({open, handleCancel, handleSubmit}) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={handleCancel}>Cancel</Button>
-        <Button onClick={() => handleSubmit(collection)}>Submit</Button>
+        <Button onClick={() => submit()}>Submit</Button>
       </DialogActions>
     </Dialog>
   )

@@ -4,6 +4,7 @@ import { Box } from "@mui/system";
 import { PlantCareContext } from "../../context/plantcare/PlantCareContext";
 import CollectionCard from "../../components/plantcare/CollectionCard";
 import AddCollectionCard from "../../components/plantcare/AddCollectionCard";
+import { ToastContainer } from 'react-toastify';
 
 const PlantCarePage = () => {
   const plantCareContext = useContext(PlantCareContext);
@@ -24,6 +25,7 @@ const PlantCarePage = () => {
           <AddCollectionCard/>
         </Grid>
       </Grid>
+      <ToastContainer/>
     </Box>
   )
 }

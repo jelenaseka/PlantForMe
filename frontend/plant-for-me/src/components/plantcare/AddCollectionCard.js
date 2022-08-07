@@ -36,6 +36,7 @@ const AddCollectionCard = () => {
         handleCancel={() => {setAddCollectionDialogOpened(false);console.log('canceled')}}
         handleSubmit={(collection) => addCollection(collection)}
       />
+      
     </div>
     
   )

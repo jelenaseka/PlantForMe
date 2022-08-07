@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Button, Card, CardActions, CardContent, CardMedia, Grid, Typography } from "@mui/material";
+import { Button, Card, CardActions, CardContent, CardMedia, Grid, Link, Typography } from "@mui/material";
 import { amber, blue, brown, cyan, deepOrange, deepPurple, green, grey, indigo, lightBlue, lightGreen, lime, orange, pink, purple, red, teal, yellow } from "@mui/material/colors";
+import { NavLink } from "react-router-dom";
 
 const CollectionCard = ({collection}) => {
   const colorHue = 200;
@@ -39,7 +40,7 @@ const CollectionCard = ({collection}) => {
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small">See collection</Button>
+        <Button size="small" component={NavLink} to={`/plantcare/${collection.id}`}>See collection</Button>
       </CardActions>
     </Card>
   )
