@@ -26,6 +26,7 @@ type CollectionResponse struct {
 }
 
 func NewCollectionResponse(id uuid.UUID, name string, description string, collectionPlants []data.CollectionPlant, username string) *CollectionResponse {
+	//dto
 	collectionPlantsDTO := make([]CollectionPlantResponse, 0) //TODO
 	return &CollectionResponse{
 		ID:               id.String(),

@@ -30,6 +30,9 @@ type CollectionPlantUpdateRequest struct {
 
 func NewCollectionPlantResponse(id uuid.UUID, collectionId uuid.UUID, nickname string, referentPlantId uuid.UUID, base64 string, tasks []data.Task) *CollectionPlantResponse {
 	tasksDTO := make([]TaskResponse, 0)
+	for _, v := range tasks {
+		tasksDTO = append(tasksDTO, *NewTaskResponse(v.ID, v.CollectionPlantID, v.Type, v.Status, v.Date, v.Notes))
+	}
 	return &CollectionPlantResponse{
 		ID:              id.String(),
 		CollectionID:    collectionId.String(),

@@ -14,6 +14,8 @@ type ContextCollectionUpdateKey struct{}
 type ContextCollectionPlantKey struct{}
 type ContextCollectionPlantUpdateKey struct{}
 
+type ContextTaskKey struct{}
+
 func (handler *CollectionHandler) MiddlewareCollectionValidation(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Print(r.RequestURI)
@@ -103,6 +105,31 @@ func (handler *CollectionPlantHandler) MiddlewareCollectionPlantUpdateValidation
 		}
 
 		ctx := context.WithValue(r.Context(), ContextCollectionPlantUpdateKey{}, collectionPlantRequest)
+		r = r.WithContext(ctx)
+		next.ServeHTTP(w, r)
+	})
+}
+
+// task
+
+func (handler *TaskHandler) MiddlewareTaskValidation(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Print(r.RequestURI)
+
+		var taskRequest dto.TaskRequest
+		err := json.NewDecoder(r.Body).Decode(&taskRequest)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		err = taskRequest.Validate()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		ctx := context.WithValue(r.Context(), ContextTaskKey{}, taskRequest)
 		r = r.WithContext(ctx)
 		next.ServeHTTP(w, r)
 	})

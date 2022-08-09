@@ -30,7 +30,7 @@ func (this *CollectionPlantHandler) GetAllByCollectionId(w http.ResponseWriter, 
 		return
 	}
 
-	this.l.Print("Get all collection plants")
+	this.l.Print("Get all collection plants by collection id")
 
 	collectionPlants, err := this.ICollectionPlantService.GetAllByCollectionId(uuid.Must(uuid.Parse(id)))
 	if err != nil {

@@ -25,7 +25,7 @@ func NewCollectionPlantRepository() CollectionPlantRepositoryInterface {
 func (this *collectionPlantRepository) FindAllByCollectionId(id uuid.UUID) ([]data.CollectionPlant, error) {
 	db := config.GetDB()
 	var collectionPlants []data.CollectionPlant
-	result := db.Preload("Tasks").Where("collection_id = ?", id.String()).Find(&collectionPlants)
+	result := db.Debug().Preload("Tasks", "status = ?", "WAITING").Where("collection_id = ?", id.String()).Find(&collectionPlants)
 
 	if result.Error != nil {
 		return nil, result.Error
