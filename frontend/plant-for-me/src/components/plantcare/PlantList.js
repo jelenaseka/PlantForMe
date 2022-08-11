@@ -13,7 +13,7 @@ import { Button, Checkbox, ListItemButton } from "@mui/material";
 import { Box } from "@mui/system";
 
 
-const PlantList = ({handleSubmit, selectedId, setSelectedId}) => {
+const PlantList = ({handleSubmit, selectedId, setSelectedPlant}) => {
   const collectionContext = useContext(CollectionContext);
   
 
@@ -23,7 +23,7 @@ const PlantList = ({handleSubmit, selectedId, setSelectedId}) => {
           collectionContext.allPlants.map((plant, index) => (
             <ListItemButton key={index}
               selected={selectedId === plant.id}
-              onClick={() => setSelectedId(plant.id)}
+              onClick={() => setSelectedPlant(plant)}
             >
               <ListItemAvatar>
                 <Avatar alt={plant.name} src={plant.image}>

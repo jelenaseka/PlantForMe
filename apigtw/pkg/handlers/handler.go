@@ -147,6 +147,8 @@ func Delete(address string) http.HandlerFunc {
 			panic(err)
 		}
 		req.Header.Set("Content-Type", "application/json; charset=utf-8")
+		req.Header.Add("Username", principal.Username)
+		req.Header.Add("Role", principal.Role.String())
 
 		res, err := client.Do(req)
 		if err != nil {

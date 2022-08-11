@@ -9,12 +9,12 @@ import (
 )
 
 type TaskResponse struct {
-	ID                string `json:"id"`
-	CollectionPlantID string `json:"collectionPlantId"`
-	Type              string `json:"type"`
-	Status            string `json:"status"`
-	Date              string `json:"date"`
-	Notes             string `json:"notes"`
+	ID                string          `json:"id"`
+	CollectionPlantID string          `json:"collectionPlantId"`
+	Type              data.TaskType   `json:"type"`
+	Status            data.TaskStatus `json:"status"`
+	Date              string          `json:"date"`
+	Notes             string          `json:"notes"`
 }
 
 type TaskRequest struct {
@@ -28,8 +28,8 @@ func NewTaskResponse(id uuid.UUID, collectionPlantId uuid.UUID, taskType data.Ta
 	return &TaskResponse{
 		ID:                id.String(),
 		CollectionPlantID: collectionPlantId.String(),
-		Type:              taskType.String(),
-		Status:            status.String(),
+		Type:              taskType,
+		Status:            status,
 		Date:              date.Format(time.RFC3339),
 		Notes:             notes,
 	}

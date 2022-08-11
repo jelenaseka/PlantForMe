@@ -2,8 +2,12 @@ import React, { useContext, useEffect, useState } from "react";
 import { Button, Card, CardActions, CardContent, CardMedia, Grid, Link, Typography } from "@mui/material";
 import { amber, blue, brown, cyan, deepOrange, deepPurple, green, grey, indigo, lightBlue, lightGreen, lime, orange, pink, purple, red, teal, yellow } from "@mui/material/colors";
 import { NavLink } from "react-router-dom";
+import DeleteIcon from '@mui/icons-material/Delete';
+import { toast } from "react-toastify";
+import { PlantCareContext } from "../../context/plantcare/PlantCareContext";
 
 const CollectionCard = ({collection}) => {
+  const plantCareContext = useContext(PlantCareContext);
   const colorHue = 200;
     
   const randomColor = () => {
@@ -13,6 +17,17 @@ const CollectionCard = ({collection}) => {
 
     var rand_index = Math.floor(Math.random() * colors.length);
     return colors[rand_index];
+  }
+
+  const deleteCollection = () => {
+    plantCareContext.deleteCollectionHandler(collection.id)
+    .then(res => {
+      if(res.ok) {
+        toast.success("Successfully deleted collection!");
+      } else {
+        toast.error(res.err)
+      }
+    })
   }
 
   return (
@@ -33,7 +48,7 @@ const CollectionCard = ({collection}) => {
       
       <CardContent>
         <Typography gutterBottom variant="h5" component="div">
-          {collection.heading}
+          {collection.name}
         </Typography>
         <Typography variant="body2" color="text.secondary">
           {collection.description}
@@ -41,6 +56,7 @@ const CollectionCard = ({collection}) => {
       </CardContent>
       <CardActions>
         <Button size="small" component={NavLink} to={`/plantcare/${collection.id}`}>See collection</Button>
+        <Button size="small" onClick={() => deleteCollection()}><DeleteIcon/></Button>
       </CardActions>
     </Card>
   )

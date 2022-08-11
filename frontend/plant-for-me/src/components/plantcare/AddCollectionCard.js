@@ -1,15 +1,25 @@
 import { Button, Card, CardContent, CardMedia, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import AddIcon from '@mui/icons-material/Add';
 import AddCollectionDialog from "./AddCollectionDialog";
 import { grey } from "@mui/material/colors";
+import { PlantCareContext } from "../../context/plantcare/PlantCareContext";
+import { toast } from "react-toastify";
 
 const AddCollectionCard = () => {
+  const plantCareContext = useContext(PlantCareContext);
   const [addCollectionDialogOpened, setAddCollectionDialogOpened] = useState(false);
 
   const addCollection = (collection) => {
-    console.log(collection);
-    setAddCollectionDialogOpened(false);
+    plantCareContext.addCollectionHandler(collection)
+      .then(res => {
+        if(res.ok) {
+          toast.success("Successfully added new collection!");
+          setAddCollectionDialogOpened(false);
+        } else {
+          toast.error(res.err)
+        }
+      })
   }
 
   return (

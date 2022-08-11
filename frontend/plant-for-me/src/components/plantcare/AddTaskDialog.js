@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 
 const AddTaskDialog = ({open, handleCancel,  handleSubmit}) => {
   const [task, setTask] = useState({
-    taskType: "WATERING",
+    type: 0,
     notes: "",
     date: null
   });
@@ -24,7 +24,7 @@ const AddTaskDialog = ({open, handleCancel,  handleSubmit}) => {
     }
     handleSubmit(task);
     setTask({
-      taskType: "WATERING",
+      type: 0,
       notes: "",
       date: null
     });
@@ -42,16 +42,16 @@ const AddTaskDialog = ({open, handleCancel,  handleSubmit}) => {
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            value={task.taskType}
+            value={task.type}
             label="Task type"
-            onChange={(e) => setTask({...task, taskType: e.target.value})}
+            onChange={(e) => setTask({...task, type: e.target.value})}
           >
-            <MenuItem value="WATERING">Watering</MenuItem>
-            <MenuItem value="TRANSPLANT">Transplant</MenuItem>
-            <MenuItem value="TRIME">Trime</MenuItem>
-            <MenuItem value="FERTILIZE">Fertilize</MenuItem>
-            <MenuItem value="FUNGICIDE">Fungicide</MenuItem>
-            <MenuItem value="INSECTICIDE">Insecticide</MenuItem>
+            <MenuItem value={0}>Watering</MenuItem>
+            <MenuItem value={1}>Transplant</MenuItem>
+            <MenuItem value={2}>Trime</MenuItem>
+            <MenuItem value={3}>Fertilize</MenuItem>
+            <MenuItem value={4}>Fungicide</MenuItem>
+            <MenuItem value={5}>Insecticide</MenuItem>
           </Select>
         </FormControl>
         <TextField

@@ -105,14 +105,17 @@ func main() {
 	postPlantCareR := r.Methods(http.MethodPost).Subrouter()
 	postPlantCareR.HandleFunc("/api/collections", handlers.Post(configuration.PlantCareAddress))
 	postPlantCareR.HandleFunc("/api/collectionplants", handlers.Post(configuration.PlantCareAddress))
+	postPlantCareR.HandleFunc("/api/tasks", handlers.Post(configuration.PlantCareAddress))
 
 	putPlantCareR := r.Methods(http.MethodPut).Subrouter()
 	putPlantCareR.HandleFunc("/api/collections/{id}", handlers.Put(configuration.PlantCareAddress))
 	putPlantCareR.HandleFunc("/api/collectionplants/{id}", handlers.Put(configuration.PlantCareAddress))
+	putPlantCareR.HandleFunc("/api/tasks/{id}/done", handlers.Put(configuration.PlantCareAddress))
 
 	deletePlantCareR := r.Methods(http.MethodDelete).Subrouter()
 	deletePlantCareR.HandleFunc("/api/collections/{id}", handlers.Delete(configuration.PlantCareAddress))
 	deletePlantCareR.HandleFunc("/api/collectionplants/{id}", handlers.Delete(configuration.PlantCareAddress))
+	deletePlantCareR.HandleFunc("/api/tasks/{id}", handlers.Delete(configuration.PlantCareAddress))
 
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{configuration.FrontendAddress},

@@ -20,9 +20,9 @@ const CollectionPage = () => {
         Collection - {collectionContext.collection.name}
       </Typography>
       {
-        collectionContext.collection.plants &&
+        collectionContext.collectionPlants &&
         <Grid sx={{padding:'2em'}} container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
-          {collectionContext.collection.plants.map((plant, index) => (
+          {collectionContext.collectionPlants.map((plant, index) => (
             <Grid item xs={4} sm={4} md={4} key={index}>
               <CollectionPlantCard plant={plant}/>
             </Grid>

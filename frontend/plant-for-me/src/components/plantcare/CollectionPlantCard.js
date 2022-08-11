@@ -15,9 +15,16 @@ import GrassIcon from '@mui/icons-material/Grass';
 import CheckIcon from '@mui/icons-material/Check';
 import AddIcon from '@mui/icons-material/Add';
 import { CollectionContext } from "../../context/plantcare/CollectionContext";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { Box } from "@mui/system";
 import AddTaskDialog from "./AddTaskDialog";
+import DeleteIcon from '@mui/icons-material/Delete';
+import { toast } from "react-toastify";
+import FormatColorFillIcon from '@mui/icons-material/FormatColorFill';
+import ContentCutIcon from '@mui/icons-material/ContentCut';
+import BugReportIcon from '@mui/icons-material/BugReport';
+import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
+import format from 'date-fns/format'
 
 const CollectionPlantCard = ({plant}) => {
   const collectionContext = useContext(CollectionContext);
@@ -33,28 +40,58 @@ const CollectionPlantCard = ({plant}) => {
     return colors[rand_index];
   }
 
+  const deleteCollectionPlant = () => {
+    collectionContext.deleteCollectionPlantHandler(plant.id)
+    .then(res => {
+      if(res.ok) {
+        toast.success("Successfully deleted collection plant!");
+        collectionContext.getCollectionPlantsHandler();
+      } else {
+        toast.error(res.err)
+      }
+    })
+  }
+
   const addTask = (task) => {
-    task.date = task.date.toISOString()//.slice(0, -1)
-    console.log(task)
-    task.plantID = plant.id;
-    setAddTaskDialogOpened(false);
-    collectionContext.addTaskHandler(task);
+    task.date = task.date.toISOString()
+    task.collectionPlantId = plant.id;
+    
+    collectionContext.addTaskHandler(task).then(res => {
+      if(res.ok) {
+        toast.success("Successfully added task!");
+        collectionContext.getCollectionPlantsHandler();
+        setAddTaskDialogOpened(false);
+      } else {
+        toast.error(res.err)
+      }
+    })
   }
 
   const setTaskDone = (id) => {
-    console.log(id);
+    collectionContext.setTaskToDoneHandler(id).then(res => {
+      if(res.ok) {
+        toast.success("Task is done");
+        collectionContext.getCollectionPlantsHandler();
+      } else {
+        toast.error(res.err)
+      }
+    })
+  }
+
+  const getFormattedDate = (date) => {
+    return format(new Date(date), 'dd-MM-yyyy')
   }
 
   return (
     <div>
       <Card>
         {
-          plant.image ?
+          plant.base64Image ?
           <CardMedia
             component="img"
             height="140"
-            image="/static/images/cards/contemplative-reptile.jpg"
-            alt="green iguana"
+            image={plant.base64Image}
+            alt={plant.referentPlantName}
           />
           : 
           <CardMedia
@@ -63,35 +100,35 @@ const CollectionPlantCard = ({plant}) => {
         }
         
         <CardContent>
-          {
-            plant.referent &&
-            <div>
-              <Typography gutterBottom variant="h5" component="div">
-              {plant.nickname}
-              </Typography>
-              {/* TODO link to plant */}
-              <Typography variant="subtitle1" color="text.secondary" component="div" sx={{textAlign:'right'}}>
-                {plant.referent.name}
-              </Typography>
-            </div>
-          }
+          <div>
+            <Typography gutterBottom variant="h5" component="div">
+            {plant.nickname}
+            </Typography>
+            {/* TODO link to plant */}
+            <Typography variant="subtitle1" color="text.secondary" component="div" sx={{textAlign:'right'}}>
+              <Link to={`/plants/${plant.referentPlantId}`}>{plant.referentPlantName}</Link>
+            </Typography>
+          </div>
           
           {
             plant.tasks &&
             <List>
             {
               plant.tasks.map((task, index) => 
-                {if (task.status === "WAITING") {
+                {if (task.status === 0) {
                   return <ListItem disablePadding key={index}>
                   <ListItemButton sx={{padding:'0.3em 0 0.3em 0.3em'}}>
                     <ListItemIcon>
                       {
-                        task.type === "watering" ? <OpacityIcon sx={{color: blue[300]}}/>
-                        : (task.type === "transplant" ? <ParkIcon sx={{color: green[300]}}/>
-                        : <GrassIcon sx={{color: green[300]}}/>)
+                        task.type === 0 ? <OpacityIcon sx={{color: blue[300]}}/>
+                        : (task.type === 1 ? <ParkIcon sx={{color: green[300]}}/>
+                        : (task.type === 2 ? <ContentCutIcon sx={{color: green[300]}}/>
+                        : (task.type === 3 ? <FormatColorFillIcon sx={{color:yellow[300]}}/>
+                        : (task.type === 4 ? <SentimentVeryDissatisfiedIcon sx={{color:orange[300]}}/>
+                        : <BugReportIcon sx={{color:red[300]}}/>))))
                       }
                     </ListItemIcon>
-                    <ListItemText primary={task.date} secondary={task.notes}/>
+                    <ListItemText primary={getFormattedDate(task.date)} secondary={task.notes}/>
                     <Chip label={<CheckIcon color="primary"/>} onClick={() => setTaskDone(task.id)}/>
                   </ListItemButton>
                 </ListItem>
@@ -108,6 +145,7 @@ const CollectionPlantCard = ({plant}) => {
         </CardContent>
         <CardActions>
           <Button size="small" component={NavLink} to={`/plantcare/${collectionContext.collection.id}/plant/${plant.id}`}>See more</Button>
+          <Button size="small" onClick={() => deleteCollectionPlant()}><DeleteIcon/></Button>
         </CardActions>
       </Card>
       <AddTaskDialog open={addTaskDialogOpened} handleCancel={() => setAddTaskDialogOpened(false)} handleSubmit={(task) => addTask(task)}/>

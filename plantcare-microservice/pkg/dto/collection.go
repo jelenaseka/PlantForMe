@@ -9,7 +9,7 @@ import (
 
 type CollectionRequest struct {
 	Name        string `json:"name" validate:"required,min=3,max=45"`
-	Description string `json:"description" validate:"required,max=255"`
+	Description string `json:"description" validate:"max=255"`
 }
 
 type CollectionUpdateRequest struct {

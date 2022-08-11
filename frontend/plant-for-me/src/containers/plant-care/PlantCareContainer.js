@@ -5,39 +5,61 @@ import React, { useEffect, useState } from "react";
 import AddIcon from '@mui/icons-material/Add';
 import PlantCarePage from "../../pages/plantcare/PlantCarePage";
 import { PlantCareContext } from "../../context/plantcare/PlantCareContext"
+import { CollectionService } from "../../services/plantcare/CollectionService";
 
 const PlantCareContainer = () => {
   const [collections, setCollections] = useState([]);
 
   
   useEffect(() => {
-    setCollections([
-      {
-        id: 1,
-        image: null,
-        heading: 'Garden', //ovo je name
-        description: 'This is place where I put my garden plants'
-      },
-      {
-        id: 2,
-        heading: 'Indoor plants',
-        description: 'Here are all of my indoor plants'
-      },
-      {
-        id: 3,
-        heading: 'Adenium',
-        description: 'Here are all of my adeniums'
-      },
-      {
-        id: 4,
-        heading: 'Cactuses',
-        description: ''
-      }
-    ])
+    getMyCollectionsHandler();
   }, [])
 
+  const getMyCollectionsHandler = () => {
+    const getMyCollections = CollectionService.getMyCollections()
+      .then(async res => {
+        if(res.ok) {
+          const data = await res.json()
+          console.log(data)
+          setCollections(data)
+        } else {
+
+        }
+      }).catch(err => console.log(err))
+
+    return getMyCollections;
+  }
+
+  const addCollectionHandler = (collection) => {
+    const addCollection = CollectionService.createCollection(collection)
+      .then(async res => {
+        if(res.ok) {
+          return { ok: true, err: null}
+        } else {
+          const data = await res.text()
+          return { ok: false, err: data }
+        }
+      }).catch(err => console.log(err))
+    return addCollection;
+  }
+
+  const deleteCollectionHandler = (id) => {
+    const deleteCollection = CollectionService.deleteCollection(id)
+      .then(async res => {
+        if(res.ok) {
+          return { ok: true, err: null}
+        } else {
+          const data = await res.text()
+          return { ok: false, err: data }
+        }
+      }).catch(err => console.log(err))
+    return deleteCollection;
+  }
+
+  
+
   return (
-    <PlantCareContext.Provider value={{collections}}>
+    <PlantCareContext.Provider value={{collections, getMyCollectionsHandler, addCollectionHandler, deleteCollectionHandler}}>
       <PlantCarePage/>
     </PlantCareContext.Provider>
   )

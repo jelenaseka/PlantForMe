@@ -22,16 +22,20 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 const AddCollectionPlantDialog = ({open, handleCancel, handleSubmit}) => {
-  const [selectedPlantId, setSelectedPlantId] = React.useState(null);
-  const [image, setImage] = useState(null);
-  const [name, setName] = useState("");
+  const [collectionPlant, setCollectionPlant] = useState({
+    collectionId:"",
+    nickname:"",
+    referentPlantId:null,
+    referentPlantName:"",
+    base64Image:null
+  })
 
   const submit = () => {
-    if(selectedPlantId === null) {
+    if(collectionPlant.referentPlantId === null) {
       toast.error("You did not selected any plant");
       return;
     }
-    handleSubmit(selectedPlantId);
+    handleSubmit(collectionPlant);
   }
 
   const convertToBase64 = (file) => {
@@ -50,7 +54,7 @@ const AddCollectionPlantDialog = ({open, handleCancel, handleSubmit}) => {
     const file = e.target.files[0];
     const base64 = await convertToBase64(file);
     
-    setImage(base64);
+    setCollectionPlant({...collectionPlant, base64Image: base64});
     e.target.value = null;
   };
 
@@ -81,7 +85,7 @@ const AddCollectionPlantDialog = ({open, handleCancel, handleSubmit}) => {
             You can only choose plant from our collection
           </Typography>
           <Box sx={{display:'flex', justifyContent:'space-between',bgcolor:grey[200]}}>
-            <PlantList handleSubmit={(selectedId) => handleSubmit(selectedId)} selectedId={selectedPlantId} setSelectedId={setSelectedPlantId}/>
+            <PlantList handleSubmit={(selectedId) => handleSubmit(selectedId)} selectedId={collectionPlant.referentPlantId} setSelectedPlant={(e) => setCollectionPlant({...collectionPlant, referentPlantId:e.id, referentPlantName:e.name })}/>
             <Box sx={{padding:'2em', width:'100%', textAlign:'right'}}>
               <TextField
                 sx={{marginBottom:'1em'}}
@@ -90,9 +94,9 @@ const AddCollectionPlantDialog = ({open, handleCancel, handleSubmit}) => {
                 label="Plant nickname"
                 type="text"
                 fullWidth
-                value={name}
-                // onChange={(e) => setTask({...task, notes: e.target.value})}
-                // onBlur={() => setTask({...task, notes: task.notes.trim()})} 
+                value={collectionPlant.nickname}
+                onChange={(e) => setCollectionPlant({...collectionPlant, nickname: e.target.value})}
+                onBlur={() => setCollectionPlant({...collectionPlant, nickname: collectionPlant.nickname.trim()})} 
                 variant="standard"
               />
               <Button
@@ -105,7 +109,7 @@ const AddCollectionPlantDialog = ({open, handleCancel, handleSubmit}) => {
               </Button>
               
               <div className="image-placeholder">
-                <img src={image} />
+                <img src={collectionPlant.base64Image} />
               </div>
             </Box>
           </Box>
