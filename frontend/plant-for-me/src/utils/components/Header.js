@@ -38,6 +38,12 @@ const Header = () => {
             <NavbarLink link="/forums" title="Forums" />
           </Button>
           {
+            currentUser &&
+            <Button >
+              <NavbarLink link="/plantcare" title="My plants" />
+            </Button>
+          }
+          {
             !currentUser && 
             <Button>
               <NavbarLink link="/login" title="Login" />

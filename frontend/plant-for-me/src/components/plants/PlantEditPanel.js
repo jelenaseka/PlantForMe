@@ -5,6 +5,7 @@ import { growthRate, hardiness, lifeTime, light, months, watering, height } from
 import MyCheckboxList from "../../utils/components/MyCheckboxList"
 import MySelect from "../../utils/components/MySelect"
 import { ToastContainer, toast } from 'react-toastify';
+import { handleFileUpload } from "../../utils/functions/imageHandler"
 
 const PlantEditPanel = ({plant, categories, handlePlantOperation, handleBack, title}) => {
   const [newPlant, setNewPlant] = useState(null)
@@ -64,25 +65,9 @@ const PlantEditPanel = ({plant, categories, handlePlantOperation, handleBack, ti
     
   }
 
-  const convertToBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const fileReader = new FileReader();
-      fileReader.readAsDataURL(file);
-      fileReader.onload = () => {
-        resolve(fileReader.result);
-      };
-      fileReader.onerror = (error) => {
-        reject(error);
-      };
-    });
-  };
-  const handleFileUpload = async (e) => {
-    const file = e.target.files[0];
-    const base64 = await convertToBase64(file);
-    
-    setNewPlant({...newPlant, image: base64})
-    e.target.value = null;
-  };
+  const fileUpload = (e) => {
+    handleFileUpload(e, (base64) => setNewPlant({...newPlant, image: base64}));
+  }
 
   const validateForm = (plant) => {
     return (
@@ -138,7 +123,7 @@ const PlantEditPanel = ({plant, categories, handlePlantOperation, handleBack, ti
               component="label"
             >
               Upload image
-              <input type="file" onChange={(e) => handleFileUpload(e)} hidden/>
+              <input type="file" onChange={(e) => fileUpload(e)} hidden/>
             </Button>
             
             <Typography variant="subtitle1" gutterBottom component="div">

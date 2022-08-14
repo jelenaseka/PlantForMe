@@ -2,6 +2,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, T
 import React, { useContext, useState } from "react"
 import { ForumsContext } from "../../context/forums/ForumsContext";
 import MySelect from "../../utils/components/MySelect";
+import { handleFileUpload } from "../../utils/functions/imageHandler";
 
 
 const CreatePostDialog = ({handleOpen, handleClose}) => {
@@ -43,26 +44,9 @@ const CreatePostDialog = ({handleOpen, handleClose}) => {
     return (post.heading.trim() !== "" && post.content.trim() !== "" && post.categoryId !== "" && post.image !== "")
   }
 
-  const handleFileUpload = async (e) => {
-    const file = e.target.files[0];
-    const base64 = await convertToBase64(file);
-    
-    setPost({...post, image: base64})
-    e.target.value = null;
-  };
-
-  const convertToBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const fileReader = new FileReader();
-      fileReader.readAsDataURL(file);
-      fileReader.onload = () => {
-        resolve(fileReader.result);
-      };
-      fileReader.onerror = (error) => {
-        reject(error);
-      };
-    });
-  };
+  const fileUpload = (e) => {
+    handleFileUpload(e, (base64) => setPost({...post, image: base64}));
+  }
 
   return (
     <Dialog 
@@ -104,7 +88,7 @@ const CreatePostDialog = ({handleOpen, handleClose}) => {
           component="label"
         >
           Upload image
-          <input type="file" onChange={(e) => handleFileUpload(e)} hidden/>
+          <input type="file" onChange={(e) => fileUpload(e)} hidden/>
         </Button>
         
         <Typography variant="subtitle1" gutterBottom component="div">

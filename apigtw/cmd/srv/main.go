@@ -93,6 +93,30 @@ func main() {
 	deleteForumR.HandleFunc("/api/comments/{id}", handlers.Delete(configuration.ForumAddress))
 	deleteForumR.HandleFunc("/api/forum/categories/{id}", handlers.Delete(configuration.ForumAddress))
 
+	// PLANT-CARE MICROSERVICE
+
+	getPlantCareR := r.Methods(http.MethodGet).Subrouter()
+	getPlantCareR.HandleFunc("/api/collections", handlers.Get(configuration.PlantCareAddress))
+	getPlantCareR.HandleFunc("/api/collections/{id}", handlers.Get(configuration.PlantCareAddress))
+	getPlantCareR.HandleFunc("/api/collections/mine", handlers.Get(configuration.PlantCareAddress))
+	getPlantCareR.HandleFunc("/api/collectionplants/collection/{id}", handlers.Get(configuration.PlantCareAddress))
+	getPlantCareR.HandleFunc("/api/collectionplants/{id}", handlers.Get(configuration.PlantCareAddress))
+
+	postPlantCareR := r.Methods(http.MethodPost).Subrouter()
+	postPlantCareR.HandleFunc("/api/collections", handlers.Post(configuration.PlantCareAddress))
+	postPlantCareR.HandleFunc("/api/collectionplants", handlers.Post(configuration.PlantCareAddress))
+	postPlantCareR.HandleFunc("/api/tasks", handlers.Post(configuration.PlantCareAddress))
+
+	putPlantCareR := r.Methods(http.MethodPut).Subrouter()
+	putPlantCareR.HandleFunc("/api/collections/{id}", handlers.Put(configuration.PlantCareAddress))
+	putPlantCareR.HandleFunc("/api/collectionplants/{id}", handlers.Put(configuration.PlantCareAddress))
+	putPlantCareR.HandleFunc("/api/tasks/{id}/done", handlers.Put(configuration.PlantCareAddress))
+
+	deletePlantCareR := r.Methods(http.MethodDelete).Subrouter()
+	deletePlantCareR.HandleFunc("/api/collections/{id}", handlers.Delete(configuration.PlantCareAddress))
+	deletePlantCareR.HandleFunc("/api/collectionplants/{id}", handlers.Delete(configuration.PlantCareAddress))
+	deletePlantCareR.HandleFunc("/api/tasks/{id}", handlers.Delete(configuration.PlantCareAddress))
+
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{configuration.FrontendAddress},
 		AllowCredentials: true,

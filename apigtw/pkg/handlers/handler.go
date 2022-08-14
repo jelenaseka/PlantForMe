@@ -103,7 +103,6 @@ func Put(address string) http.HandlerFunc {
 			Timeout: time.Second * 10,
 		}
 		data, _ := ioutil.ReadAll(r.Body)
-		log.Print("data ovde:", bytes.NewBuffer(data))
 
 		req, err := http.NewRequest(http.MethodPut, address+r.URL.String(), bytes.NewBuffer(data))
 
@@ -147,6 +146,8 @@ func Delete(address string) http.HandlerFunc {
 			panic(err)
 		}
 		req.Header.Set("Content-Type", "application/json; charset=utf-8")
+		req.Header.Add("Username", principal.Username)
+		req.Header.Add("Role", principal.Role.String())
 
 		res, err := client.Do(req)
 		if err != nil {

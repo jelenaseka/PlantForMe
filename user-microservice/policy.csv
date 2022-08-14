@@ -23,3 +23,6 @@ p, Member, /api/comments*, *
 p, Admin, /api/comments/:id, DELETE
 p, *, /api/forum/categories*, GET
 p, Moderator, /api/forum/categories*, *
+p, *, /api/collections*, *
+p, *, /api/collectionplants*, *
+p, *, /api/tasks*, *

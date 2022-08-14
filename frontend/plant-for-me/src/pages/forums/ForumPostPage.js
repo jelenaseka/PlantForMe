@@ -7,6 +7,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AreYouSureDialog from "../../utils/components/AreYouSureDialog";
 import EditIcon from '@mui/icons-material/Edit';
+import { handleFileUpload } from "../../utils/functions/imageHandler";
 
 const ForumPostPage = () => {
   const postContext = useContext(ForumPostContext);
@@ -141,26 +142,9 @@ const ForumPostPage = () => {
     return (editedPost.heading.trim() !== "" && editedPost.content.trim() !== "" && editedPost.image !== "")
   }
 
-  const handleFileUpload = async (e) => {
-    const file = e.target.files[0];
-    const base64 = await convertToBase64(file);
-    
-    setEditedPost({...editedPost, image: base64})
-    e.target.value = null;
-  };
-
-  const convertToBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const fileReader = new FileReader();
-      fileReader.readAsDataURL(file);
-      fileReader.onload = () => {
-        resolve(fileReader.result);
-      };
-      fileReader.onerror = (error) => {
-        reject(error);
-      };
-    });
-  };
+  const fileUpload = (e) => {
+    handleFileUpload(e, (base64) => setEditedPost({...editedPost, image: base64}));
+  }
 
   return (
       <div>
@@ -269,7 +253,7 @@ const ForumPostPage = () => {
                   sx={{marginTop:'1em'}}
                 >
                   Upload image
-                  <input type="file" onChange={(e) => handleFileUpload(e)} hidden/>
+                  <input type="file" onChange={(e) => fileUpload(e)} hidden/>
                 </Button>
                 
                 <div className="image-placeholder">
