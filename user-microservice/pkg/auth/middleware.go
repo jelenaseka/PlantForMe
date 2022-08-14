@@ -90,7 +90,7 @@ func MiddlewareAuthorizationFromAPIGateway(cas *casbin.Enforcer) func(next http.
 				next.ServeHTTP(w, r)
 			} else {
 				fmt.Println("nijeee ok")
-				if sub == "Public" {
+				if sub == "Public" { //todo fix
 					w.WriteHeader(http.StatusUnauthorized)
 					w.Write([]byte("Not authorized"))
 				} else {

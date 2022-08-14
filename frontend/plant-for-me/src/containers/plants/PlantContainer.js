@@ -6,14 +6,18 @@ import { PlantService } from "../../services/plants/PlantService";
 import { useNavigate } from "react-router-dom";
 import { AuthService } from "../../services/auth/AuthService";
 import { PlantReviewService } from "../../services/plants/PlantReviewService";
+import { tokenIsExpired } from "../../utils/functions/jwt";
 
 const PlantContainer = () => {
   const { id } = useParams();
   const [plant, setPlant] = useState(null)
   let navigate = useNavigate();
-  const currentUser = AuthService.getCurrentUser()
+  const currentUser = AuthService.getCurrentUser();
 
   useEffect(() => {
+    if(tokenIsExpired()) {
+      AuthService.logout();
+    }
     getPlantHandler();
   }, [id])
 
@@ -21,9 +25,11 @@ const PlantContainer = () => {
     const getData = PlantService.getOne(id)
       .then(async res => {
         if(res.ok) {
-          return await res.json().then(data => {setPlant(data)});
+          return await res.json().then(data => setPlant(data));
         } else {
-          return navigate("/404");
+          if(res.status === 204) {
+            return navigate("/404");
+          }
         }
       })
       .catch(err => console.log(err))
@@ -34,7 +40,6 @@ const PlantContainer = () => {
     const deletePlant = PlantService.deletePlant(id)
       .then(async res => {
         if(res.ok) {
-          await res.text();
           return { ok: true, err: null };
         } else {
           const data = await res.text();
@@ -155,4 +160,4 @@ const PlantContainer = () => {
   )
 }
 
-export default PlantContainer
+export default PlantContainer;

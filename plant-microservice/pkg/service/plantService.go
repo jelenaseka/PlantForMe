@@ -20,7 +20,7 @@ type plantService struct {
 
 type PlantServiceInterface interface {
 	GetAll(url.Values) ([]dto.PlantResponse, error_utils.MessageErr)
-	GetOneById(uuid.UUID) (*dto.PlantResponse, error_utils.MessageErr)
+	GetOneById(uuid.UUID) (*dto.PlantResponseWithCategory, error_utils.MessageErr)
 	Create(*dto.PlantRequest, string) (*uuid.NullUUID, error_utils.MessageErr)
 	Update(*dto.PlantRequest, uuid.UUID) error_utils.MessageErr
 	Delete(uuid.UUID) error_utils.MessageErr
@@ -44,7 +44,7 @@ func (service *plantService) GetAll(urlValues url.Values) ([]dto.PlantResponse, 
 	return plantsResponse, nil
 }
 
-func (service *plantService) GetOneById(id uuid.UUID) (*dto.PlantResponse, error_utils.MessageErr) {
+func (service *plantService) GetOneById(id uuid.UUID) (*dto.PlantResponseWithCategory, error_utils.MessageErr) {
 	plant, err := service.IPlantRepository.FindById(id)
 
 	if err != nil {

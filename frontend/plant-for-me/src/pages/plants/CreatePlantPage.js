@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from "react"
 import { CreatePlantContext } from "../../context/plants/CreatePlantContext";
 import '../../assets/css/layout.css';
-import Snackbar from '@mui/material/Snackbar';
 import PlantEditPanel from "../../components/plants/PlantEditPanel";
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
+import { tokenIsExpired } from "../../utils/functions/jwt";
+import { AuthService } from "../../services/auth/AuthService";
 
 const CreatePlantPage = () => {
   const createPlantContext = useContext(CreatePlantContext)
@@ -12,12 +13,8 @@ const CreatePlantPage = () => {
   let navigate = useNavigate();
 
   useEffect(() => {
-    reset()
+    reset();
   }, [])
-
-  const handleBack = () => {
-    navigate("/plants");
-  }
 
   const reset = () => {
     setPlant({
@@ -37,6 +34,10 @@ const CreatePlantPage = () => {
   }
 
   const createNewPlant = (plant) => {
+    if(tokenIsExpired() || createPlantContext.currentUser === null) {
+      AuthService.logout();
+      return navigate("/login");
+    }
     createPlantContext.createPlantHandler(plant).then(res => {
       if(res.ok) {
         reset();
@@ -54,7 +55,7 @@ const CreatePlantPage = () => {
         plant={plant}
         categories={createPlantContext.categories}
         handlePlantOperation={(plant) => createNewPlant(plant)}
-        handleBack={handleBack}
+        handleBack={() => navigate("/plants")}
         title="Create a plant"/>
     </div>
   )

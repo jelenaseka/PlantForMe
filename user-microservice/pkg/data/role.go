@@ -3,16 +3,13 @@ package data
 type Role int
 
 const (
-	Public Role = iota //TODO delete
-	Member
+	Member Role = iota
 	Moderator
 	Admin
 )
 
 func (r Role) String() string {
 	switch r {
-	case Public:
-		return "Public"
 	case Member:
 		return "Member"
 	case Moderator:

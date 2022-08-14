@@ -1,5 +1,5 @@
-p, Public, /api/auth/login, POST
-p, Public, /api/auth/register, POST
+p, *, /api/auth/login, POST
+p, *, /api/auth/register, POST
 p, *, /api/auth/me, GET
 p, Member, /api/auth/username, PUT
 p, Moderator, /api/auth/username, PUT
@@ -9,6 +9,7 @@ p, *, /api/plants*, GET
 p, *, /api/plants/:id, GET
 p, *, /api/categories, GET
 p, *, /api/categories/:id, GET
+p, Admin, /api/categories*, *
 p, *, /api/plantreviews*, *
 p, Moderator, /api/plants, POST
 p, Moderator, /api/plants/*, *

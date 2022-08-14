@@ -18,13 +18,15 @@ const PlantsPage = () => {
             <FilterPanel/>
           </Grid>
           <Grid item md={9}>
-            <Box>
-              <Button>
-                <NavLink to="/plants/create">
+            {
+              (plantContext.currentUser && plantContext.currentUser.role === 1) &&
+              <Box sx={{display:'flex', justifyContent:'end', marginBottom:'1em'}}>
+                <Button variant="contained" component={NavLink} to="/plants/create">
                   Create plant
-                </NavLink>
-              </Button>
-            </Box>
+                </Button>
+              </Box>
+            }
+            
             <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
               {plantContext.plants.map((plant, index) => (
                 <Grid item xs={2} sm={4} md={4} key={index}>

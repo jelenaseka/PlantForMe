@@ -51,7 +51,7 @@ func (repo *plantReviewRepository) FindAllByPlant(id uuid.UUID) ([]data.PlantRev
 func (repo *plantReviewRepository) FindAverageRatingByPlant(id uuid.UUID) (float64, error) {
 	db := config.GetDB()
 	var averageRating float64
-	result := db.Where("plant_id = ?", id).Table("plant_reviews").Select("AVG(rating)").Find(&averageRating)
+	result := db.Debug().Where("plant_id = ?", id).Table("plant_reviews").Select("ifnull(AVG(rating), 0)").Find(&averageRating)
 	if result.Error != nil {
 		return -1, result.Error
 	}

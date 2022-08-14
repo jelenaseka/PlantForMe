@@ -1,24 +1,29 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from "@mui/material"
 import React, { useContext, useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom";
 import { CategoriesContext } from "../../context/plants/CategoriesContext";
+import { AuthService } from "../../services/auth/AuthService";
+import { tokenIsExpired } from "../../utils/functions/jwt";
 
 const SaveCategoryDialog = ({title, handleOpen, handleClose, handleFeedback, category}) => {
   const categoriesContext = useContext(CategoriesContext)
   const [newCategory, setNewCategory] = useState(category);
   const [error, setError] = React.useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  let navigate = useNavigate();
 
   const handleSubmit = () => {
+    if(tokenIsExpired() || categoriesContext.currentUser === null) {
+      AuthService.logout();
+      navigate("/login");
+      return;
+    }
     if (!validate()) {
       setError(true);
       setErrorMessage("Name must not be empty");
       return;
     }
-    if(newCategory.id) {
-      updateCategory()
-    } else {
-      createCategory()
-    }
+    newCategory.id ? updateCategory() : createCategory();
     setError(false);
     setErrorMessage("");
   }

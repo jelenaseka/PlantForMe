@@ -23,13 +23,13 @@ const Header = () => {
             <NavbarLink link="/plants" title="Plants" />
           </Button>
           {
-            currentUser && currentUser.role === 3 &&
+            currentUser && currentUser.role === 2 &&
             <Button>
               <NavbarLink link="/categories" title="Categories" />
             </Button>
           }
           {
-            currentUser && currentUser.role === 3 &&
+            currentUser && currentUser.role === 2 &&
             <Button>
               <NavbarLink link="/users" title="Users" />
             </Button>

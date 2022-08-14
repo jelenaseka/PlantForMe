@@ -3,12 +3,18 @@ import { PlantsContext} from '../../context/plants/PlantsContext'
 import PlantsPage from '../../pages/plants/PlantsPage';
 import { CategoryService } from '../../services/plants/CategoryService';
 import { PlantService } from '../../services/plants/PlantService';
+import { AuthService } from '../../services/auth/AuthService';
+import { tokenIsExpired } from '../../utils/functions/jwt';
 
 const PlantsContainer = () => {
   const [plants, setPlants] = useState([])
   const [categories, setCategories] = useState([])
+  const currentUser = AuthService.getCurrentUser();
 
   useEffect(() => {
+    if(tokenIsExpired()) {
+      AuthService.logout();
+    }
     getCategoriesHandler()
     getPlantsHandler()
   }, [])
@@ -17,12 +23,10 @@ const PlantsContainer = () => {
     const getData = CategoryService.getCategories()
       .then(async res => {
         if(res.ok) {
-          const data = await res.json();
-          setCategories(data)
+          return await res.json().then(data => setCategories(data))
         } else {
-          //todo error
           const err = await res.text();
-          return {ok: false, err: err};
+          console.log(err);
         }
       })
       .catch(err => console.log(err) )
@@ -33,12 +37,10 @@ const PlantsContainer = () => {
     const getData =  PlantService.getPlants(url)
       .then(async res => {
         if(res.ok) {
-          const data = await res.json();
-          setPlants(data)
+          return await res.json().then(data => setPlants(data))
         } else {
-          //todo error
           const err = await res.text();
-          return {ok: false, err: err};
+          console.log(err);
         }
       })
       .catch(err => console.log(err) )
@@ -51,7 +53,8 @@ const PlantsContainer = () => {
         plants, 
         categories, 
         getPlantsHandler, 
-        getCategoriesHandler
+        getCategoriesHandler,
+        currentUser
         }
       }>
       <PlantsPage />

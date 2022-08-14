@@ -5,6 +5,7 @@ import { CategoriesContext } from "../../context/plants/CategoriesContext"
 import CategoriesPage from "../../pages/plants/CategoriesPage"
 import { AuthService } from "../../services/auth/AuthService"
 import { useNavigate } from 'react-router-dom';
+import { tokenIsExpired } from "../../utils/functions/jwt"
 
 const CategoriesContainer = () => {
   const [categories, setCategories] = useState([])
@@ -12,10 +13,14 @@ const CategoriesContainer = () => {
   let navigate = useNavigate();
 
   useEffect(() => {
-    if(currentUser === null || currentUser.role !== 3) {
-      navigate('/404');
+    if(tokenIsExpired() || currentUser === null) {
+      AuthService.logout();
+      navigate("/login");
     }
-    getCategoriesHandler()
+    if(currentUser.role !== 2) {
+      navigate("/404");
+    }
+    getCategoriesHandler();
   }, [])
 
   const getCategoriesHandler = () => {
@@ -25,7 +30,7 @@ const CategoriesContainer = () => {
           const data = await res.json();
           setCategories(data);
         } else {
-          navigate('/404');
+          console.log(await res.text());
         }
       })
       .catch(err => {
@@ -38,7 +43,6 @@ const CategoriesContainer = () => {
     const createCategory = CategoryService.createCategory(category)
       .then(async res => {
         if(res.ok) {
-          getCategoriesHandler();
           return { ok: true, err: null };
         } else {
           const data = await res.text();
@@ -56,7 +60,6 @@ const CategoriesContainer = () => {
     const updateCategory = CategoryService.updateCategory(category)
     .then(async res => {
       if(res.ok) {
-        getCategoriesHandler();
         return { ok: true, err: null}
       } else {
         const data = await res.text();
@@ -74,12 +77,9 @@ const CategoriesContainer = () => {
       .then(async res => {
         console.log(res)
         if(res.ok) {
-          getCategoriesHandler();
           return { ok: true, err: null };
         } else {
           console.log(res)
-          //TODO sorry, something went wrong
-          //check if 401 - navigate to login page
         }
       })
       .catch(err => {
@@ -91,10 +91,12 @@ const CategoriesContainer = () => {
   return (
     <CategoriesContext.Provider value={
       {
-        categories, 
+        categories,
+        getCategoriesHandler,
         createCategoryHandler, 
         deleteCategoryHandler, 
-        updateCategoryHandler, 
+        updateCategoryHandler,
+        currentUser
       }
       }>
       <CategoriesPage />

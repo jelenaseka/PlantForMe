@@ -52,17 +52,15 @@ const PlantEditPanel = ({plant, categories, handlePlantOperation, handleBack, ti
   };
 
   const handleNewPlant = () => {
-    
     if(!validateForm(newPlant)) {
       toast.error("Form not valid");
-      return
+      return;
     }
     
     newPlant.bloomingMonths = []
     checkedBloomingMonths.forEach((bm, index) => bm === true && newPlant.bloomingMonths.push(index))
     
     handlePlantOperation(newPlant);
-    
   }
 
   const fileUpload = (e) => {
@@ -117,11 +115,8 @@ const PlantEditPanel = ({plant, categories, handlePlantOperation, handleBack, ti
             <MyCheckboxList label="Blooming months" options={months} isChecked={(index) => checkedBloomingMonths[index]} onValueChange={(index) => handleBloomingMonthsOnChange(index)}/>
           </Grid>
 
-          <Grid item md={6}>
-            <Button
-              variant="contained"
-              component="label"
-            >
+          <Grid item md={6}  sx={{padding:'0 0.8em'}}>
+            <Button variant="contained" component="label">
               Upload image
               <input type="file" onChange={(e) => fileUpload(e)} hidden/>
             </Button>
@@ -132,34 +127,32 @@ const PlantEditPanel = ({plant, categories, handlePlantOperation, handleBack, ti
             <div className="image-placeholder">
               <img src={newPlant.image} alt='Your plant'/>
             </div>
-            
-            
           </Grid>
+
           <Grid item md={12}>
             <FormControl fullWidth sx={{ m: 1 }}>
-            <TextField
-              id="standard-multiline-flexible"
-              label="Description"
-              multiline
-              maxRows={25}
-              value={newPlant.description}
-              onChange={(e) => setNewPlant({...newPlant, description: e.target.value})}
-              onBlur={() => setNewPlant({...newPlant, description: newPlant.description.trim()})}
-              variant="standard"
-            />
+              <TextField
+                id="standard-multiline-flexible"
+                label="Description"
+                multiline
+                maxRows={25}
+                value={newPlant.description}
+                onChange={(e) => setNewPlant({...newPlant, description: e.target.value})}
+                onBlur={() => setNewPlant({...newPlant, description: newPlant.description.trim()})}
+                variant="standard"
+              />
             </FormControl>
             
           </Grid>
           <Grid container justifyContent="flex-end">
-            <Button variant="contained" onClick={() => handleBack()}>Back</Button>
+            <Button variant="contained" onClick={() => handleBack()} sx={{marginRight:'0.5em'}}>Back</Button>
             <Button variant="contained" onClick={() => handleNewPlant(newPlant)}>Submit</Button>
           </Grid>
         </Grid>
       </Box>
       }
-      
     </div>
   )
 }
 
-export default PlantEditPanel
+export default PlantEditPanel;

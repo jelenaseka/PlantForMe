@@ -108,15 +108,15 @@ export const months = ["January","February","March","April","May","June","July",
 
 export const roles = [
     {
-        id: 1,
+        id: 0,
         name: "Member"
     }
     ,{
-        id: 2,
+        id: 1,
         name: "Moderator"
     },
     {
-        id: 3,
+        id: 2,
         name: "Admin"
     }
 ]
