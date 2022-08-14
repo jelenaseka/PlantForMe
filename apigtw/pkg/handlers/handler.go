@@ -103,7 +103,6 @@ func Put(address string) http.HandlerFunc {
 			Timeout: time.Second * 10,
 		}
 		data, _ := ioutil.ReadAll(r.Body)
-		log.Print("data ovde:", bytes.NewBuffer(data))
 
 		req, err := http.NewRequest(http.MethodPut, address+r.URL.String(), bytes.NewBuffer(data))
 

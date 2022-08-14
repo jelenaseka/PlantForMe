@@ -18,8 +18,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import RegistrationContainer from './containers/registration/RegistrationContainer';
 import ProfileContainer from './containers/profile/ProfileContainer';
 import PlantCareContainer from './containers/plant-care/PlantCareContainer';
-import CollectionPage from './pages/plantcare/CollectionPage';
 import CollectionContainer from './containers/plant-care/CollectionContainer';
+import CollectionPlantContainer from './containers/plant-care/CollectionPlantContainer';
 
 function App() {
   return (
@@ -38,6 +38,7 @@ function App() {
           <Route path="/forums/:id" element={<ForumPostContainer/>}/>
           <Route path="/plantcare" element={<PlantCareContainer/>}/>
           <Route path="/plantcare/:id" element={<CollectionContainer/>}/>
+          <Route path="/plantcare/:collectionid/plant/:plantid" element={<CollectionPlantContainer/>}/>
           <Route path="/login" element={<LoginContainer/>}/>
           <Route path="/registration" element={<RegistrationContainer/>}/>
           <Route path='/me' element={<ProfileContainer/>}/>

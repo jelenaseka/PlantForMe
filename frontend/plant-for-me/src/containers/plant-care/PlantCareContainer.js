@@ -1,8 +1,4 @@
-import { Button, Card, CardActions, CardContent, CardMedia, Grid, Typography } from "@mui/material";
-import { amber, blue, brown, cyan, deepOrange, deepPurple, green, grey, indigo, lightBlue, lightGreen, lime, orange, pink, purple, red, teal, yellow } from "@mui/material/colors";
-import { Box } from "@mui/system";
 import React, { useEffect, useState } from "react";
-import AddIcon from '@mui/icons-material/Add';
 import PlantCarePage from "../../pages/plantcare/PlantCarePage";
 import { PlantCareContext } from "../../context/plantcare/PlantCareContext"
 import { CollectionService } from "../../services/plantcare/CollectionService";

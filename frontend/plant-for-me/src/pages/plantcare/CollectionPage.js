@@ -24,7 +24,7 @@ const CollectionPage = () => {
         <Grid sx={{padding:'2em'}} container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
           {collectionContext.collectionPlants.map((plant, index) => (
             <Grid item xs={4} sm={4} md={4} key={index}>
-              <CollectionPlantCard plant={plant}/>
+              <CollectionPlantCard plant={plant} isEditable={true}/>
             </Grid>
           ))}
           <Grid item xs={2} sm={4} md={4}>

@@ -24,6 +24,7 @@ const CollectionCard = ({collection}) => {
     .then(res => {
       if(res.ok) {
         toast.success("Successfully deleted collection!");
+        plantCareContext.getMyCollectionsHandler();
       } else {
         toast.error(res.err)
       }

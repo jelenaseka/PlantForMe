@@ -16,6 +16,7 @@ import PlantList from "./PlantList";
 import { grey } from "@mui/material/colors";
 import { toast } from "react-toastify";
 import { TextField } from "@mui/material";
+import { handleFileUpload } from "../../utils/functions/imageHandler";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -38,25 +39,9 @@ const AddCollectionPlantDialog = ({open, handleCancel, handleSubmit}) => {
     handleSubmit(collectionPlant);
   }
 
-  const convertToBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const fileReader = new FileReader();
-      fileReader.readAsDataURL(file);
-      fileReader.onload = () => {
-        resolve(fileReader.result);
-      };
-      fileReader.onerror = (error) => {
-        reject(error);
-      };
-    });
-  };
-  const handleFileUpload = async (e) => {
-    const file = e.target.files[0];
-    const base64 = await convertToBase64(file);
-    
-    setCollectionPlant({...collectionPlant, base64Image: base64});
-    e.target.value = null;
-  };
+  const fileUpload = (e) => {
+    handleFileUpload(e, (base64) => setCollectionPlant({...collectionPlant, base64Image: base64}));
+  }
 
   return (
     <Dialog
@@ -105,7 +90,7 @@ const AddCollectionPlantDialog = ({open, handleCancel, handleSubmit}) => {
                 component="label"
               >
                 Upload image
-                <input type="file" onChange={(e) => handleFileUpload(e)} hidden/>
+                <input type="file" onChange={(e) => fileUpload(e)} hidden/>
               </Button>
               
               <div className="image-placeholder">

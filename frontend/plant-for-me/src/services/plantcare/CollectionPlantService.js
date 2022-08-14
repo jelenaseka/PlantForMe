@@ -6,8 +6,8 @@ export const CollectionPlantService = {
     getAllByCollectionId: (id) => {
       return fetch(baseUrl + `/collection/${id}`, {headers: getHeaders()})
     },
-    getOne: (id) => {
-      return fetch(`${baseUrl}/${id}`, {headers:getHeaders()})
+    getOne: (plantid) => {
+      return fetch(`${baseUrl}/${plantid}`, {headers:getHeaders()})
     },
     createCollectionPlant: (collectionPlant) => {
       return fetch(baseUrl, {

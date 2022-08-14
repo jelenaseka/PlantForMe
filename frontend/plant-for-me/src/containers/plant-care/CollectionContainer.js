@@ -114,6 +114,20 @@ const CollectionContainer = () => {
       return setTaskToDone;
   }
 
+  const deleteTaskHandler = (id) => {
+    const deleteTask = TaskService.deleteTask(id)
+      .then(async res => {
+        if(res.ok) {
+          return { ok: true, err: null}
+        } else {
+          const data = await res.text();
+          return { ok: false, err: data}
+        }
+      }).catch(err => console.log(err));
+
+      return deleteTask;
+  }
+
   return (
     <CollectionContext.Provider value={
       {
@@ -124,7 +138,8 @@ const CollectionContainer = () => {
         getCollectionPlantsHandler, 
         addCollectionPlantHandler,
         deleteCollectionPlantHandler,
-        setTaskToDoneHandler
+        setTaskToDoneHandler,
+        deleteTaskHandler
       }}>
       <CollectionPage/>
     </CollectionContext.Provider>

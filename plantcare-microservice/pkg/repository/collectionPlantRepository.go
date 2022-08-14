@@ -5,6 +5,7 @@ import (
 	"plantcare-microservice/pkg/data"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type collectionPlantRepository struct {
@@ -26,7 +27,9 @@ func (this *collectionPlantRepository) FindAllByCollectionId(id uuid.UUID) ([]da
 	db := config.GetDB()
 	var collectionPlants []data.CollectionPlant
 	//todo order tasks by date desc
-	result := db.Debug().Preload("Tasks", "status = ?", "WAITING").Where("collection_id = ?", id.String()).Find(&collectionPlants)
+	result := db.Debug().Preload("Tasks", "status = ?", "WAITING", func(db *gorm.DB) *gorm.DB {
+		return db.Order("tasks.date DESC")
+	}).Where("collection_id = ?", id.String()).Find(&collectionPlants)
 
 	if result.Error != nil {
 		return nil, result.Error
@@ -38,7 +41,9 @@ func (this *collectionPlantRepository) FindAllByCollectionId(id uuid.UUID) ([]da
 func (this *collectionPlantRepository) FindById(id uuid.UUID) (*data.CollectionPlant, error) {
 	db := config.GetDB()
 	var collectionPlant data.CollectionPlant
-	result := db.Preload("Tasks").First(&collectionPlant, "id = ?", id.String())
+	result := db.Preload("Tasks", func(db *gorm.DB) *gorm.DB {
+		return db.Order("tasks.date DESC")
+	}).First(&collectionPlant, "id = ?", id.String())
 
 	if result.Error != nil {
 		return nil, result.Error
