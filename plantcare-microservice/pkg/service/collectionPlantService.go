@@ -38,7 +38,7 @@ func (this *collectionPlantService) GetAllByCollectionId(collectionId uuid.UUID)
 
 	collectionPlantsResponse := make([]dto.CollectionPlantResponse, 0)
 	for _, v := range collectionPlants {
-		collectionPlantsResponse = append(collectionPlantsResponse, *dto.NewCollectionPlantResponse(v.ID, v.CollectionID, v.Nickname, v.ReferentPlantID, v.ReferentPlantName, v.Base64Image, v.Tasks))
+		collectionPlantsResponse = append(collectionPlantsResponse, *dto.NewCollectionPlantResponse(v.ID, v.Collection, v.Nickname, v.ReferentPlantID, v.ReferentPlantName, v.Base64Image, v.Tasks))
 	}
 
 	return collectionPlantsResponse, nil
@@ -55,7 +55,7 @@ func (this *collectionPlantService) GetOneById(id uuid.UUID) (*dto.CollectionPla
 		}
 	}
 
-	collectionPlantResponse := dto.NewCollectionPlantResponse(collectionPlant.ID, collectionPlant.CollectionID, collectionPlant.Nickname, collectionPlant.ReferentPlantID, collectionPlant.ReferentPlantName, collectionPlant.Base64Image, collectionPlant.Tasks)
+	collectionPlantResponse := dto.NewCollectionPlantResponse(collectionPlant.ID, collectionPlant.Collection, collectionPlant.Nickname, collectionPlant.ReferentPlantID, collectionPlant.ReferentPlantName, collectionPlant.Base64Image, collectionPlant.Tasks)
 
 	return collectionPlantResponse, nil
 }

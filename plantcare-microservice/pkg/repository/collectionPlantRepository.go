@@ -41,7 +41,7 @@ func (this *collectionPlantRepository) FindAllByCollectionId(id uuid.UUID) ([]da
 func (this *collectionPlantRepository) FindById(id uuid.UUID) (*data.CollectionPlant, error) {
 	db := config.GetDB()
 	var collectionPlant data.CollectionPlant
-	result := db.Preload("Tasks", func(db *gorm.DB) *gorm.DB {
+	result := db.Preload("Collection").Preload("Tasks", func(db *gorm.DB) *gorm.DB {
 		return db.Order("tasks.date DESC")
 	}).First(&collectionPlant, "id = ?", id.String())
 

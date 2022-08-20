@@ -36,6 +36,18 @@ func (this *Plant) GetAll(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(plants)
 }
 
+func (this *Plant) GetAllForCollectionPlantReference(w http.ResponseWriter, r *http.Request) {
+	this.l.Print("Get all plants")
+	w.Header().Add("Content-Type", "application/json")
+
+	plants, err := this.IPlantService.GetAllForCollectionPlantReference()
+	if err != nil {
+		http.Error(w, err.Message(), err.Status())
+	}
+
+	json.NewEncoder(w).Encode(plants)
+}
+
 func (plant *Plant) GetOne(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]

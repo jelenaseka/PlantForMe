@@ -32,6 +32,10 @@ const AddCollectionPlantDialog = ({open, handleCancel, handleSubmit}) => {
       toast.error("You did not selected any plant");
       return;
     }
+    if(collectionPlant.nickname.trim() === "") {
+      toast.error("You did not pick a nickname for your plant");
+      return;
+    }
     handleSubmit(collectionPlant);
   }
 

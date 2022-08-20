@@ -10,6 +10,10 @@ export const PlantService = {
       var fullUrl = baseUrl + "?" + url;
       return fetch(fullUrl, {headers: getHeaders()})
     },
+    getPlantReferences: () => {
+      var fullUrl = baseUrl + "/references";
+      return fetch(fullUrl, {headers: getHeaders()})
+    },
     getOneWithCategory: async (id) => {
       return fetch(baseUrl + `/${id}/cat`, {headers: getHeaders()})
     },

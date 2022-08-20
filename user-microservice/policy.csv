@@ -5,6 +5,8 @@ p, Member, /api/auth/username, PUT
 p, Moderator, /api/auth/username, PUT
 p, Admin, /api/auth/username, PUT
 p, Member, /api/auth/password, PUT
+p, Admin, /api/auth/password, PUT
+p, Moderator, /api/auth/password, PUT
 p, *, /api/plants*, GET
 p, *, /api/plants/:id, GET
 p, *, /api/categories, GET

@@ -9,7 +9,6 @@ import { ToastContainer } from 'react-toastify';
 const PlantCarePage = () => {
   const plantCareContext = useContext(PlantCareContext);
   
-
   return (
     <Box>
       <Typography variant="h1" component="div" gutterBottom sx={{fontSize:'30px', padding:'2em 2em 0 2em'}}>

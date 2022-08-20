@@ -260,10 +260,7 @@ const ForumPostPage = () => {
                   <img src={editedPost.image} alt='Your post'/>
                 </div>
               </div>
-              
             }
-            
-            
           </Paper>
           {
             postContext.comments.map(comment => (

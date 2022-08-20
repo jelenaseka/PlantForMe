@@ -10,7 +10,7 @@ const ProfilePage = () => {
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
   const [usernameError, setUsernameError] = useState({error: false, message: ""});
-  const [passwordError, setPasswordError] = useState({error:false, message: ""});
+  const [passwordError] = useState({error:false, message: ""});
   const [repeatPasswordError, setRepeatPasswordError] = useState({error:false, message: ""});
 
   useEffect(() => {

@@ -44,7 +44,7 @@ const CollectionCard = ({collection}) => {
         : 
         <CardMedia
           sx={{height:'140px', bgcolor:randomColor()}}
-        />
+        ><div></div></CardMedia>
       }
       
       <CardContent>

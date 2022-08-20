@@ -2,12 +2,19 @@ import React, { useEffect, useState } from "react";
 import PlantCarePage from "../../pages/plantcare/PlantCarePage";
 import { PlantCareContext } from "../../context/plantcare/PlantCareContext"
 import { CollectionService } from "../../services/plantcare/CollectionService";
+import { tokenIsExpired } from "../../utils/functions/jwt";
+import { useNavigate } from "react-router-dom";
+import { AuthService } from "../../services/auth/AuthService";
 
 const PlantCareContainer = () => {
   const [collections, setCollections] = useState([]);
-
+  let navigate = useNavigate();
   
   useEffect(() => {
+    if(tokenIsExpired()) {
+      AuthService.logout();
+      return navigate("/login");
+    }
     getMyCollectionsHandler();
   }, [])
 

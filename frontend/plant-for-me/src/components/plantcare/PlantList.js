@@ -8,9 +8,8 @@ import { CollectionContext } from "../../context/plantcare/CollectionContext";
 import {  ListItemButton } from "@mui/material";
 
 
-const PlantList = ({handleSubmit, selectedId, setSelectedPlant}) => {
+const PlantList = ({selectedId, setSelectedPlant}) => {
   const collectionContext = useContext(CollectionContext);
-  
 
   return (
       <List sx={{ width: '100%',bgcolor:grey[200], borderRadius:'4px' }}>
@@ -29,7 +28,6 @@ const PlantList = ({handleSubmit, selectedId, setSelectedPlant}) => {
           ))
         }
       </List>
-      
   )
 }
 

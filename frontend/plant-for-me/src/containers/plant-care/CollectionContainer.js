@@ -1,39 +1,49 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { CollectionContext } from "../../context/plantcare/CollectionContext";
 import CollectionPage from "../../pages/plantcare/CollectionPage";
 import { CollectionService } from "../../services/plantcare/CollectionService";
 import { CollectionPlantService } from "../../services/plantcare/CollectionPlantService";
 import { TaskService } from "../../services/plantcare/TaskService";
+import { PlantService } from "../../services/plants/PlantService";
+import { AuthService } from "../../services/auth/AuthService";
+import { tokenIsExpired } from "../../utils/functions/jwt";
 
 const CollectionContainer = () => {
   const [collection, setCollection] = useState({})
   const [collectionPlants, setCollectionPlants] = useState([])
   const [allPlants, setAllPlants] = useState([])
   const { id } = useParams();
+  const currentUser = AuthService.getCurrentUser();
+  let navigate = useNavigate();
 
   useEffect(() => {
+    if(tokenIsExpired()) {
+      AuthService.logout();
+      return navigate("/login");
+    }
     getCollectionHandler();
     getCollectionPlantsHandler();
+    getAllPlantReferencesHandler();
 
-    setAllPlants([
-      {
-        id: "e5be6177-1f6d-4ed7-a202-4828c57d499c",
-        name: "Dracaena",
-        image: null
-      },
-    ])
-  }, [id])
+  }, [id]);
+
+  const getAllPlantReferencesHandler = () => {
+    const getAllPlantReferences = PlantService.getPlantReferences()
+      .then(async res => {
+        if(res.ok) {
+          return await res.json().then(data => {console.log('all:',data);setAllPlants(data)});
+        }
+      }).catch(err => console.log(err));
+    return getAllPlantReferences;
+  }
 
   const getCollectionPlantsHandler = () => {
     const getCollectionPlants = CollectionPlantService.getAllByCollectionId(id)
       .then(async res => {
         if(res.ok) {
           const data = await res.json()
-          console.log(data)
           setCollectionPlants(data)
-        } else {
-          //
         }
       }).catch(err => console.log(err))
     
@@ -45,7 +55,9 @@ const CollectionContainer = () => {
       .then(async res => {
         if(res.ok) {
           const data = await res.json()
-          console.log(data)
+          if(data.username !== currentUser.username) {
+            return navigate("/404");
+          }
           setCollection(data)
         } else {
           //ovde treba 204 status
