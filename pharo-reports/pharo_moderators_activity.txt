@@ -1,0 +1,66 @@
+
+"Read report from logs.txt file line by line"
+(ZnServer defaultOn: 8089)
+logToTranscript;
+start.
+response := ZnClient new 
+	url: 'http://localhost:8080/api/logs';post;response.
+
+entity := response entity string.
+logs_lines := entity contents lines.
+
+counter := 1.
+"array of usernames with repeating"
+users := Bag new.
+userObjects:= Bag new.
+dict := Dictionary new.
+"My class has a method readUserFromLine which splits the line from the txt
+and gets the user from it. Then user is put in the bag, and if it not exists
+already then counter increases."
+
+dictOfUserDates:= Dictionary new.
+logs_lines do: [ :each | 
+	username := (MyClass new readUserFromLine: each).
+	date := (MyClass new readDateFromLine: each).
+	dictOfUserDates at: username ifPresent: [ :value | 
+			value add: date.
+	] ifAbsent: [
+		b := Bag new. b add: date. dictOfUserDates at: username put: b
+	]. 
+	(users includes: username) ifFalse: 
+	[ dict at: counter put: username.
+	  counter := counter + 1.
+	].
+	users add: username ].
+dictOfUserDates.
+
+narr:=(dictOfUserDates at: 'milan') asBag sortedElements .
+tempBag := Bag new.
+narr do: [ :pair | 
+	tempBag add: pair key.
+	].
+tempBag sorted.
+
+arrOfPoints := Array new: counter-1.
+dict associationsDo: [ :pair | 
+	miniArr := Array new: 2.
+	miniArr at: 1 put: pair value.
+	miniArr at: 2 put: (users occurrencesOf: pair value).
+	arrOfPoints at: (pair key) put: miniArr ]. 
+arrOfPoints.
+
+
+b := RTGrapher new.
+
+	d := RTMultipleData new.
+	d barShape color: Color red .
+	d points: arrOfPoints.
+	d addMetric: #second color: Color red. 
+	
+	d barChartWithBarTitle: #first.
+
+	b add: d.
+	b addDecorator: (RTCursorFollower new color: Color blue).
+	b axisX noDecimal; title: 'users'.
+	b axisY noDecimal; title: 'number of operations'.
+	b.

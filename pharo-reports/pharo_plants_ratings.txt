@@ -1,0 +1,39 @@
+Metacello new
+	baseline: 'Garage';
+	repository: 'github://pharo-rdbms/garage';
+	load: 'Garage-Mysql'.	
+		
+GADriver availableDrivers.
+connection := GADriver fromConnectionString:
+	'mysql://localhost:3306/plantdb?user=root&password=Admin123'.
+connection connect.
+connection isConnected.
+
+result := connection execute: 'select p.name, avg(pr.rating) from plantdb.plants p inner join plantdb.plant_reviews pr on p.id = pr.plant_id group by p.name'.
+result rows do: [:val | row := val. name := (row at: 1). avgRating := (row at:2)].
+counter := result rows size.
+arrOfPointsPlants := Array new: counter.
+result rows doWithIndex: [ :val :i | 
+	miniArr := Array new: 2.
+	miniArr at: 1 put: (val at:1).
+	miniArr at: 2 put: (val at:2).
+	arrOfPointsPlants at: i put: miniArr ]. 
+arrOfPointsPlants.
+
+connection close.
+
+b := RTGrapher new.
+
+	d := RTMultipleData new.
+	d barShape color: Color red .
+	d points: arrOfPointsPlants.
+	d addMetric: #second color: Color green. 
+
+	"Rotated text"
+	d barChartWithBarTitle: #first.
+
+	b add: d.
+	b addDecorator: (RTCursorFollower new color: Color blue).
+	b axisX noDecimal; title: 'plants'.
+	b axisY noDecimal; title: 'average rating'.
+	b.

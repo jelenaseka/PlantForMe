@@ -1,0 +1,10 @@
+10/05/2022,marija,OPERACIJA,id?
+11/05/2022,marija,CREATE,uuid
+11/06/2022,seka,CREATE,uuid
+03/04/2022,milan,CREATE,uuid
+04/04/2022,milan,CREATE,uuid
+05/04/2022,milan,CREATE,uuid
+06/04/2022,milan,CREATE,uuid
+03/04/2022,micko,CREATE,uuid
+05/04/2022,micko,CREATE,uuid
+05/04/2022,micko,CREATE,uuid

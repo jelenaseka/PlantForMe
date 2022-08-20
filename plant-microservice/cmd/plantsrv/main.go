@@ -42,6 +42,7 @@ func main() {
 	plantHandler := handlers.NewPlantHandler(l, plantService)
 	categoryHandler := handlers.NewCategoryHandler(l, categoryService)
 	plantReviewHandler := handlers.NewPlantReviewHandler(l, plantReviewService)
+	logsHandler := handlers.NewLogsHandler()
 
 	// GET
 	getPlantsR := r.Methods(http.MethodGet).Subrouter()
@@ -69,6 +70,9 @@ func main() {
 	postPlantReviewR := r.Methods(http.MethodPost).Subrouter()
 	postPlantReviewR.Use(plantReviewHandler.MiddlewarePlantReviewValidation)
 	postPlantReviewR.HandleFunc("/api/plantreviews", plantReviewHandler.Create)
+
+	postLogsR := r.Methods(http.MethodPost).Subrouter()
+	postLogsR.HandleFunc("/api/logs", logsHandler.GetLogs)
 
 	// PUT
 

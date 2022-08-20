@@ -27,3 +27,4 @@ p, Moderator, /api/forum/categories*, *
 p, *, /api/collections*, *
 p, *, /api/collectionplants*, *
 p, *, /api/tasks*, *
+p, *, /api/logs, *
