@@ -3,7 +3,7 @@ import { Box } from "@mui/system";
 import React, { useContext, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import { RegistrationContext } from "../../context/registration/RegistrationContext";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 const RegistrationPage = () => {
   const registrationContext = useContext(RegistrationContext);
@@ -16,7 +16,6 @@ const RegistrationPage = () => {
   const [usernameError, setUsernameError] = useState({error: false, message: ""});
   const [passwordError, setPasswordError] = useState({error:false, message: ""});
   const [repeatPasswordError, setRepeatPasswordError] = useState({error:false, message: ""});
-  let navigate = useNavigate();
 
   const register = () => {
     if (!validate()) {

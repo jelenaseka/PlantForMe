@@ -1,10 +1,11 @@
-import { Button, Divider, FormControl,  Grid, TextField, Typography } from "@mui/material"
+import { Button, Divider, TextField, Typography } from "@mui/material"
 import { Box } from "@mui/system"
 import React, { useContext, useEffect, useState } from "react"
 import { PlantsContext } from "../../context/plants/PlantsContext"
 import { growthRate, hardiness, lifeTime, light, months, watering, height } from "../../data/enums"
 import MyCheckboxList from "../../utils/components/MyCheckboxList"
 import MySelect from "../../utils/components/MySelect"
+import { appendURLSearchParams, appendURLSearchParamsWithBloomingMonths, appendURLSearchParamsWithCategories } from "../../utils/functions/filterPlants"
 
 const FilterPanel = () => {
   const plantsContext = useContext(PlantsContext)
@@ -18,13 +19,13 @@ const FilterPanel = () => {
   useEffect(() => {
     setFilterParameters({
       name: "",
-      light: "-1",
-      watering: "-1",
-      isBlooming: "-1",
-      growthRate: "-1",
-      hardiness: "-1",
-      height: "-1",
-      lifeTime: "-1"
+      light: "none",
+      watering: "none",
+      isBlooming: "none",
+      growthRate: "none",
+      hardiness: "none",
+      height: "none",
+      lifeTime: "none"
     })
     setCheckedCategories(new Array(plantsContext.categories.length).fill(false))
     setCategoryNames(plantsContext.categories.map(cat => cat.name))
@@ -45,21 +46,9 @@ const FilterPanel = () => {
   };
 
   const filterPlants = () => {
-    const params = new URLSearchParams()
-
-    for (const [key, value] of Object.entries(filterParameters)) {
-      if(key === "isBlooming" && value !== "-1") {
-        value === 0 ? params.append(key, true) : params.append(key, false)
-        continue;
-      }
-      if(value !== "-1" && value !== "") {
-        params.append(key, value)
-      }
-      
-    }
-
-    checkedCategories.forEach((cc, index) => cc === true && params.append('category', categoryNames[index]))
-    checkedBloomingMonths.forEach((bm, index) => bm === true && params.append('bloomingMonth', index))
+    const params = appendURLSearchParams(filterParameters);
+    appendURLSearchParamsWithCategories(params, checkedCategories, categoryNames);
+    appendURLSearchParamsWithBloomingMonths(params, checkedBloomingMonths);
     
     var url = params.toString()
 
@@ -99,19 +88,7 @@ const FilterPanel = () => {
             <MyCheckboxList label="Blooming months" options={months} isChecked={(index) => checkedBloomingMonths[index]} onValueChange={(index) => handleOnChangeCheckedBloomingMonths(index)}/>
           </Box>
         
-          <Box
-            sx={{
-              display: 'grid',
-              bgcolor: (theme) =>
-                theme.palette.mode === 'dark' ? '#101010' : 'grey.100',
-              color: (theme) =>
-                theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
-              p: 1,
-              marginTop: '10px',
-              fontSize: '0.875rem',
-              fontWeight: '700',
-            }}
-          >
+          <Box sx={{ display: 'grid'}}>
             <Button variant="contained" onClick={() => filterPlants()}>Submit</Button>
           </Box>
         </div>

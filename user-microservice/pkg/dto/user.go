@@ -9,13 +9,13 @@ import (
 type UserRequest struct {
 	Username string `json:"username" validate:"required,min=3"`
 	Password string `json:"password" validate:"required,min=3"`
-	Role     int    `json:"role" validate:"min=1,max=3"`
+	Role     int    `json:"role" validate:"min=0,max=2"`
 }
 
 type UserResponse struct {
 	ID       string    `json:"id" validate:"required,uuid"`
 	Username string    `json:"username" validate:"required"`
-	Role     data.Role `json:"role" validate:"required"`
+	Role     data.Role `json:"role" validate:"min=0,max=2"`
 }
 
 func NewUserResponse(user data.User) *UserResponse {

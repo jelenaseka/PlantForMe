@@ -4,6 +4,7 @@ import UsersPage from '../../pages/users/UsersPage';
 import { AuthService } from "../../services/auth/AuthService";
 import { UserService } from "../../services/users/UserService";
 import { useNavigate } from 'react-router-dom';
+import { tokenIsExpired } from "../../utils/functions/jwt";
 
 const UsersContainer = () => {
   const [users, setUsers] = useState([]);
@@ -11,20 +12,21 @@ const UsersContainer = () => {
   let navigate = useNavigate();
 
   useEffect(() => {
-    if(currentUser === null || currentUser.role !== 3) {
-      navigate('/404');
+    if(tokenIsExpired() || currentUser === null) {
+      AuthService.logout();
+      navigate("/login");
     }
-    getAllHandler()
+    if(currentUser.role !== 2) {
+      navigate("/404");
+    }
+    getAllHandler();
   }, [])
 
   const getAllHandler = () => {
     const getData = UserService.getUsers()
       .then(async res => {
         if(res.ok) {
-          return res.json().then(data => {
-            setUsers(data);
-            return { ok: true, err: null };
-          });
+          return res.json().then(data => setUsers(data));
         } else {
           const data = await res.text();
           return { ok: false, err: data };
@@ -40,7 +42,6 @@ const UsersContainer = () => {
     const createUser = UserService.createUser(user)
       .then(async res => {
         if(res.ok) {
-          await res.text();
           return { ok: true, err: null };
         } else {
           const data = await res.text();
@@ -49,13 +50,11 @@ const UsersContainer = () => {
       })
       .catch(err => {
         console.log('err: ',err)
-      })
-
+      });
     return createUser;
   }
 
   const updateUserHandler = (user) => {
-    
     const updateUser = UserService.updateUser(user)
       .then(async res => {
         if(res.ok) {
@@ -68,17 +67,14 @@ const UsersContainer = () => {
       })
       .catch(err => {
         console.log('err: ',err)
-      })
-
+      });
     return updateUser;
-    
   }
 
   const deleteUserHandler = (id) => {
     const deleteUser = UserService.deleteUser(id)
       .then(async res => {
         if(res.ok) {
-          await res.text();
           return { ok: true, err: null };
         } else {
           const data = await res.text();
@@ -88,11 +84,20 @@ const UsersContainer = () => {
       .catch(err => {
         console.log('err: ',err)
       })
-      return deleteUser;
+    return deleteUser;
   }
 
   return (
-    <UsersContext.Provider value={{users, getAllHandler,createUserHandler, updateUserHandler, deleteUserHandler}}>
+    <UsersContext.Provider value={
+      {
+        users,
+        getAllHandler,
+        createUserHandler,
+        updateUserHandler,
+        deleteUserHandler,
+        currentUser
+      }
+    }>
       <UsersPage />
     </UsersContext.Provider>
   )

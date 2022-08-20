@@ -5,7 +5,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CheckIcon from '@mui/icons-material/Check';
 import { PlantContext } from "../../context/plants/PlantContext";
 import { toast } from 'react-toastify';
-import { green, orange, red } from "@mui/material/colors";
+import { red } from "@mui/material/colors";
 
 const YourPlantRating = ({userLeftReview, refresh, userReview}) => {
   const plantContext = useContext(PlantContext);
@@ -15,7 +15,9 @@ const YourPlantRating = ({userLeftReview, refresh, userReview}) => {
 
   useEffect(() => {
     setReview(userReview.comment);
-    setRating(userReview.rating);
+    if (userReview.rating) {
+      setRating(userReview.rating);
+    }
   }, [userReview])
   
   const submitReview = () => {

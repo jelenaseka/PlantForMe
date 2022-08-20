@@ -1,19 +1,23 @@
 import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { UsersContext } from "../../context/users/UsersContext";
 import SaveUserDialog from "../../components/users/SaveUserDialog";
 import AreYouSureDialog from "../../utils/components/AreYouSureDialog";
 import { toast, ToastContainer } from "react-toastify";
+import { tokenIsExpired } from "../../utils/functions/jwt";
+import { AuthService } from "../../services/auth/AuthService";
+import { useNavigate } from "react-router-dom";
 
 const UsersPage = () => {
   const usersContext = useContext(UsersContext)
   const [createUserDialog, setCreateUserDialogOpen] = useState(false)
   const [updateUserDialog, setUpdateUserDialogOpen] = useState(false)
   const [deleteUserDialog, setDeleteUserDialogOpen] = useState(false)
-  const [selectedUser, setSelectedUser] = useState({})
-  const roles = ["Public","Member","Moderator","Admin"]; //todo remove public role
+  const [selectedUser, setSelectedUser] = useState({});
+  let navigate = useNavigate();
+  const roles = ["Member","Moderator","Admin"];
   
   const handleClickUpdate = (user) => {
     setSelectedUser(user)
@@ -25,7 +29,16 @@ const UsersPage = () => {
     setDeleteUserDialogOpen(true)
   }
 
+  const checkLoggedInUser = () => {
+    if(tokenIsExpired() || usersContext.currentUser === null) {
+      AuthService.logout();
+      navigate("/login");
+      return;
+    }
+  }
+
   const deleteUser = (userID) => {
+    checkLoggedInUser();
     usersContext.deleteUserHandler(userID).then(res => {
       if(res.ok) {
         toast.success("Successfully deleted user!");
@@ -37,7 +50,10 @@ const UsersPage = () => {
   }
 
   const createUser = (user) => {
+    checkLoggedInUser();
+
     if(!validate(user)) {
+      toast.warn("Required minimum length is 3"); //todo fix
       return;
     }
     
@@ -52,6 +68,8 @@ const UsersPage = () => {
   }
 
   const updateUser = (user) => {
+    checkLoggedInUser();
+
     if(!validate(user)) {
       return;
     }
@@ -62,23 +80,19 @@ const UsersPage = () => {
     userToUpdate.role = user.role;
     
     usersContext.updateUserHandler(userToUpdate)
-    .then(res => {
-      if(res.ok) {
-        toast.success("Successfully updated user!");
-      } else {
-        toast.error(res.err);
-      }
-      setUpdateUserDialogOpen(false);
-    }).then(() => usersContext.getAllHandler())
+      .then(res => {
+        if(res.ok) {
+          toast.success("Successfully updated user!");
+        } else {
+          toast.error(res.err);
+        }
+        setUpdateUserDialogOpen(false);
+      }).then(() => usersContext.getAllHandler())
     
   }
 
   const validate = (user) => {
-    if(user.username.trim().length < 3 || user.password.trim().length <3 ){
-      toast.warn("Required minimum length is 3");
-      return false;
-    }
-    return true;
+    return !(user.username.trim().length < 3 || user.password.trim().length < 3 );
   }
 
   const getRoleName = (role) => {
@@ -103,7 +117,7 @@ const UsersPage = () => {
           user={{
             username: "",
             password: "",
-            role: 1
+            role: 0
           }}
         />
 

@@ -56,13 +56,36 @@ type PlantResponseWithCategory struct {
 	CreatedAt      string               `json:"createdAt" validate:"required"`
 }
 
+func NewPlantResponseWithCategory(id string, name string, description string, image string, category data.Category, light data.Light, watering data.Watering,
+	isBlooming bool, bloomingMonths []data.BloomingMonth, growthRate data.GrowthRate, hardiness data.Hardiness, height data.Height,
+	lifeTime data.LifeTime, createdAt string) *PlantResponseWithCategory {
+
+	categoryResponse := CategoryResponse{
+		ID:   category.ID.String(),
+		Name: category.Name,
+	}
+	return &PlantResponseWithCategory{
+		ID:             id,
+		Name:           name,
+		Description:    description,
+		Image:          image,
+		Category:       categoryResponse,
+		Light:          light,
+		Watering:       watering,
+		IsBlooming:     isBlooming,
+		BloomingMonths: bloomingMonths,
+		GrowthRate:     growthRate,
+		Hardiness:      hardiness,
+		Height:         height,
+		LifeTime:       lifeTime,
+		CreatedAt:      createdAt,
+	}
+}
+
 func NewPlantResponse(id string, name string, description string, image string, category data.Category, light data.Light, watering data.Watering,
 	isBlooming bool, bloomingMonths []data.BloomingMonth, growthRate data.GrowthRate, hardiness data.Hardiness, height data.Height,
 	lifeTime data.LifeTime, createdAt string) *PlantResponse {
-	// categoryResponse := CategoryResponse{
-	// 	ID:   category.ID.String(),
-	// 	Name: category.Name,
-	// }
+
 	return &PlantResponse{
 		ID:             id,
 		Name:           name,

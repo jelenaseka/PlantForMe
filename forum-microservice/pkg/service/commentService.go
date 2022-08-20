@@ -20,9 +20,9 @@ type commentService struct {
 type CommentServiceInterface interface {
 	GetAll() ([]dto.CommentResponse, error_utils.MessageErr)
 	GetOneById(id uuid.UUID) (*dto.CommentResponse, error_utils.MessageErr)
-	Create(commentRequest *dto.CommentRequest) (*uuid.NullUUID, error_utils.MessageErr)
-	Update(commentRequest *dto.CommentRequest, id uuid.UUID) error_utils.MessageErr
-	Delete(id uuid.UUID, principal data.Principal) error_utils.MessageErr
+	Create(commentRequest *dto.CommentRequest, username string) (*uuid.NullUUID, error_utils.MessageErr)
+	Update(commentRequest *dto.CommentRequest, id uuid.UUID, username string) error_utils.MessageErr
+	Delete(id uuid.UUID, username string) error_utils.MessageErr
 	GetCommentsCountByPostId(id string) (int, error_utils.MessageErr)
 	GetCommentsByPostIdPageable(page int, postId string) ([]dto.CommentResponse, error_utils.MessageErr)
 }
@@ -62,10 +62,10 @@ func (this *commentService) GetOneById(id uuid.UUID) (*dto.CommentResponse, erro
 	return commentResponse, nil
 }
 
-func (this *commentService) Create(commentRequest *dto.CommentRequest) (*uuid.NullUUID, error_utils.MessageErr) {
+func (this *commentService) Create(commentRequest *dto.CommentRequest, username string) (*uuid.NullUUID, error_utils.MessageErr) {
 	id := uuid.New()
 
-	comment := data.NewComment(id, commentRequest.Content, commentRequest.Username, uuid.Must(uuid.Parse(commentRequest.PostID)))
+	comment := data.NewComment(id, commentRequest.Content, username, uuid.Must(uuid.Parse(commentRequest.PostID)))
 
 	_, err := this.IPostService.GetOneById(uuid.Must(uuid.Parse(commentRequest.PostID)))
 	if err != nil {
@@ -82,8 +82,8 @@ func (this *commentService) Create(commentRequest *dto.CommentRequest) (*uuid.Nu
 	return &uuid.NullUUID{UUID: id, Valid: true}, nil
 }
 
-func (this *commentService) Update(commentRequest *dto.CommentRequest, id uuid.UUID) error_utils.MessageErr {
-	comment := data.NewComment(id, commentRequest.Content, commentRequest.Username, uuid.Must(uuid.Parse(commentRequest.PostID)))
+func (this *commentService) Update(commentRequest *dto.CommentRequest, id uuid.UUID, username string) error_utils.MessageErr {
+	comment := data.NewComment(id, commentRequest.Content, username, uuid.Must(uuid.Parse(commentRequest.PostID)))
 
 	_, err := this.IPostService.GetOneById(uuid.Must(uuid.Parse(commentRequest.PostID)))
 	if err != nil {
@@ -99,8 +99,8 @@ func (this *commentService) Update(commentRequest *dto.CommentRequest, id uuid.U
 		return error_utils.NewConflictError(fmt.Sprintf("Comment with the id %s not on the right post.", id))
 	}
 
-	if foundComment.Username != commentRequest.Username {
-		return error_utils.NewConflictError(fmt.Sprintf("User %s who is trying to edit post not right", commentRequest.Username))
+	if foundComment.Username != username {
+		return error_utils.NewConflictError(fmt.Sprintf("User %s who is trying to edit post not right", username))
 	}
 
 	error = this.ICommentRepository.Update(comment)
@@ -110,13 +110,13 @@ func (this *commentService) Update(commentRequest *dto.CommentRequest, id uuid.U
 	return nil
 }
 
-func (this *commentService) Delete(id uuid.UUID, principal data.Principal) error_utils.MessageErr {
+func (this *commentService) Delete(id uuid.UUID, username string) error_utils.MessageErr {
 	foundComment, err := this.ICommentRepository.FindById(id)
 	if err != nil {
 		return error_utils.NewNotFoundError(fmt.Sprintf("The comment with the id %s is not found in the database.", id.String()))
 	}
 
-	if foundComment.Username != principal.Username {
+	if foundComment.Username != username {
 		error_utils.NewConflictError(fmt.Sprintf("The user with the username %s does not have permission to delete the comment.", foundComment.Username))
 	}
 

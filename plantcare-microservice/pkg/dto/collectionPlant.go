@@ -8,13 +8,14 @@ import (
 )
 
 type CollectionPlantResponse struct {
-	ID                string         `json:"id"`
-	CollectionID      string         `json:"collectionId"`
-	Nickname          string         `json:"nickname"`
-	ReferentPlantID   string         `json:"referentPlantId"`
-	ReferentPlantName string         `json:"referentPlantName"`
-	Base64Image       string         `json:"base64Image"`
-	Tasks             []TaskResponse `json:"tasks"`
+	ID                string             `json:"id"`
+	CollectionID      string             `json:"collectionId"`
+	Collection        CollectionResponse `json:"collection"`
+	Nickname          string             `json:"nickname"`
+	ReferentPlantID   string             `json:"referentPlantId"`
+	ReferentPlantName string             `json:"referentPlantName"`
+	Base64Image       string             `json:"base64Image"`
+	Tasks             []TaskResponse     `json:"tasks"`
 }
 
 type CollectionPlantRequest struct {
@@ -30,14 +31,22 @@ type CollectionPlantUpdateRequest struct {
 	Base64Image string `json:"base64Image"`
 }
 
-func NewCollectionPlantResponse(id uuid.UUID, collectionId uuid.UUID, nickname string, referentPlantId uuid.UUID, referentPlantName string, base64 string, tasks []data.Task) *CollectionPlantResponse {
+func NewCollectionPlantResponse(id uuid.UUID, collection data.Collection, nickname string, referentPlantId uuid.UUID, referentPlantName string, base64 string, tasks []data.Task) *CollectionPlantResponse {
 	tasksDTO := make([]TaskResponse, 0)
 	for _, v := range tasks {
 		tasksDTO = append(tasksDTO, *NewTaskResponse(v.ID, v.CollectionPlantID, v.Type, v.Status, v.Date, v.Notes))
 	}
+	collectionResponse := CollectionResponse{
+		ID:               collection.ID.String(),
+		Name:             collection.Name,
+		Description:      collection.Description,
+		CollectionPlants: nil,
+		Username:         collection.Username,
+	}
 	return &CollectionPlantResponse{
 		ID:                id.String(),
-		CollectionID:      collectionId.String(),
+		CollectionID:      collection.ID.String(),
+		Collection:        collectionResponse,
 		Nickname:          nickname,
 		ReferentPlantID:   referentPlantId.String(),
 		ReferentPlantName: referentPlantName,

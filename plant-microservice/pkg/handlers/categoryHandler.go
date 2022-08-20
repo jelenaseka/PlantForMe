@@ -15,10 +15,11 @@ import (
 type CategoryHandler struct {
 	l                *log.Logger
 	ICategoryService service.CategoryServiceInterface
+	ILogsService     service.LogsServiceInterface
 }
 
-func NewCategoryHandler(l *log.Logger, s service.CategoryServiceInterface) *CategoryHandler {
-	return &CategoryHandler{l, s}
+func NewCategoryHandler(l *log.Logger, s service.CategoryServiceInterface, ls service.LogsServiceInterface) *CategoryHandler {
+	return &CategoryHandler{l, s, ls}
 }
 
 func (this *CategoryHandler) GetAll(w http.ResponseWriter, r *http.Request) {
@@ -58,6 +59,13 @@ func (this *CategoryHandler) GetOne(w http.ResponseWriter, r *http.Request) {
 func (this *CategoryHandler) Create(w http.ResponseWriter, r *http.Request) {
 	this.l.Print("Create category")
 
+	username := r.Header["Username"][0]
+
+	if username == "" {
+		http.Error(w, "Not logged in", http.StatusUnauthorized)
+		return
+	}
+
 	categoryRequest := r.Context().Value(ContextCategoryKey{}).(dto.CategoryRequest)
 
 	id, err := this.ICategoryService.Create(&categoryRequest)
@@ -65,6 +73,9 @@ func (this *CategoryHandler) Create(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Message(), err.Status())
 		return
 	}
+
+	logLine := this.ILogsService.CreateLogLine(username, "CREATE_CATEGORY", id.UUID)
+	this.ILogsService.Log(logLine)
 
 	json.NewEncoder(w).Encode(id)
 	w.WriteHeader(http.StatusCreated)
@@ -79,6 +90,13 @@ func (this *CategoryHandler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	username := r.Header["Username"][0]
+
+	if username == "" {
+		http.Error(w, "Not logged in", http.StatusUnauthorized)
+		return
+	}
+
 	this.l.Print("Update category with the id ", id)
 
 	categoryRequest := r.Context().Value(ContextCategoryKey{}).(dto.CategoryRequest)
@@ -87,6 +105,9 @@ func (this *CategoryHandler) Update(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, err.Message(), err.Status())
 	}
+
+	logLine := this.ILogsService.CreateLogLine(username, "UPDATE_CATEGORY", uuid.MustParse(id))
+	this.ILogsService.Log(logLine)
 }
 
 func (this *CategoryHandler) Delete(w http.ResponseWriter, r *http.Request) {
@@ -100,10 +121,19 @@ func (this *CategoryHandler) Delete(w http.ResponseWriter, r *http.Request) {
 
 	this.l.Print("Delete category with the id ", id)
 
+	username := r.Header["Username"][0]
+
+	if username == "" {
+		http.Error(w, "Not logged in", http.StatusUnauthorized)
+		return
+	}
+
 	err := this.ICategoryService.Delete(uuid.Must(uuid.Parse(id)))
 	if err != nil {
 		http.Error(w, err.Message(), err.Status())
 		return
 	}
+	logLine := this.ILogsService.CreateLogLine(username, "DELETE_CATEGORY", uuid.MustParse(id))
+	this.ILogsService.Log(logLine)
 	w.WriteHeader(http.StatusNoContent)
 }

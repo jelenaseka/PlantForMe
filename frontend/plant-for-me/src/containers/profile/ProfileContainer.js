@@ -3,14 +3,17 @@ import { ProfileContext } from '../../context/profile/ProfileContext';
 import ProfilePage from "../../pages/profile/ProfilePage";
 import { AuthService } from "../../services/auth/AuthService";
 import { useNavigate } from 'react-router-dom';
+import { tokenIsExpired } from "../../utils/functions/jwt";
 
 const ProfileContainer = () => {
   const [me, setMe] = useState(null);
-  const currentUser = AuthService.getCurrentUser()
   let navigate = useNavigate();
 
   useEffect(() => {
-    console.log(currentUser)
+    if(tokenIsExpired()) {
+      AuthService.logout();
+      return navigate("/login");
+    }
     handleGetMe();
   }, [])
 

@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Button, Card, CardActions, CardContent, CardMedia, Grid, Link, Typography } from "@mui/material";
-import { amber, blue, brown, cyan, deepOrange, deepPurple, green, grey, indigo, lightBlue, lightGreen, lime, orange, pink, purple, red, teal, yellow } from "@mui/material/colors";
+import React, { useContext,  } from "react";
+import { Button, Card, CardActions, CardContent, CardMedia, Typography } from "@mui/material";
+import { amber, blue, brown, cyan, deepOrange, deepPurple, green, indigo, lightBlue, lightGreen, lime, orange, pink, purple, red, teal, yellow } from "@mui/material/colors";
 import { NavLink } from "react-router-dom";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { toast } from "react-toastify";
@@ -44,7 +44,7 @@ const CollectionCard = ({collection}) => {
         : 
         <CardMedia
           sx={{height:'140px', bgcolor:randomColor()}}
-        />
+        ><div></div></CardMedia>
       }
       
       <CardContent>

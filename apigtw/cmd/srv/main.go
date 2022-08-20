@@ -39,9 +39,14 @@ func main() {
 
 	// PLANT-MICROSERVICE
 
+	postLogsR := r.Methods(http.MethodPost).Subrouter()
+	postLogsR.HandleFunc("/api/logs", handlers.Post(configuration.PlantAddress))
+
 	getPlantsR := r.Methods(http.MethodGet).Subrouter()
 	getPlantsR.HandleFunc("/api/plants", handlers.Get(configuration.PlantAddress))
+	getPlantsR.HandleFunc("/api/plants/references", handlers.Get(configuration.PlantAddress))
 	getPlantsR.HandleFunc("/api/plants/{id}", handlers.Get(configuration.PlantAddress))
+	getPlantsR.HandleFunc("/api/plants/{id}/cat", handlers.Get(configuration.PlantAddress))
 	getPlantsR.HandleFunc("/api/categories", handlers.Get(configuration.PlantAddress))
 	getPlantsR.HandleFunc("/api/categories/{id}", handlers.Get(configuration.PlantAddress))
 	getPlantsR.HandleFunc("/api/plantreviews/plant/{id}", handlers.Get(configuration.PlantAddress))
@@ -118,7 +123,7 @@ func main() {
 	deletePlantCareR.HandleFunc("/api/tasks/{id}", handlers.Delete(configuration.PlantCareAddress))
 
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{configuration.FrontendAddress},
+		AllowedOrigins:   []string{configuration.FrontendAddress, "http://localhost:8089"},
 		AllowCredentials: true,
 		AllowedMethods:   []string{"GET", "OPTIONS", "POST", "DELETE", "PUT"},
 		AllowedHeaders:   []string{"*"},

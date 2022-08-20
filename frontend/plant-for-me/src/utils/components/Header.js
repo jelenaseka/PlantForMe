@@ -1,12 +1,12 @@
 import { AppBar, Button } from "@mui/material";
 import { Box } from "@mui/system"
-import React, { useEffect } from "react"
+import React from "react"
 import NavbarLink from "./NavbarLink";
 import '../../assets/css/header.css';
 import { AuthService } from "../../services/auth/AuthService";
 import { useNavigate } from "react-router-dom";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { Link, Navigate, NavLink } from "react-router-dom";
+import {  NavLink } from "react-router-dom";
 
 const Header = () => {
   let navigate = useNavigate();
@@ -23,13 +23,13 @@ const Header = () => {
             <NavbarLink link="/plants" title="Plants" />
           </Button>
           {
-            currentUser && currentUser.role === 3 &&
+            currentUser && (currentUser.role === 2 || currentUser.role === 1) &&
             <Button>
               <NavbarLink link="/categories" title="Categories" />
             </Button>
           }
           {
-            currentUser && currentUser.role === 3 &&
+            currentUser && currentUser.role === 2 &&
             <Button>
               <NavbarLink link="/users" title="Users" />
             </Button>

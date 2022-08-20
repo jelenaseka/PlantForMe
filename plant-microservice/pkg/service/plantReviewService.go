@@ -69,7 +69,7 @@ func (service *plantReviewService) Create(plantReviewRequest *dto.PlantReviewReq
 	id := uuid.New()
 	plantReview := dto.NewPlantReviewFromPlantReviewRequest(plantReviewRequest, id, username)
 
-	_, msg_err := service.IPlantService.GetOneById(plantReview.PlantID)
+	_, msg_err := service.IPlantService.GetOneWithCategory(plantReview.PlantID)
 	if msg_err != nil {
 		return nil, error_utils.NewConflictError(fmt.Sprintf("Plant with the id %s does not exists in the database.", plantReview.PlantID.String()))
 	}

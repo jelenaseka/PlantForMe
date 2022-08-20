@@ -20,9 +20,9 @@ type postService struct {
 type PostServiceInterface interface {
 	GetAll() ([]dto.PostResponse, error_utils.MessageErr)
 	GetOneById(id uuid.UUID) (*dto.PostResponseWithComments, error_utils.MessageErr)
-	Create(postRequest *dto.PostRequest) (*uuid.NullUUID, error_utils.MessageErr)
-	Update(postRequest *dto.PostRequest, id uuid.UUID) error_utils.MessageErr
-	Delete(id uuid.UUID, principal data.Principal) error_utils.MessageErr
+	Create(postRequest *dto.PostRequest, username string) (*uuid.NullUUID, error_utils.MessageErr)
+	Update(postRequest *dto.PostRequest, id uuid.UUID, username string) error_utils.MessageErr
+	Delete(id uuid.UUID, username string) error_utils.MessageErr
 	GetAllCountComments() ([]dto.PostCountCommentsResponse, error_utils.MessageErr)
 	GetAllOrderByCreatedAt() ([]dto.PostResponse, error_utils.MessageErr)
 	GetAllPageable(page int, category string) ([]dto.PostCountCommentsResponse, error_utils.MessageErr)
@@ -64,10 +64,10 @@ func (this *postService) GetOneById(id uuid.UUID) (*dto.PostResponseWithComments
 	return postResponse, nil
 }
 
-func (this *postService) Create(postRequest *dto.PostRequest) (*uuid.NullUUID, error_utils.MessageErr) {
+func (this *postService) Create(postRequest *dto.PostRequest, username string) (*uuid.NullUUID, error_utils.MessageErr) {
 	id := uuid.New()
 
-	post := data.NewPost(id, postRequest.Heading, postRequest.Content, postRequest.Username, uuid.Must(uuid.Parse(postRequest.CategoryID)), postRequest.Image)
+	post := data.NewPost(id, postRequest.Heading, postRequest.Content, username, uuid.Must(uuid.Parse(postRequest.CategoryID)), postRequest.Image)
 
 	_, catError := this.ICategoryService.GetOneById(uuid.Must(uuid.Parse(postRequest.CategoryID)))
 	if catError != nil {
@@ -83,13 +83,13 @@ func (this *postService) Create(postRequest *dto.PostRequest) (*uuid.NullUUID, e
 	return &uuid.NullUUID{UUID: id, Valid: true}, nil
 }
 
-func (this *postService) Update(postRequest *dto.PostRequest, id uuid.UUID) error_utils.MessageErr {
+func (this *postService) Update(postRequest *dto.PostRequest, id uuid.UUID, username string) error_utils.MessageErr {
 	_, catError := this.ICategoryService.GetOneById(uuid.Must(uuid.Parse(postRequest.CategoryID)))
 	if catError != nil {
 		error_utils.NewConflictError(fmt.Sprintf("The category with the id %s is not found in the database.", postRequest.CategoryID))
 	}
 
-	post := data.NewPost(id, postRequest.Heading, postRequest.Content, postRequest.Username, uuid.Must(uuid.Parse(postRequest.CategoryID)), postRequest.Image)
+	post := data.NewPost(id, postRequest.Heading, postRequest.Content, username, uuid.Must(uuid.Parse(postRequest.CategoryID)), postRequest.Image)
 
 	foundPost, err := this.IPostRepository.FindById(post.ID)
 	if err != nil {
@@ -107,13 +107,13 @@ func (this *postService) Update(postRequest *dto.PostRequest, id uuid.UUID) erro
 	return nil
 }
 
-func (this *postService) Delete(id uuid.UUID, principal data.Principal) error_utils.MessageErr {
+func (this *postService) Delete(id uuid.UUID, username string) error_utils.MessageErr {
 	foundPost, err := this.IPostRepository.FindById(id)
 	if err != nil {
 		return error_utils.NewNotFoundError(fmt.Sprintf("The post with the id %s is not found in the database.", id.String()))
 	}
 
-	if foundPost.Username != principal.Username {
+	if foundPost.Username != username {
 		error_utils.NewConflictError(fmt.Sprintf("The user with the username %s does not have permission to delete the post.", foundPost.Username))
 	}
 

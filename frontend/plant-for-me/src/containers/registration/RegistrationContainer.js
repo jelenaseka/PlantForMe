@@ -9,7 +9,6 @@ const RegistrationContainer = () => {
     const register = AuthService.register(newUser)
       .then(async res => {
         if(res.ok) {
-          const data = await res.json();
           return { ok: true, err: null };
         } else {
           const data = await res.text();

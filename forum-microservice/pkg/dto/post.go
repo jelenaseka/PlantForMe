@@ -10,7 +10,6 @@ import (
 type PostRequest struct {
 	Heading    string `json:"heading" validate:"required"`
 	Content    string `json:"content" validate:"required"`
-	Username   string `json:"username" validate:"required"`
 	CategoryID string `json:"categoryID" validate:"required"`
 	Image      string `json:"image"`
 }

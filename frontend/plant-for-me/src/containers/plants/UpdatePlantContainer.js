@@ -4,14 +4,21 @@ import { UpdatePlantContext} from '../../context/plants/UpdatePlantContext'
 import UpdatePlantPage from '../../pages/plants/UpdatePlantPage';
 import { PlantService } from '../../services/plants/PlantService';
 import { useNavigate, useParams } from "react-router-dom";
+import { tokenIsExpired } from "../../utils/functions/jwt";
+import { AuthService } from "../../services/auth/AuthService";
 
 const UpdatePlantContainer = () => {
   const [categories, setCategories] = useState([])
   const { id } = useParams();
   const [plant, setPlant] = useState(null);
   let navigate = useNavigate();
+  const currentUser = AuthService.getCurrentUser();
 
   useEffect(() => {
+    if(tokenIsExpired() || currentUser === null || currentUser.role !== 1) {
+      AuthService.logout();
+      navigate("/login");
+    }
     getCategoriesHandler()
     getPlantHandler()
   }, [id])
@@ -20,9 +27,9 @@ const UpdatePlantContainer = () => {
     const getData = CategoryService.getCategories()
       .then(async res => {
         if(res.ok) {
-          return await res.json().then(data => setCategories(data))
+          return await res.json().then(data => setCategories(data));
         } else {
-          //todo error
+          return await res.text().then(data => console.log(data));
         }
       })
       .catch(err => console.log(err))
@@ -35,7 +42,9 @@ const UpdatePlantContainer = () => {
         if(res.ok) {
           return await res.json().then(data => setPlant(data));
         } else {
-          return navigate("/404");
+          if(res.status === 204) {
+            return navigate("/404");
+          }
         }
       })
       .catch(err => console.log(err))
@@ -46,7 +55,6 @@ const UpdatePlantContainer = () => {
     const updatePlant = PlantService.updatePlant(plant)
       .then(async res => {
         if(res.ok) {
-          getPlantHandler();
           return { ok: true, err: null };
         } else {
           const data = await res.text();
@@ -55,9 +63,9 @@ const UpdatePlantContainer = () => {
       })
       .catch(err => {
         console.log('err: ',err)
-      })
+      });
 
-  return updatePlant;
+    return updatePlant;
   }
 
   return (
@@ -65,7 +73,11 @@ const UpdatePlantContainer = () => {
       {
         categories, 
         plant,
-        updatePlantHandler}}>
+        updatePlantHandler,
+        getPlantHandler,
+        currentUser
+      }
+    }>
       <UpdatePlantPage />
     </UpdatePlantContext.Provider>
   )

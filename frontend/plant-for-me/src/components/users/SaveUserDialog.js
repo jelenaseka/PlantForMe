@@ -7,9 +7,9 @@ const SaveUserDialog = ({title, handleOpen, handleClose, handleSaveUser, user}) 
   const [newUser, setNewUser] = useState({})
 
   useEffect(() => {
-    console.log(user)
     setNewUser(user)
-  }, [user])
+  }, [user]);
+
   return (
     <Dialog open={handleOpen} onClose={handleClose}>
       <DialogTitle>{title}</DialogTitle>
@@ -47,7 +47,7 @@ const SaveUserDialog = ({title, handleOpen, handleClose, handleSaveUser, user}) 
             {
               username: "",
               password: "",
-              role: 1
+              role: 0
             }); 
           return handleSaveUser(newUser)}}>Submit</Button>
       </DialogActions>

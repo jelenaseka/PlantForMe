@@ -26,7 +26,6 @@ function App() {
     <div className="App">
       <ThemeProvider theme={theme}>
       <Header></Header>
-      {/* <Container maxWidth="lg"> */}
         <Routes>
           <Route path="/plants/create" element={<CreatePlantContainer/>}/>
           <Route path="/plants/update/:id" element={<UpdatePlantContainer/>}/>
@@ -44,7 +43,6 @@ function App() {
           <Route path='/me' element={<ProfileContainer/>}/>
           <Route path="/404" element={<NotFoundPage/>} />
         </Routes>
-      {/* </Container> */}
       </ThemeProvider>
      
     </div>

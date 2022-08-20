@@ -9,6 +9,7 @@ type CollectionPlant struct {
 	gorm.Model
 	ID                uuid.UUID
 	CollectionID      uuid.UUID
+	Collection        Collection
 	Nickname          string
 	ReferentPlantID   uuid.UUID
 	ReferentPlantName string

@@ -21,8 +21,8 @@ export const ForumCategoryService = {
     })
   },
 
-  updateCategory: (category, id) => {
-    return fetch(baseUrl + `/${id}`, {
+  updateCategory: (category) => {
+    return fetch(baseUrl + `/${category.id}`, {
       method: 'PUT',
       headers: getHeaders(),
       body: JSON.stringify(category)

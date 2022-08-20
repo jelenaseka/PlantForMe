@@ -16,6 +16,7 @@ const AddCollectionCard = () => {
         if(res.ok) {
           toast.success("Successfully added new collection!");
           setAddCollectionDialogOpened(false);
+          plantCareContext.getMyCollectionsHandler();
         } else {
           toast.error(res.err)
         }

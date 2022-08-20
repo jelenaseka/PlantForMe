@@ -14,27 +14,27 @@ import HeightIcon from '@mui/icons-material/Height';
 import FilterVintageIcon from '@mui/icons-material/FilterVintage';
 import ListItem from '../../components/plants/ListItem'
 import { Link, useNavigate } from "react-router-dom";
-import { green, yellow } from "@mui/material/colors";
+import { green } from "@mui/material/colors";
 import { toast } from 'react-toastify';
+import { tokenIsExpired } from "../../utils/functions/jwt";
+import { AuthService } from "../../services/auth/AuthService";
 
 const PlantFeatures = () => {
   const plantContext = useContext(PlantContext);
   let navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   const deletePlant = () => {
+    if(tokenIsExpired() || plantContext.currentUser === null) {
+      AuthService.logout();
+      navigate("/login");
+      return;
+    }
     plantContext.deletePlantHandler().then(res => {
       if(res.ok) {
         navigate("/plants");
       } else {
-        //todo error
         toast.error(res.err);
       }
     })
@@ -52,34 +52,38 @@ const PlantFeatures = () => {
   return (
     <Card >
       <CardHeader
-        
-        action={
-          <IconButton aria-label="settings" onClick={handleClick}>
+        action={ (plantContext.currentUser.role === 1 || plantContext.currentUser.role === 2) &&
+          <IconButton aria-label="settings" onClick={(e) => setAnchorEl(e.currentTarget)}>
             <MoreVertIcon />
           </IconButton>
         }
         title="Plant Features"
       />
-      <Menu
-        id="basic-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        MenuListProps={{
-          'aria-labelledby': 'basic-button',
-        }}
-      >
-        <MenuItem component={Link} to={"/plants/update/" + plantContext.plant.id} >
-          <EditIcon sx={{ color: green[500] }}/>
-        </MenuItem>
-        <MenuItem onClick={() => deletePlant()}>
-          <DeleteIcon/>
-        </MenuItem>
-      </Menu>
+      {
+        (plantContext.currentUser.role === 1 || plantContext.currentUser.role === 2) &&
+          <Menu
+            id="basic-menu"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={() => setAnchorEl(null)}
+            MenuListProps={{
+              'aria-labelledby': 'basic-button',
+            }}
+          >
+            <MenuItem component={Link} to={"/plants/update/" + plantContext.plant.id} >
+            <EditIcon sx={{ color: green[500] }}/>
+            </MenuItem>
+            <MenuItem onClick={() => deletePlant()}>
+              <DeleteIcon/>
+            </MenuItem>
+          </Menu>
+      }
+      
+        
       <Divider/>
       <CardContent>
         <ul className="plant-parameters-list">
-          {/* <ListItem icon={<CategoryIcon/>} name="Category" value={plantContext.plant.category.name}/> */}
+          <ListItem icon={<CategoryIcon/>} name="Category" value={plantContext.plant.category.name}/>
           <ListItem icon={<OpacityIcon/>} name="Watering" value={watering[plantContext.plant.watering].name}/>
           <ListItem icon={<WbSunnyIcon/>} name="Light" value={light[plantContext.plant.light].name}/>
           <ListItem icon={<ExpandIcon/>} name="Growth rate" value={growthRate[plantContext.plant.growthRate].name}/>

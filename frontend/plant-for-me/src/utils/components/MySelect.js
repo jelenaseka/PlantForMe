@@ -16,7 +16,7 @@ const MySelect = ({label, options, selected, onValueChange, isFiltering}) => {
         onChange={(e) => onValueChange(e.target.value)}
       >
         {isFiltering &&
-          <MenuItem value="-1">None</MenuItem>
+          <MenuItem value="none">None</MenuItem>
         }
         {options.map((option) => (
           <MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>

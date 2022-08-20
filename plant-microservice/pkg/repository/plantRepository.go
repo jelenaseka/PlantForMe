@@ -15,6 +15,7 @@ type plantRepository struct {
 
 type PlantRepositoryInterface interface {
 	FindAll(url.Values) ([]data.Plant, error)
+	FindAllForCollectionPlantReference() ([]data.PlantReference, error)
 	FindById(id uuid.UUID) (*data.Plant, error)
 	FindByName(name string) (*data.Plant, error)
 	Create(plant *data.Plant) error
@@ -34,6 +35,16 @@ func (repo *plantRepository) FindAll(urlValues url.Values) ([]data.Plant, error)
 	query += utils.BuildQuery(urlValues)
 	fmt.Print(query)
 
+	db.Debug().Raw(query).Scan(&plants)
+
+	return plants, nil
+}
+
+func (repo *plantRepository) FindAllForCollectionPlantReference() ([]data.PlantReference, error) {
+	db := config.GetDB()
+	var plants []data.PlantReference
+
+	query := "select p.id, p.name, p.base64_image from plantdb.plants p where p.deleted_at IS NULL"
 	db.Debug().Raw(query).Scan(&plants)
 
 	return plants, nil

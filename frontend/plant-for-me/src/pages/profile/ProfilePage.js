@@ -1,4 +1,4 @@
-import { Button, FormControl, Grid, TextField } from "@mui/material";
+import { Button, Grid, TextField } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useContext, useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
@@ -10,7 +10,7 @@ const ProfilePage = () => {
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
   const [usernameError, setUsernameError] = useState({error: false, message: ""});
-  const [passwordError, setPasswordError] = useState({error:false, message: ""});
+  const [passwordError] = useState({error:false, message: ""});
   const [repeatPasswordError, setRepeatPasswordError] = useState({error:false, message: ""});
 
   useEffect(() => {
