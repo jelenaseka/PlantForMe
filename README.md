@@ -56,7 +56,7 @@ Admin može kreirati nove korisnike i moderatore. On takođe ima uvid u izvešta
 
 **Forum service** – GoLang mikroservis i MySQL baza podataka za upravljanje diskusijama na forumu
 
-**Report service** – Pharo servis za izveštaje o moderatorima i biljkama
+**Report service** – Pharo servis za izveštaje o moderatorima i biljkama. Logovi o aktivnosti moderatora se citaju iz txt fajla, a o popularnosti biljaka iz baze podataka.
 
 **Recommendation service** – GoLang mikroservis i Neo4j baza podataka za preporuku biljaka korisnicima na osnovu onih koje već poseduju
 
