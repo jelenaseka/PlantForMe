@@ -16,13 +16,18 @@ const ForumsPage = () => {
   const page = parseInt(query.get('page') || '1', 10);
   const [createPostDialogOpen, setCreatePostDialogOpen] = React.useState(false);
 
-  const handleCreatePostDialog = (isSuccessfull) => {
-    //TODO - CHANGE
-    if(isSuccessfull) {
-      setCreatePostDialogOpen(false);
-      toast.success("Successfully created post!");
-      forumContext.getPostsDataHandler();
-    }
+  const handleCreatePostDialog = (post) => {
+    forumContext.createPostHandler(post)
+      .then(res => {
+        if(res.ok) {
+          setCreatePostDialogOpen(false);
+          toast.success("Successfully created post!");
+          forumContext.getPostsDataHandler();
+        } else {
+          toast.error(res.err);
+        }
+      })
+
   }
 
   const getCurrentLink = (page, category) => {
@@ -61,7 +66,8 @@ const ForumsPage = () => {
           <div>
             <CreatePostDialog 
               handleOpen={createPostDialogOpen} 
-              handleClose={(isSuccessfull) =>  handleCreatePostDialog(isSuccessfull)} 
+              handleCancel={() => setCreatePostDialogOpen(false)}
+              handleSubmit={(post) =>  handleCreatePostDialog(post)} 
             />
             <Button variant="contained" onClick={() => setCreatePostDialogOpen(true)}>Create post</Button>
           </div>

@@ -45,6 +45,7 @@ func main() {
 	getPlantsR := r.Methods(http.MethodGet).Subrouter()
 	getPlantsR.HandleFunc("/api/plants", handlers.Get(configuration.PlantAddress))
 	getPlantsR.HandleFunc("/api/plants/{id}", handlers.Get(configuration.PlantAddress))
+	getPlantsR.HandleFunc("/api/plants/{id}/cat", handlers.Get(configuration.PlantAddress))
 	getPlantsR.HandleFunc("/api/categories", handlers.Get(configuration.PlantAddress))
 	getPlantsR.HandleFunc("/api/categories/{id}", handlers.Get(configuration.PlantAddress))
 	getPlantsR.HandleFunc("/api/plantreviews/plant/{id}", handlers.Get(configuration.PlantAddress))

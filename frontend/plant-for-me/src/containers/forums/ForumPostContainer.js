@@ -34,6 +34,7 @@ const ForumPostContainer = () => {
       .then(async res => {
         if (res.ok) {
           const data = await res.json();
+          console.log(data);
           setComments(data);
         } else {
           return navigate("/plants");

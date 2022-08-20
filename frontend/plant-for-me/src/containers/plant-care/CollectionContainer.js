@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { CollectionContext } from "../../context/plantcare/CollectionContext";
 import CollectionPage from "../../pages/plantcare/CollectionPage";
 import { CollectionService } from "../../services/plantcare/CollectionService";
@@ -11,8 +11,6 @@ const CollectionContainer = () => {
   const [collectionPlants, setCollectionPlants] = useState([])
   const [allPlants, setAllPlants] = useState([])
   const { id } = useParams();
-  let navigate = useNavigate();
-
 
   useEffect(() => {
     getCollectionHandler();

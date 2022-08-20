@@ -1,16 +1,11 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
-import ImageIcon from '@mui/icons-material/Image';
-import WorkIcon from '@mui/icons-material/Work';
-import BeachAccessIcon from '@mui/icons-material/BeachAccess';
-import { grey, red } from "@mui/material/colors";
+import { grey } from "@mui/material/colors";
 import { CollectionContext } from "../../context/plantcare/CollectionContext";
-import { Button, Checkbox, ListItemButton } from "@mui/material";
-import { Box } from "@mui/system";
+import {  ListItemButton } from "@mui/material";
 
 
 const PlantList = ({handleSubmit, selectedId, setSelectedPlant}) => {

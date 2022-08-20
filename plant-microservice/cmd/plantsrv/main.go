@@ -36,18 +36,20 @@ func main() {
 	bloomingMonthService := service.NewBloomingMonthService(bloomingMonthRepository)
 	plantService := service.NewPlantService(plantRepository, categoryService, bloomingMonthService)
 	plantReviewService := service.NewPlantReviewService(plantReviewRepository, plantService)
+	logsService := service.NewLogsService()
 
 	// HANDLERS
 
-	plantHandler := handlers.NewPlantHandler(l, plantService)
-	categoryHandler := handlers.NewCategoryHandler(l, categoryService)
+	plantHandler := handlers.NewPlantHandler(l, plantService, logsService)
+	categoryHandler := handlers.NewCategoryHandler(l, categoryService, logsService)
 	plantReviewHandler := handlers.NewPlantReviewHandler(l, plantReviewService)
-	logsHandler := handlers.NewLogsHandler()
+	logsHandler := handlers.NewLogsHandler(logsService)
 
 	// GET
 	getPlantsR := r.Methods(http.MethodGet).Subrouter()
 	getPlantsR.HandleFunc("/api/plants", plantHandler.GetAll)
 	getPlantsR.HandleFunc("/api/plants/{id}", plantHandler.GetOne)
+	getPlantsR.HandleFunc("/api/plants/{id}/cat", plantHandler.GetOneWithCategory)
 
 	getCategoriesR := r.Methods(http.MethodGet).Subrouter()
 	getCategoriesR.HandleFunc("/api/categories", categoryHandler.GetAll)

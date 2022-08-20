@@ -90,7 +90,7 @@ func (this *postRepository) Delete(id uuid.UUID) {
 func (this *postRepository) FindAllCountComments() ([]data.PostCountComments, error) {
 	db := config.GetDB()
 	var posts []data.PostCountComments
-	result := db.Debug().Preload("Comments").Raw("select p.*, count(c.id) as comments_count from forumdb.posts p left join forumdb.comments c on p.id = c.post_id where p.deleted_at is null group by p.id order by comments_count desc limit 6;").Scan(&posts)
+	result := db.Debug().Preload("Comments").Raw("select p.*, count(c.id) as comments_count from forumdb.posts p left join forumdb.comments c on p.id = c.post_id where p.deleted_at is null and c.deleted_at is null group by p.id order by comments_count desc limit 6;").Scan(&posts)
 
 	if result.Error != nil {
 		return nil, result.Error
@@ -115,7 +115,7 @@ func (this *postRepository) FindAllByCategoryPageable(page int, category string)
 	limit := 3
 	offset := limit * (page - 1)
 
-	query := "select p.*, count(c.id) as comments_count from forumdb.posts p left join forumdb.comments c on p.id = c.post_id left join forumdb.categories cat on cat.id = p.category_id where p.deleted_at is null "
+	query := "select p.*, count(c.id) as comments_count from forumdb.posts p left join forumdb.comments c on p.id = c.post_id left join forumdb.categories cat on cat.id = p.category_id where p.deleted_at is null and c.deleted_at is null "
 	if category != "" {
 		query += " and cat.name = '" + category + "'"
 	}

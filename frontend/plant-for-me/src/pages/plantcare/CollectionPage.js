@@ -4,7 +4,6 @@ import { CollectionContext } from "../../context/plantcare/CollectionContext";
 import { Box, Grid, Typography } from "@mui/material";
 import { ToastContainer } from 'react-toastify';
 import CollectionPlantCard from "../../components/plantcare/CollectionPlantCard";
-import AddCollectionPlantDialog from "../../components/plantcare/AddCollectionPlantDialog";
 import AddCollectionPlantCard from "../../components/plantcare/AddCollectionPlantCard";
 
 const CollectionPage = () => {

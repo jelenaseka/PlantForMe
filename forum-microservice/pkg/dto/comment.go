@@ -8,9 +8,8 @@ import (
 )
 
 type CommentRequest struct {
-	Content  string `json:"content" validate:"required"`
-	Username string `json:"username" validate:"required"`
-	PostID   string `json:"postID" validate:"required,uuid"`
+	Content string `json:"content" validate:"required"`
+	PostID  string `json:"postID" validate:"required,uuid"`
 }
 
 func (cr *CommentRequest) Validate() error {

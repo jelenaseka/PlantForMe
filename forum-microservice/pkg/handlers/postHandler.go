@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"forum-microservice/pkg/data"
 	"forum-microservice/pkg/dto"
 	"forum-microservice/pkg/service"
 	"forum-microservice/pkg/utils"
@@ -85,9 +84,16 @@ func (this *PostHandler) GetOne(w http.ResponseWriter, r *http.Request) {
 func (this *PostHandler) Create(w http.ResponseWriter, r *http.Request) {
 	this.l.Print("Create post")
 
+	username := r.Header["Username"][0]
+
+	if username == "" {
+		http.Error(w, "Not logged in", http.StatusUnauthorized)
+		return
+	}
+
 	postRequest := r.Context().Value(ContextPostKey{}).(dto.PostRequest)
 
-	id, err := this.IPostService.Create(&postRequest)
+	id, err := this.IPostService.Create(&postRequest, username)
 	if err != nil {
 		http.Error(w, err.Message(), err.Status())
 		return
@@ -108,9 +114,16 @@ func (this *PostHandler) Update(w http.ResponseWriter, r *http.Request) {
 
 	this.l.Print("Update post with the id ", id)
 
+	username := r.Header["Username"][0]
+
+	if username == "" {
+		http.Error(w, "Not logged in", http.StatusUnauthorized)
+		return
+	}
+
 	postRequest := r.Context().Value(ContextPostKey{}).(dto.PostRequest)
 
-	err := this.IPostService.Update(&postRequest, uuid.Must(uuid.Parse(id)))
+	err := this.IPostService.Update(&postRequest, uuid.Must(uuid.Parse(id)), username)
 	if err != nil {
 		http.Error(w, err.Message(), err.Status())
 	}
@@ -119,19 +132,22 @@ func (this *PostHandler) Update(w http.ResponseWriter, r *http.Request) {
 func (this *PostHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
-	//username is here
-	var principal data.Principal
-
-	_ = json.NewDecoder(r.Body).Decode(&principal)
 
 	if !utils.IsValidUUID(id) {
 		http.Error(w, "Bad request. Id format error", http.StatusBadRequest)
 		return
 	}
 
+	username := r.Header["Username"][0]
+
+	if username == "" {
+		http.Error(w, "Not logged in", http.StatusUnauthorized)
+		return
+	}
+
 	this.l.Print("Delete post with the id ", id)
 
-	err := this.IPostService.Delete(uuid.Must(uuid.Parse(id)), principal)
+	err := this.IPostService.Delete(uuid.Must(uuid.Parse(id)), username)
 	if err != nil {
 		http.Error(w, err.Message(), err.Status())
 		return

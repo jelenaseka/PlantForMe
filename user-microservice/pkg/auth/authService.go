@@ -55,7 +55,7 @@ func (this *authService) ValidateCredentials(credentials Credentials) (*data.Use
 }
 
 func (this *authService) IssueToken(user *data.User) (string, error_utils.MessageErr) {
-	expirationTime := time.Now().Add(1 * time.Minute)
+	expirationTime := time.Now().Add(60 * time.Minute)
 
 	claims := &Claims{
 		Username: user.Username,

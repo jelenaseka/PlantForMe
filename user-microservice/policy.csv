@@ -14,10 +14,11 @@ p, *, /api/plantreviews*, *
 p, Moderator, /api/plants, POST
 p, Moderator, /api/plants/*, *
 p, Moderator, /api/categories, POST
-p, Moderator, /api/categories/*, *
+p, Moderator, /api/categories*, *
 p, Admin, /api/users*, *
 p, *, /api/posts*, GET
 p, Member, /api/posts*, *
+p, Moderator, /api/posts*, *
 p, Admin, /api/posts/:id, DELETE
 p, *, /api/comments*, GET
 p, Member, /api/comments*, *

@@ -54,7 +54,7 @@ const EditCollectionPlantDialog = ({open, handleCancel, handleSubmit, collection
           </Button>
           <Box sx={{display:'flex', justifyContent:'space-between'}}>
             <div className="image-placeholder">
-              <img src={newCollectionPlant.base64Image} />
+              <img src={newCollectionPlant.base64Image} alt="collection plant"/>
             </div>
           </Box>
           <Button variant="contained" sx={{color: "white"}} onClick={() => submit()}>submit</Button>

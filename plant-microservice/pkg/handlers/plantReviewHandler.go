@@ -114,6 +114,12 @@ func (plant *PlantReviewHandler) Update(w http.ResponseWriter, r *http.Request) 
 	vars := mux.Vars(r)
 	id := vars["id"]
 	plant.l.Print("Update plant review with the id ", id)
+	username := r.Header["Username"][0]
+
+	if username == "" {
+		http.Error(w, "Not logged in", http.StatusUnauthorized)
+		return
+	}
 
 	plantReviewRequest := r.Context().Value(ContextPlantReviewUpdateKey{}).(dto.PlantReviewUpdateRequest)
 
@@ -128,10 +134,18 @@ func (plant *PlantReviewHandler) Delete(w http.ResponseWriter, r *http.Request) 
 	id := vars["id"]
 	plant.l.Print("Delete plant review with the id ", id)
 
+	username := r.Header["Username"][0]
+
+	if username == "" {
+		http.Error(w, "Not logged in", http.StatusUnauthorized)
+		return
+	}
+
 	err := plant.IPlantReviewService.Delete(uuid.Must(uuid.Parse(id)))
 	if err != nil {
 		http.Error(w, err.Message(), err.Status())
 		return
 	}
+
 	w.WriteHeader(http.StatusNoContent)
 }

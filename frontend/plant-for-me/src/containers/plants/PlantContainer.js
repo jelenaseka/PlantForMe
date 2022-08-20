@@ -22,7 +22,7 @@ const PlantContainer = () => {
   }, [id])
 
   const getPlantHandler = () => {
-    const getData = PlantService.getOne(id)
+    const getData = PlantService.getOneWithCategory(id)
       .then(async res => {
         if(res.ok) {
           return await res.json().then(data => setPlant(data));

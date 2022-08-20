@@ -17,7 +17,7 @@ const CategoriesContainer = () => {
       AuthService.logout();
       navigate("/login");
     }
-    if(currentUser.role !== 2) {
+    if(currentUser.role !== 2 && currentUser.role !== 1) {
       navigate("/404");
     }
     getCategoriesHandler();

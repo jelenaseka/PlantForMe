@@ -5,6 +5,7 @@ import { ForumPostService } from "../../services/forum/ForumPostService";
 import { ForumCategoryService } from "../../services/forum/ForumCategoryService";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthService } from "../../services/auth/AuthService"
+import { tokenIsExpired } from "../../utils/functions/jwt";
 
 function useQuery() {
   const { search } = useLocation();
@@ -24,6 +25,9 @@ const ForumsContainer = () => {
   let navigate = useNavigate();
 
   useEffect(() => {
+    if(tokenIsExpired()) {
+      AuthService.logout();
+    }
     getPostsDataHandler()
     getMostPopularPostsHandler()
     getPostsCount()
@@ -36,47 +40,35 @@ const ForumsContainer = () => {
   }
 
   const getMostPopularPostsHandler = () => {
-    const getData = async () => {
-      try {
-        const mostPopularPostsResponse = await ForumPostService.getMostPopularPostsCountComments()
-        if(mostPopularPostsResponse.ok) {
-          const data = await mostPopularPostsResponse.json();
-          setMostPopularPosts(data)
-          
+    const getData = ForumPostService.getMostPopularPostsCountComments()
+      .then(async res => {
+        if(res.ok) {
+          return await res.json().then(data => setMostPopularPosts(data));
         } else {
-          const err = await mostPopularPostsResponse.text();
+          const err = await res.text();
           return {ok: false, err: err};
         }
-      } catch(err) { console.log(err) }
-    }
-    getData();
+      }).catch(err =>  console.log(err));
+    return getData;
   }
 
   const getCategoriesHandler = () => {
-    const getData = async () => {
-      try {
-        const categoriesResponse = await ForumCategoryService.getCategoriesCountPosts()
-        if(categoriesResponse.ok) {
-          const data = await categoriesResponse.json();
-          setCategories(data)
+    const getData = ForumCategoryService.getCategoriesCountPosts()
+      .then(async res => {
+        if(res.ok) {
+          return await res.json().then(data => setCategories(data));
         } else {
-          const err = await categoriesResponse.text();
-          return {ok: false, err: err};
-          
+          return await res.text().then(data => console.log(data));
         }
-        
-      } catch(err) { console.log(err) }
-    }
-    getData();
+      }).catch(err => console.log(err));
+    return getData;
   }
 
   const getPostsCount = () => {
-    //TODO change 
-    const getData = async () => {
-      try {
-        const postsCountResponse = await ForumPostService.getPostsCount(currentCategory)
-        if(postsCountResponse.ok) {
-          const data = await postsCountResponse.text();
+    const getData = ForumPostService.getPostsCount(currentCategory)
+      .then(async res => {
+        if(res.ok) {
+          const data = await res.text();
           var count = parseInt(data)
           if (count % 3 !== 0) {
             count = Math.floor(count / 3) + 1
@@ -86,45 +78,37 @@ const ForumsContainer = () => {
           setPostsCount(count)
           
         } else {
-          const err = await postsCountResponse.text();
+          const err = await res.text();
           return {ok: false, err: err};
         }
-      } catch(err) { console.log(err) }
-    }
-    getData()
+      }).catch(err => console.log(err));
+    return getData;
   }
 
   const getAllPostsHandler = (page, category) => {
-    console.log(category)
-    const getData = async () => {
-      try {
-        const allPostsResponse = await ForumPostService.getAllPostsCountComments(page, category)
-        if(allPostsResponse.ok) {
-          const data = await allPostsResponse.json();
-          setAllPosts(data)
+    const getData = ForumPostService.getAllPostsCountComments(page, category)
+      .then(async res => {
+        if(res.ok) {
+          return await res.json().then(data => setAllPosts(data));
         } else {
-          const err = await allPostsResponse.text();
+          const err = await res.text();
           return {ok: false, err: err};
         }
-      } catch(err) { console.log(err) }
-    }
-    getData()
+      }).catch(err => console.log(err));
+    return getData;
   }
 
   const getLatestPostsHandler = () => {
-    const getData = async () => {
-      try {
-        const latestPostsResponse = await ForumPostService.getLatestPostsCountComments()
-        if(latestPostsResponse.ok) {
-          const data = await latestPostsResponse.json();
-          setLatestPosts(data)
+    const getData = ForumPostService.getLatestPostsCountComments()
+      .then(async res => {
+        if(res.ok) {
+          return await res.json().then(data => setLatestPosts(data));
         } else {
-          const err = await latestPostsResponse.text();
+          const err = await res.text();
           return {ok: false, err: err};
         }
-      } catch(err) { console.log(err) }
-    }
-    getData();
+      }).catch(err => console.log(err));
+    return getData;
   }
 
   const createPostHandler = (post) => {
@@ -139,7 +123,7 @@ const ForumsContainer = () => {
         }
       })
       .catch(err => console.log(err))
-      return createPost;
+    return createPost;
   }
 
   const createCategoryHandler = (category) => {
@@ -165,12 +149,17 @@ const ForumsContainer = () => {
       .catch(err => console.log(err))
   }
 
-  const editCategoryHandler = (category, id) => {
-    ForumCategoryService.updateCategory(category, id)
+  const editCategoryHandler = (category) => {
+    const updateCategory = ForumCategoryService.updateCategory(category)
       .then(async res => {
-        return navigate("/forums");
+        if(res.ok) {
+          return { ok: true, err: null};
+        } else {
+          return { ok: false, err: await res.text()}
+        }
       })
-      .catch(err => console.log(err))
+      .catch(err => console.log(err));
+    return updateCategory;
   }
 
   return (

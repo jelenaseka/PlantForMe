@@ -1,6 +1,6 @@
 import { Button, Card, CardActions, CardContent, CardMedia, Chip, Typography } from "@mui/material";
 import React, { useContext, useState } from "react";
-import { amber, blue, brown, cyan, deepOrange, deepPurple, green, indigo, lightBlue, lightGreen, lime, orange, pink, purple, red, teal, yellow } from "@mui/material/colors";
+import { blue, green, orange,  red, yellow } from "@mui/material/colors";
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -82,6 +82,7 @@ const CollectionPlantCard = ({plant, isEditable}) => {
       case 0: return "WAITING";
       case 1: return "DONE";
       case 2: return "PASSED";
+      default: return ""
     }
   }
 

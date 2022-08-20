@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"forum-microservice/pkg/data"
 	"forum-microservice/pkg/dto"
 	"forum-microservice/pkg/service"
 	"forum-microservice/pkg/utils"
@@ -60,9 +59,16 @@ func (this *CommentHandler) GetOne(w http.ResponseWriter, r *http.Request) {
 func (this *CommentHandler) Create(w http.ResponseWriter, r *http.Request) {
 	this.l.Print("Create comment")
 
+	username := r.Header["Username"][0]
+
+	if username == "" {
+		http.Error(w, "Not logged in", http.StatusUnauthorized)
+		return
+	}
+
 	commentRequest := r.Context().Value(ContextCommentKey{}).(dto.CommentRequest)
 
-	id, err := this.ICommentService.Create(&commentRequest)
+	id, err := this.ICommentService.Create(&commentRequest, username)
 	if err != nil {
 		http.Error(w, err.Message(), err.Status())
 		return
@@ -83,9 +89,16 @@ func (this *CommentHandler) Update(w http.ResponseWriter, r *http.Request) {
 
 	this.l.Print("Update comment with the id ", id)
 
+	username := r.Header["Username"][0]
+
+	if username == "" {
+		http.Error(w, "Not logged in", http.StatusUnauthorized)
+		return
+	}
+
 	commentRequest := r.Context().Value(ContextCommentKey{}).(dto.CommentRequest)
 
-	err := this.ICommentService.Update(&commentRequest, uuid.Must(uuid.Parse(id)))
+	err := this.ICommentService.Update(&commentRequest, uuid.Must(uuid.Parse(id)), username)
 	if err != nil {
 		http.Error(w, err.Message(), err.Status())
 	}
@@ -100,13 +113,16 @@ func (this *CommentHandler) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var principal data.Principal
+	username := r.Header["Username"][0]
 
-	_ = json.NewDecoder(r.Body).Decode(&principal)
+	if username == "" {
+		http.Error(w, "Not logged in", http.StatusUnauthorized)
+		return
+	}
 
 	this.l.Print("Delete comment with the id ", id)
 
-	err := this.ICommentService.Delete(uuid.Must(uuid.Parse(id)), principal)
+	err := this.ICommentService.Delete(uuid.Must(uuid.Parse(id)), username)
 	if err != nil {
 		http.Error(w, err.Message(), err.Status())
 		return

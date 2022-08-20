@@ -1,47 +1,37 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography } from "@mui/material";
 import React, { useContext, useState } from "react"
+import { toast } from "react-toastify";
 import { ForumsContext } from "../../context/forums/ForumsContext";
 import MySelect from "../../utils/components/MySelect";
 import { handleFileUpload } from "../../utils/functions/imageHandler";
 
 
-const CreatePostDialog = ({handleOpen, handleClose}) => {
+const CreatePostDialog = ({handleOpen, handleSubmit, handleCancel}) => {
   const forumContext = useContext(ForumsContext);
   
   const [post, setPost] = useState({
     heading: "",
     content: "",
-    username: forumContext.currentUser.username,
     categoryId: "",
-    image: ""
+    image: null
   })
 
   const createPost = () => {
-    console.log('smth')
     if(!isFormValid()) {
-      console.log('nije validna')
+      toast.error("Form not valid!");
       return;
     }
-    forumContext.createPostHandler(post)
-      .then(res => {
-        if(res.ok) {
-          setPost({
-            heading: "",
-            content: "",
-            username: forumContext.currentUser.username,
-            categoryId: "",
-            image: ""
-          })
-          handleClose(true) //TODO - ako klikne sa strane i dalje je true - syntetic base event
-        } else {
-          //error
-        }
-      })
-    
+    handleSubmit(post);
+    setPost({
+      heading: "",
+      content: "",
+      categoryId: "",
+      image: ""
+    })
   }
 
   const isFormValid = () => {
-    return (post.heading.trim() !== "" && post.content.trim() !== "" && post.categoryId !== "" && post.image !== "")
+    return (post.heading.trim() !== "" && post.content.trim() !== "" && post.categoryId !== "" )
   }
 
   const fileUpload = (e) => {
@@ -51,7 +41,7 @@ const CreatePostDialog = ({handleOpen, handleClose}) => {
   return (
     <Dialog 
       open={handleOpen} 
-      onClose={handleClose} 
+      onClose={handleCancel} 
       fullWidth
       maxWidth='md'>
         
@@ -99,7 +89,7 @@ const CreatePostDialog = ({handleOpen, handleClose}) => {
         </div>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose}>Cancel</Button>
+        <Button onClick={handleCancel}>Cancel</Button>
         <Button onClick={() => createPost()}>Submit</Button>
       </DialogActions>
     </Dialog>

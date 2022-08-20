@@ -1,52 +1,49 @@
 import React, { useContext, useState } from "react";
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, List, ListItem, ListItemButton, ListItemIcon, TextField, Typography } from "@mui/material";
+import { Button, Divider, Grid, List, ListItem, ListItemButton, ListItemIcon,  Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import GrassIcon from '@mui/icons-material/Grass';
 import FormatListBulletedOutlinedIcon from '@mui/icons-material/FormatListBulletedOutlined';
-import { Link, Navigate, NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { ForumsContext } from "../../context/forums/ForumsContext";
 import AddIcon from '@mui/icons-material/Add';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AreYouSureDialog from "../../utils/components/AreYouSureDialog";
 import EditIcon from '@mui/icons-material/Edit';
+import CategoryDialog from "./CategoryDialog";
 
 const ForumCategoriesList = ({categories}) => {
   const forumContext = useContext(ForumsContext)
-  const [selectedCategory, setSelectedCategory] = React.useState("-1");
-  const handleListItemClick = (event, categoryId) => {
-    setSelectedCategory(categoryId);
-  };
-  const [newCategory, setNewCategory] = useState("");
+  const [selectedCategoryId, setSelectedCategoryId] = React.useState("-1");
+  const [selectedCategory, setSelectedCategory] = useState({name:''});
+  
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
   const [editCategoryDialogOpen, setEditCategoryDialogOpen] = useState(false);
   const [areYouSureDialogOpen, setAreYouSureDialogOpen] = useState(false);
 
-  const addCategory = () => {
-    if (newCategory === "") {
-      toast.error("not valid");
-      return;
-    }
-    forumContext.createCategoryHandler({name: newCategory})
+  const addCategory = (category) => {
+    forumContext.createCategoryHandler(category)
       .then(res => {
         if (res.ok) {
-          setNewCategory("");
           setCategoryDialogOpen(false);
           toast.success("Successfully added category!");
           forumContext.getCategoriesHandler();
         } else {
           toast.error(res.err);
         }
-      })
+      });
   }
 
-  const editCategory = () => {
-    if (selectedCategory.name.trim() === "") {
-      toast.error("not valid");
-      return;
-    }
-    forumContext.editCategoryHandler(selectedCategory, selectedCategory.id);
-    setEditCategoryDialogOpen(false);
+  const editCategory = (category) => {
+    forumContext.editCategoryHandler(category).then(res => {
+      if(res.ok) {
+        toast.success("Successfully edited category!")
+        setEditCategoryDialogOpen(false);
+        forumContext.getCategoriesHandler();
+      } else {
+        toast.error(res.err);
+      }
+    });
   }
 
   return (
@@ -56,63 +53,31 @@ const ForumCategoriesList = ({categories}) => {
       </Typography>
       <AreYouSureDialog handleOpen={areYouSureDialogOpen} 
                   handleClose={() => setAreYouSureDialogOpen(false)} 
-                  handleOperation={() => forumContext.deleteCategoryHandler(selectedCategory.id)}
+                  handleOperation={() => forumContext.deleteCategoryHandler(selectedCategoryId)}
                   title="Delete category" content={"Are you sure you want to delete category?"}/>
-      <Dialog open={editCategoryDialogOpen} onClose={() => setEditCategoryDialogOpen(false)}>
-        <DialogTitle>Edit category</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Category name"
-            type="text"
-            fullWidth
-            
-            variant="standard"
-            value={selectedCategory.name}
-            onChange={(e) => setSelectedCategory({...selectedCategory, name: e.target.value})} 
-            onBlur={() => setSelectedCategory({...selectedCategory, name: selectedCategory.name.trim()})} 
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setEditCategoryDialogOpen(false)}>Cancel</Button>
-          <Button onClick={() => editCategory()}>Submit</Button>
-        </DialogActions>
-      </Dialog>            
-      <ToastContainer />
+      <CategoryDialog 
+        open={editCategoryDialogOpen} 
+        handleCancel={() => setEditCategoryDialogOpen(false)}
+        handleSubmit={(category) => editCategory(category)}
+        selectedCategory={selectedCategory}/>      
       {
-        forumContext.currentUser && forumContext.currentUser.role === 2 &&
+        (forumContext.currentUser && (forumContext.currentUser.role === 2 || forumContext.currentUser.role === 1)) &&
         <div>
           <Button onClick={() => setCategoryDialogOpen(true)}><AddIcon/></Button>
-          <Dialog open={categoryDialogOpen} onClose={() => setCategoryDialogOpen(false)}>
-            <DialogTitle>Add category</DialogTitle>
-            <DialogContent>
-              <TextField
-                autoFocus
-                margin="dense"
-                label="Category name"
-                type="text"
-                fullWidth
-                
-                variant="standard"
-                value={newCategory}
-                onChange={(e) => setNewCategory(e.target.value)} 
-                onBlur={() => setNewCategory(newCategory.trim())} 
-              />
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={() => setCategoryDialogOpen(false)}>Cancel</Button>
-              <Button onClick={() => addCategory()}>Submit</Button>
-            </DialogActions>
-          </Dialog>
+          <CategoryDialog 
+            open={categoryDialogOpen} 
+            handleCancel={() => setCategoryDialogOpen(false)}
+            handleSubmit={(category) => addCategory(category)}
+            selectedCategory={{name:''}}/>
+          
         </div>
         
       }
       <nav aria-label="main mailbox folders">
         <List sx={{padding:'0'}}>
           <ListItemButton 
-            selected={selectedCategory === '-1'} 
-            onClick={(event) => handleListItemClick(event, "-1")}>
+            selected={selectedCategoryId === '-1'} 
+            onClick={() => setSelectedCategoryId("-1")}>
             <ListItemIcon>
               <FormatListBulletedOutlinedIcon />
             </ListItemIcon>
@@ -126,8 +91,8 @@ const ForumCategoriesList = ({categories}) => {
                 <Grid container alignItems="center" justifyContent="space-between">
                   <Grid item md={8}>
                     <ListItemButton 
-                      selected={selectedCategory === category.id} 
-                      onClick={(event) => handleListItemClick(event, category.id)}>
+                      selected={selectedCategoryId === category.id} 
+                      onClick={() => setSelectedCategoryId(category.id)}>
                       <ListItemIcon>
                         <GrassIcon />
                       </ListItemIcon>
@@ -141,21 +106,18 @@ const ForumCategoriesList = ({categories}) => {
                     {category.postsCount} posts
                   </Grid>
                   {
-                    forumContext.currentUser && forumContext.currentUser.role === 2 &&
+                    (forumContext.currentUser && (forumContext.currentUser.role === 2 || forumContext.currentUser.role === 1)) &&
                     <Grid item md={2}>
                       <Box sx={{diplay:'flex', flexDirection:'row'}}>
                         <Button>
                           <EditIcon onClick={() => {setSelectedCategory(category); return setEditCategoryDialogOpen(true)}}/>
                         </Button>
                         <Button>
-                          <DeleteIcon onClick={() => {setSelectedCategory(category); return setAreYouSureDialogOpen(true)}}/>
+                          <DeleteIcon onClick={() => {setSelectedCategoryId(category.id); return setAreYouSureDialogOpen(true)}}/>
                         </Button>
-                        
                       </Box>
-                      
                     </Grid>
                   }
-                  
                 </Grid>
                 </ListItem>
                 <Divider></Divider>

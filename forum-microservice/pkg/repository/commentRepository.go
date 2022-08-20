@@ -59,7 +59,8 @@ func (this *commentRepository) Create(comment *data.Comment) error {
 
 func (this *commentRepository) Update(comment *data.Comment) error {
 	db := config.GetDB()
-	result := db.Save(&comment)
+	// result := db.Debug().Save(&comment)
+	result := db.Debug().Model(&comment).Update("content", comment.Content)
 	if result.Error != nil {
 		return result.Error
 	}

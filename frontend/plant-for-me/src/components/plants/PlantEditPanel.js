@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react"
 import { growthRate, hardiness, lifeTime, light, months, watering, height } from "../../data/enums"
 import MyCheckboxList from "../../utils/components/MyCheckboxList"
 import MySelect from "../../utils/components/MySelect"
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { handleFileUpload } from "../../utils/functions/imageHandler"
 
 const PlantEditPanel = ({plant, categories, handlePlantOperation, handleBack, title}) => {
@@ -78,7 +78,7 @@ const PlantEditPanel = ({plant, categories, handlePlantOperation, handleBack, ti
   return (
     <div>{newPlant &&
       <Box sx={{ padding: '2em' }}>
-        <ToastContainer />
+        {/* <ToastContainer /> */}
         <Typography variant="h1" sx={{ fontSize: '30px'}} component="div" gutterBottom>
           {title}
         </Typography>

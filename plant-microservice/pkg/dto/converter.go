@@ -7,7 +7,26 @@ import (
 	"github.com/google/uuid"
 )
 
-func ConvertPlantToPlantResponse(plant *data.Plant) *PlantResponseWithCategory {
+func ConvertPlantToPlantResponseWithCategory(plant *data.Plant) *PlantResponseWithCategory {
+	return NewPlantResponseWithCategory(
+		plant.ID.String(),
+		plant.Name,
+		plant.Description,
+		plant.Base64Image,
+		plant.Category,
+		plant.Light,
+		plant.Watering,
+		plant.IsBlooming,
+		plant.BloomingMonths,
+		plant.GrowthRate,
+		plant.Hardiness,
+		plant.Height,
+		plant.LifeTime,
+		plant.CreatedAt.String(),
+	)
+}
+
+func ConvertPlantToPlantResponse(plant *data.Plant) *PlantResponse {
 	return NewPlantResponse(
 		plant.ID.String(),
 		plant.Name,

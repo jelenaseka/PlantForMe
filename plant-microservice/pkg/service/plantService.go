@@ -20,7 +20,8 @@ type plantService struct {
 
 type PlantServiceInterface interface {
 	GetAll(url.Values) ([]dto.PlantResponse, error_utils.MessageErr)
-	GetOneById(uuid.UUID) (*dto.PlantResponseWithCategory, error_utils.MessageErr)
+	GetOneWithCategory(uuid.UUID) (*dto.PlantResponseWithCategory, error_utils.MessageErr)
+	GetOne(uuid.UUID) (*dto.PlantResponse, error_utils.MessageErr)
 	Create(*dto.PlantRequest, string) (*uuid.NullUUID, error_utils.MessageErr)
 	Update(*dto.PlantRequest, uuid.UUID) error_utils.MessageErr
 	Delete(uuid.UUID) error_utils.MessageErr
@@ -44,7 +45,7 @@ func (service *plantService) GetAll(urlValues url.Values) ([]dto.PlantResponse, 
 	return plantsResponse, nil
 }
 
-func (service *plantService) GetOneById(id uuid.UUID) (*dto.PlantResponseWithCategory, error_utils.MessageErr) {
+func (service *plantService) GetOne(id uuid.UUID) (*dto.PlantResponse, error_utils.MessageErr) {
 	plant, err := service.IPlantRepository.FindById(id)
 
 	if err != nil {
@@ -57,6 +58,23 @@ func (service *plantService) GetOneById(id uuid.UUID) (*dto.PlantResponseWithCat
 	}
 
 	plantResponse := dto.ConvertPlantToPlantResponse(plant)
+
+	return plantResponse, nil
+}
+
+func (service *plantService) GetOneWithCategory(id uuid.UUID) (*dto.PlantResponseWithCategory, error_utils.MessageErr) {
+	plant, err := service.IPlantRepository.FindById(id)
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, error_utils.NewNotFoundError(fmt.Sprintf("The plant with the id %s is not found in the database.", id.String()))
+		} else {
+			return nil, error_utils.NewInternalServerError(fmt.Sprintf("Error when trying to retrieve plant: %s", err.Error()))
+		}
+
+	}
+
+	plantResponse := dto.ConvertPlantToPlantResponseWithCategory(plant)
 
 	return plantResponse, nil
 }

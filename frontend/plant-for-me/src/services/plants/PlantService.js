@@ -10,6 +10,9 @@ export const PlantService = {
       var fullUrl = baseUrl + "?" + url;
       return fetch(fullUrl, {headers: getHeaders()})
     },
+    getOneWithCategory: async (id) => {
+      return fetch(baseUrl + `/${id}/cat`, {headers: getHeaders()})
+    },
     getOne: async (id) => {
       return fetch(baseUrl + `/${id}`, {headers: getHeaders()})
     },
