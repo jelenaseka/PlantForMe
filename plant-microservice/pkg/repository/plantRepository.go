@@ -36,13 +36,13 @@ func (this *plantRepository) FindPlantsByReferentsIds(references []string) []dat
 		return []data.ReferentPlant{}
 	}
 
-	query := "select p.id, p.name, c.name as category_name, p.light, p.watering, p.is_blooming, p.growth_rate, p.hardiness, p.height, p.life_time from plantdb.plants p, plantdb.categories c where p.category_id = c.id and ("
+	query := "select id, name, light, watering, is_blooming, growth_rate, hardiness, height, life_time from plantdb.plants where ("
 
 	for k, v := range references {
 		if k == len(references)-1 {
-			query += " p.id = '" + v + "')"
+			query += " id = '" + v + "')"
 		} else {
-			query += " p.id = '" + v + "'" + " OR "
+			query += " id = '" + v + "'" + " OR "
 		}
 	}
 	db.Debug().Raw(query).Find(&plants)
