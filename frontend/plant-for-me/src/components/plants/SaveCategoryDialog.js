@@ -26,6 +26,7 @@ const SaveCategoryDialog = ({title, handleOpen, handleClose, handleFeedback, cat
     newCategory.id ? updateCategory() : createCategory();
     setError(false);
     setErrorMessage("");
+    setNewCategory({name:""})
   }
 
   const createCategory = () => {

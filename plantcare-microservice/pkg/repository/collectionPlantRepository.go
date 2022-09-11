@@ -14,6 +14,7 @@ type collectionPlantRepository struct {
 type CollectionPlantRepositoryInterface interface {
 	FindAllByCollectionId(id uuid.UUID) ([]data.CollectionPlant, error)
 	FindById(id uuid.UUID) (*data.CollectionPlant, error)
+	FindReferentPlantsIdByUsername(username string) ([]string, error)
 	Create(*data.CollectionPlant) error
 	Update(*data.CollectionPlant) error
 	Delete(id uuid.UUID)
@@ -50,6 +51,16 @@ func (this *collectionPlantRepository) FindById(id uuid.UUID) (*data.CollectionP
 	}
 
 	return &collectionPlant, nil
+}
+
+func (this *collectionPlantRepository) FindReferentPlantsIdByUsername(username string) ([]string, error) {
+	db := config.GetDB()
+	var referentIds []string
+
+	query := "SELECT cp.referent_plant_id FROM plantcaredb.collection_plants cp, plantcaredb.collections c where cp.collection_id = c.id and c.username = 'luka';"
+	db.Debug().Raw(query).Scan(referentIds)
+
+	return referentIds, nil
 }
 
 func (this *collectionPlantRepository) Create(collectionPlant *data.CollectionPlant) error {

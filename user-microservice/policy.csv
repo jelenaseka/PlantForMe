@@ -22,6 +22,8 @@ p, *, /api/posts*, GET
 p, Member, /api/posts*, *
 p, Moderator, /api/posts*, *
 p, Admin, /api/posts/:id, DELETE
+p, Admin, /api/posts*, *
+p, Admin, /api*, *
 p, *, /api/comments*, GET
 p, Member, /api/comments*, *
 p, Admin, /api/comments/:id, DELETE

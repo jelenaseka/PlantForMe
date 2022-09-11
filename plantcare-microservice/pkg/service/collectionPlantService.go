@@ -20,6 +20,7 @@ type collectionPlantService struct {
 type CollectionPlantServiceInterface interface {
 	GetAllByCollectionId(collectionId uuid.UUID) ([]dto.CollectionPlantResponse, error_utils.MessageErr)
 	GetOneById(id uuid.UUID) (*dto.CollectionPlantResponse, error_utils.MessageErr)
+	GetReferentPlantsIdByUsername(username string) ([]string, error_utils.MessageErr)
 	Create(collectionPlantRequest *dto.CollectionPlantRequest, username string) (*uuid.NullUUID, error_utils.MessageErr)
 	Update(id uuid.UUID, collectionPlantRequest *dto.CollectionPlantUpdateRequest, username string) error_utils.MessageErr
 	Delete(id uuid.UUID, username string) error_utils.MessageErr
@@ -58,6 +59,16 @@ func (this *collectionPlantService) GetOneById(id uuid.UUID) (*dto.CollectionPla
 	collectionPlantResponse := dto.NewCollectionPlantResponse(collectionPlant.ID, collectionPlant.Collection, collectionPlant.Nickname, collectionPlant.ReferentPlantID, collectionPlant.ReferentPlantName, collectionPlant.Base64Image, collectionPlant.Tasks)
 
 	return collectionPlantResponse, nil
+}
+
+func (this *collectionPlantService) GetReferentPlantsIdByUsername(username string) ([]string, error_utils.MessageErr) {
+	referentIds, err := this.ICollectionPlantRepository.FindReferentPlantsIdByUsername(username)
+
+	if err != nil {
+		return nil, error_utils.NewInternalServerError(fmt.Sprintf("Error when trying to retrieve referent plants: %s", err.Error()))
+	}
+
+	return referentIds, nil
 }
 
 func (this *collectionPlantService) Create(collectionPlantRequest *dto.CollectionPlantRequest, username string) (*uuid.NullUUID, error_utils.MessageErr) {

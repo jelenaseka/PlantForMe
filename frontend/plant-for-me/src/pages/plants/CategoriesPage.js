@@ -15,7 +15,7 @@ const CategoriesPage = () => {
   const categoriesContext = useContext(CategoriesContext)
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
   const [deleteCategoryDialog, setDeleteCategoryDialogOpen] = useState(false)
-  const [selectedCategory, setSelectedCategory] = useState({name: 'ha'});
+  const [selectedCategory, setSelectedCategory] = useState({name: ''});
   let navigate = useNavigate();
 
   const handleFeedback = (feedback) => {

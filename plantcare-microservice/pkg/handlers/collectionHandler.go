@@ -143,6 +143,8 @@ func (this *CollectionHandler) Delete(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Bad request. Id format error", http.StatusBadRequest)
 		return
 	}
+
+	//TODO napravi proveru u middleware a ovde samo uzmi bez provere
 	this.l.Print("Delete collection with the id ", id)
 	headers := r.Header
 	_, ok := headers["Username"]

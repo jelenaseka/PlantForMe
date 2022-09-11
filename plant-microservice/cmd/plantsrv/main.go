@@ -37,6 +37,7 @@ func main() {
 	plantService := service.NewPlantService(plantRepository, categoryService, bloomingMonthService)
 	plantReviewService := service.NewPlantReviewService(plantReviewRepository, plantService)
 	logsService := service.NewLogsService()
+	recommendationService := service.NewRecommendationService(plantRepository)
 
 	// HANDLERS
 
@@ -44,6 +45,7 @@ func main() {
 	categoryHandler := handlers.NewCategoryHandler(l, categoryService, logsService)
 	plantReviewHandler := handlers.NewPlantReviewHandler(l, plantReviewService)
 	logsHandler := handlers.NewLogsHandler(logsService)
+	recommendationHandler := handlers.NewRecommendationHandler(l, recommendationService)
 
 	// GET
 	getPlantsR := r.Methods(http.MethodGet).Subrouter()
@@ -76,6 +78,9 @@ func main() {
 
 	postLogsR := r.Methods(http.MethodPost).Subrouter()
 	postLogsR.HandleFunc("/api/logs", logsHandler.GetLogs)
+
+	postRecommendationR := r.Methods(http.MethodPost).Subrouter()
+	postRecommendationR.HandleFunc("/api/recommendation/referents", recommendationHandler.GetPlantsByReferentsIds)
 
 	// PUT
 

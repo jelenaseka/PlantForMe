@@ -64,24 +64,26 @@ const LoginPage = () => {
         }}>
         <FormControl variant="outlined">
           <TextField
-          error={usernameError.error}
-          helperText={usernameError.message}
-          id="outlined-basic" 
-          label="Username" 
-          variant="outlined" 
-          value={username} 
-          onChange={(e) => setUsername(e.target.value)} 
+            
+            error={usernameError.error}
+            helperText={usernameError.message}
+            id="outlined-basic" 
+            label="Username" 
+            variant="outlined" 
+            value={username} 
+            onChange={(e) => setUsername(e.target.value)} 
           />
           
           <TextField
-          error={passwordError.error}
-          helperText={passwordError.message}
-          id="outlined-basic" 
-          label="Password" 
-          variant="outlined" 
-          value={password} 
-          onChange={(e) => setPassword(e.target.value)} 
-          sx={{marginTop: '1em'}} 
+            type="password"
+            error={passwordError.error}
+            helperText={passwordError.message}
+            id="outlined-basic" 
+            label="Password" 
+            variant="outlined" 
+            value={password} 
+            onChange={(e) => setPassword(e.target.value)} 
+            sx={{marginTop: '1em'}} 
           />
         </FormControl>
         <Box sx={{display:'flex', gap:1, flexDirection:'row',marginTop:'2em',justifyContent:'space-between'}}>

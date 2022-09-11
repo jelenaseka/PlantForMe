@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap');
+
+.welcome-page {
+  /* The image used */
+  background-image: url("/images/b1.jpg");
+
+  /* Full height */
+  /* height: 100%;  */
+
+  /* Center and scale the image nicely */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.welcome-font {
+  margin-block-start: 0;
+    margin-block-end: 0;
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-weight: 300;
+  text-align: center;
+  font-size: 50px;
+  padding-top: 1.5em;
+}
+
+.logo-heading {
+  color:white;
+  font-size: 60px;
+}

@@ -88,7 +88,7 @@ func (this *authService) Registration(registerUserRequest *dto.RegisterUserReque
 	id := uuid.New()
 
 	hashedPassword := crypto.NewSHA256([]byte(registerUserRequest.Password))
-	user := data.NewUser(id, registerUserRequest.Username, hex.EncodeToString(hashedPassword), data.Role(1))
+	user := data.NewUser(id, registerUserRequest.Username, hex.EncodeToString(hashedPassword), data.Role(0))
 
 	_, err := this.IUserRepository.FindByUsername(user.Username)
 	if err == nil {
@@ -105,11 +105,12 @@ func (this *authService) Registration(registerUserRequest *dto.RegisterUserReque
 
 func (this *authService) ChangeUsername(newUsername string, currentUsername string) (*data.User, error_utils.MessageErr) {
 	user, err := this.IUserRepository.FindByUsername(currentUsername)
+
 	if err != nil {
 		return nil, error_utils.NewNotFoundError(fmt.Sprintf("The user with the username %s is not found in the database.", currentUsername))
 	}
-
 	foundUser, err := this.IUserRepository.FindByUsername(newUsername)
+
 	if err == nil && foundUser.ID != user.ID {
 		return nil, error_utils.NewConflictError(fmt.Sprintf("User with the username %s already exists in the database.", user.Username))
 	}

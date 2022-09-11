@@ -61,6 +61,25 @@ func (this *CollectionPlantHandler) GetOne(w http.ResponseWriter, r *http.Reques
 	json.NewEncoder(w).Encode(collectionResponse)
 }
 
+func (this *CollectionPlantHandler) GetReferentPlantsIdByUsername(w http.ResponseWriter, r *http.Request) {
+	headers := r.Header
+	_, ok := headers["Username"]
+	if !ok {
+		http.Error(w, "Not logged in", http.StatusUnauthorized)
+		return
+	}
+	username := r.Header["Username"][0]
+
+	w.Header().Add("Content-Type", "application/json")
+
+	referentIds, err := this.ICollectionPlantService.GetReferentPlantsIdByUsername(username)
+	if err != nil {
+		http.Error(w, err.Message(), err.Status())
+		return
+	}
+	json.NewEncoder(w).Encode(referentIds)
+}
+
 func (this *CollectionPlantHandler) Create(w http.ResponseWriter, r *http.Request) {
 	this.l.Print("Create collection plant")
 

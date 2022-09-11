@@ -75,7 +75,7 @@ func (this *commentRepository) Delete(id uuid.UUID) {
 func (this *commentRepository) GetCommentsCountByPostId(id string) (int, error) {
 	db := config.GetDB()
 	var count int
-	query := "select count(c.id) from forumdb.comments c where c.post_id = '" + id + "';"
+	query := "select count(c.id) from forumdb.comments c where c.deleted_at is null and c.post_id = '" + id + "';"
 
 	result := db.Debug().Raw(query).Scan(&count)
 

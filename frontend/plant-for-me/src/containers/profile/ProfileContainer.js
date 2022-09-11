@@ -34,6 +34,7 @@ const ProfileContainer = () => {
     let user = {newUsername: username};
     const changeUsername = AuthService.changeUsername(user)
       .then(async res => {
+        console.log('res',res);
         if(res.ok) {
           return res.json().then(data => {
             localStorage.setItem("user", JSON.stringify(data))

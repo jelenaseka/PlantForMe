@@ -52,7 +52,7 @@ const PlantFeatures = () => {
   return (
     <Card >
       <CardHeader
-        action={ (plantContext.currentUser.role === 1 || plantContext.currentUser.role === 2) &&
+        action={ (plantContext.currentUser && (plantContext.currentUser.role === 1 || plantContext.currentUser.role === 2)) &&
           <IconButton aria-label="settings" onClick={(e) => setAnchorEl(e.currentTarget)}>
             <MoreVertIcon />
           </IconButton>
@@ -60,7 +60,7 @@ const PlantFeatures = () => {
         title="Plant Features"
       />
       {
-        (plantContext.currentUser.role === 1 || plantContext.currentUser.role === 2) &&
+        (plantContext.currentUser && (plantContext.currentUser.role === 1 || plantContext.currentUser.role === 2)) &&
           <Menu
             id="basic-menu"
             anchorEl={anchorEl}

@@ -102,6 +102,7 @@ func (this *AuthHandler) ChangeUsername(w http.ResponseWriter, r *http.Request) 
 	returnedUser, err := this.IAuthService.ChangeUsername(user.NewUsername, username)
 	if err != nil {
 		http.Error(w, err.Message(), err.Status())
+		return
 	}
 
 	token, err := this.IAuthService.IssueToken(returnedUser)

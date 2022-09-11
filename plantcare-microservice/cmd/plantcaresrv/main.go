@@ -49,6 +49,7 @@ func main() {
 	getCollectionPlantsR := r.Methods(http.MethodGet).Subrouter()
 	getCollectionPlantsR.HandleFunc("/api/collectionplants/collection/{id}", collectionPlantHandler.GetAllByCollectionId)
 	getCollectionPlantsR.HandleFunc("/api/collectionplants/{id}", collectionPlantHandler.GetOne)
+	getCollectionPlantsR.HandleFunc("/api/collectionplants/referents", collectionPlantHandler.GetReferentPlantsIdByUsername)
 
 	getTasksR := r.Methods(http.MethodGet).Subrouter()
 	getTasksR.HandleFunc("/api/tasks/collectionplant/{id}", taskHandler.GetAllByCollectionPlantId)

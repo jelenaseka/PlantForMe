@@ -18,6 +18,7 @@ type PlantRepositoryInterface interface {
 	FindAllForCollectionPlantReference() ([]data.PlantReference, error)
 	FindById(id uuid.UUID) (*data.Plant, error)
 	FindByName(name string) (*data.Plant, error)
+	FindPlantsByReferentsIds(references []string) []data.ReferentPlant
 	Create(plant *data.Plant) error
 	Update(plant *data.Plant) error
 	Delete(id uuid.UUID)
@@ -25,6 +26,28 @@ type PlantRepositoryInterface interface {
 
 func NewPlantRepository() PlantRepositoryInterface {
 	return &plantRepository{}
+}
+
+func (this *plantRepository) FindPlantsByReferentsIds(references []string) []data.ReferentPlant {
+	db := config.GetDB()
+	var plants []data.ReferentPlant
+
+	if len(references) == 0 {
+		return []data.ReferentPlant{}
+	}
+
+	query := "select p.id, p.name, c.name as category_name, p.light, p.watering, p.is_blooming, p.growth_rate, p.hardiness, p.height, p.life_time from plantdb.plants p, plantdb.categories c where p.category_id = c.id and ("
+
+	for k, v := range references {
+		if k == len(references)-1 {
+			query += " p.id = '" + v + "')"
+		} else {
+			query += " p.id = '" + v + "'" + " OR "
+		}
+	}
+	db.Debug().Raw(query).Find(&plants)
+
+	return plants
 }
 
 func (repo *plantRepository) FindAll(urlValues url.Values) ([]data.Plant, error) {

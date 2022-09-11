@@ -21,11 +21,11 @@ const ProfilePage = () => {
   }, [profileContext.me])
 
   const getRoleString = () => {
-    if(profileContext.me.role === 1) {
+    if(profileContext.me.role === 0) {
       return 'Member';
-    } else if (profileContext.me.role === 2) {
+    } else if (profileContext.me.role === 1) {
       return 'Moderator';
-    } else if (profileContext.me.role === 3) {
+    } else if (profileContext.me.role === 2) {
       return 'Admin';
     }
   }
@@ -110,6 +110,7 @@ const ProfilePage = () => {
             <Grid item md={12}>
               Set new password<br/>
               <TextField
+                type="password"
                 sx={{marginRight:'5px', marginTop: '1em'}}
                 label="Password" 
                 variant="outlined" 
@@ -124,6 +125,7 @@ const ProfilePage = () => {
             </Grid>
             <Grid item md={12}>
               <TextField
+                type="password"
                 sx={{marginRight:'5px'}}
                 label="Repeat password" 
                 variant="outlined" 
@@ -147,56 +149,7 @@ const ProfilePage = () => {
             </Grid>
           </Grid>
         </Box>
-        // <Box sx={
-        //   { display:'flex', 
-        //     flexDirection: 'column', 
-        //     justifyContent:"center", 
-        //     width: '50ch', 
-        //     padding: '3em 2em', 
-        //     borderRadius:'15px',
-        //     // border:'1px solid #a5d6a7'
-        //   }}>
-        //     <Box component="form" variant="outlined" sx={{display:'flex'}}>
-              
-        //       <TextField
-        //         sx={{marginRight:'5px'}}
-        //         label="Username" 
-        //         variant="outlined" 
-        //         value={profileContext.me.username} 
-        //       />
-        //       <div >
-        //         <Button sx={{marginTop:'8px'}} variant="contained">change</Button>
-                
-        //       </div>
-              
-        //     </Box>
-        //     <Box component="form" variant="outlined" sx={{display:'flex'}}>
-        //       <TextField
-        //         sx={{marginRight:'5px', marginTop: '1em'}}
-        //         label="Username" 
-        //         variant="outlined" 
-        //         value={profileContext.password} 
-        //       />
-        //     </Box>
-        //     <Box component="form" variant="outlined" sx={{display:'flex'}}>
-        //       <TextField
-        //         sx={{marginRight:'5px', marginTop: '1em'}}
-        //         label="Username" 
-        //         variant="outlined" 
-        //         value={profileContext.repeatPassword} 
-        //       />
-        //       <div >
-        //         <Button sx={{marginTop:'8px'}} variant="contained">update password</Button>
-        //       </div>
-              
-        //     </Box>
-        //     <TextField
-        //       sx={{marginTop: '1em'}} 
-        //       label="Role" 
-        //       variant="outlined" 
-        //       value={getRoleString(profileContext.me.role)} 
-        //     />
-        // </Box>
+        
       }
       
       

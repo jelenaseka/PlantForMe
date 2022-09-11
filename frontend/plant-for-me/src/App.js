@@ -20,6 +20,8 @@ import ProfileContainer from './containers/profile/ProfileContainer';
 import PlantCareContainer from './containers/plant-care/PlantCareContainer';
 import CollectionContainer from './containers/plant-care/CollectionContainer';
 import CollectionPlantContainer from './containers/plant-care/CollectionPlantContainer';
+import WelcomeContainer from './containers/home/WelcomeContainer';
+
 
 function App() {
   return (
@@ -27,6 +29,7 @@ function App() {
       <ThemeProvider theme={theme}>
       <Header></Header>
         <Routes>
+          <Route path="/" element={<WelcomeContainer/>}/>
           <Route path="/plants/create" element={<CreatePlantContainer/>}/>
           <Route path="/plants/update/:id" element={<UpdatePlantContainer/>}/>
           <Route path="/plants" element={<PlantsContainer/>}/>
