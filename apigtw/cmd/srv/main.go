@@ -122,6 +122,11 @@ func main() {
 	deletePlantCareR.HandleFunc("/api/collectionplants/{id}", handlers.Delete(configuration.PlantCareAddress))
 	deletePlantCareR.HandleFunc("/api/tasks/{id}", handlers.Delete(configuration.PlantCareAddress))
 
+	// RECOMMENDATION MICROSERVICE
+
+	getRecommendationR := r.Methods(http.MethodGet).Subrouter()
+	getRecommendationR.HandleFunc("/api/recommendation", handlers.Get(configuration.RecommendationAddress))
+
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{configuration.FrontendAddress, "http://localhost:8089"},
 		AllowCredentials: true,

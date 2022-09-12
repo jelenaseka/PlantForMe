@@ -21,6 +21,7 @@ import PlantCareContainer from './containers/plant-care/PlantCareContainer';
 import CollectionContainer from './containers/plant-care/CollectionContainer';
 import CollectionPlantContainer from './containers/plant-care/CollectionPlantContainer';
 import WelcomeContainer from './containers/home/WelcomeContainer';
+import RecommendationContainer from './containers/recommendation/RecommendationContainer';
 
 
 function App() {
@@ -41,6 +42,7 @@ function App() {
           <Route path="/plantcare" element={<PlantCareContainer/>}/>
           <Route path="/plantcare/:id" element={<CollectionContainer/>}/>
           <Route path="/plantcare/:collectionid/plant/:plantid" element={<CollectionPlantContainer/>}/>
+          <Route path='/recommendation' element={<RecommendationContainer/>}/>
           <Route path="/login" element={<LoginContainer/>}/>
           <Route path="/registration" element={<RegistrationContainer/>}/>
           <Route path='/me' element={<ProfileContainer/>}/>

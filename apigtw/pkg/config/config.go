@@ -5,12 +5,13 @@ import (
 )
 
 type Configurations struct {
-	ServerAddress    string `mapstructure:"SERVER_ADDRESS"`
-	UserAddress      string `mapstructure:"USER_MICROSERVICE_SERVER_ADDRESS"`
-	PlantAddress     string `mapstructure:"PLANT_MICROSERVICE_SERVER_ADDRESS"`
-	ForumAddress     string `mapstructure:"FORUM_MICROSERVICE_SERVER_ADDRESS"`
-	PlantCareAddress string `mapstructure:"PLANT_CARE_MICROSERVICE_SERVER_ADDRESS"`
-	FrontendAddress  string `mapstructure:"FRONTEND_ADDRESS"`
+	ServerAddress         string `mapstructure:"SERVER_ADDRESS"`
+	UserAddress           string `mapstructure:"USER_MICROSERVICE_SERVER_ADDRESS"`
+	PlantAddress          string `mapstructure:"PLANT_MICROSERVICE_SERVER_ADDRESS"`
+	ForumAddress          string `mapstructure:"FORUM_MICROSERVICE_SERVER_ADDRESS"`
+	PlantCareAddress      string `mapstructure:"PLANT_CARE_MICROSERVICE_SERVER_ADDRESS"`
+	RecommendationAddress string `mapstructure:"RECOMMENDATION_MICROSERVICE_SERVER_ADDRESS"`
+	FrontendAddress       string `mapstructure:"FRONTEND_ADDRESS"`
 }
 
 func LoadConfig(path string) (config Configurations, err error) {

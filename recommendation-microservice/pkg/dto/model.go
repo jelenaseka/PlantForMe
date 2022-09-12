@@ -7,17 +7,10 @@ type Referents struct {
 }
 
 type Plant struct {
-	ID          uuid.UUID `gorm:"type:varchar(36)"`
-	Name        string    `gorm:"type:varchar(255);unique"`
-	Description string
-	Base64Image string
-	Light       Light
-	Watering    Watering
-	IsBlooming  bool
-	GrowthRate  GrowthRate
-	Hardiness   Hardiness
-	Height      Height
-	LifeTime    LifeTime
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	Image       string    `json:"image"`
 }
 
 type Light int

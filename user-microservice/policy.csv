@@ -33,3 +33,4 @@ p, *, /api/collections*, *
 p, *, /api/collectionplants*, *
 p, *, /api/tasks*, *
 p, *, /api/logs, *
+p, *, /api/recommendation, GET

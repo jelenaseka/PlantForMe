@@ -44,6 +44,12 @@ const Header = () => {
             </Button>
           }
           {
+            currentUser &&
+            <Button >
+              <NavbarLink link="/recommendation" title="Recommendation" />
+            </Button>
+          }
+          {
             !currentUser && 
             <Button>
               <NavbarLink link="/login" title="Login" />

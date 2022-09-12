@@ -20,17 +20,15 @@ func NewRecommendationHandler(l *log.Logger) *RecommendationHandler {
 
 func (this *RecommendationHandler) GetRecommendation(w http.ResponseWriter, r *http.Request) {
 
-	// headers := r.Header
-	// _, ok := headers["Username"]
-	// if !ok {
-	// 	http.Error(w, "Not logged in", http.StatusUnauthorized)
-	// 	return
-	// }
-	// username := r.Header["Username"][0]
+	headers := r.Header
+	_, ok := headers["Username"]
+	if !ok {
+		http.Error(w, "Not logged in", http.StatusUnauthorized)
+		return
+	}
+	username := r.Header["Username"][0]
 
 	w.Header().Add("Content-Type", "application/json")
-
-	//posalji request plantcare ms
 
 	client := &http.Client{
 		Timeout: time.Second * 10,
@@ -38,7 +36,7 @@ func (this *RecommendationHandler) GetRecommendation(w http.ResponseWriter, r *h
 
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8088/api/collectionplants/recommendation/referents", nil)
 
-	req.Header.Add("Username", "jelena")
+	req.Header.Add("Username", username)
 
 	resp, err := client.Do(req)
 	if err != nil {

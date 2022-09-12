@@ -5,6 +5,7 @@ import (
 	"log"
 	"math"
 	"plant-microservice/pkg/data"
+	"plant-microservice/pkg/dto"
 	"plant-microservice/pkg/repository"
 	"plant-microservice/pkg/utils/error_utils"
 	"sort"
@@ -15,14 +16,14 @@ type recommendationService struct {
 }
 
 type RecommendationServiceInterface interface {
-	GetSimilarPlants(references []string) ([]data.Plant, error_utils.MessageErr)
+	GetSimilarPlants(references []string) ([]dto.PlantItem, error_utils.MessageErr)
 }
 
 func NewRecommendationService(pr repository.PlantRepositoryInterface) RecommendationServiceInterface {
 	return &recommendationService{pr}
 }
 
-func (this *recommendationService) GetSimilarPlants(references []string) ([]data.Plant, error_utils.MessageErr) {
+func (this *recommendationService) GetSimilarPlants(references []string) ([]dto.PlantItem, error_utils.MessageErr) {
 	fmt.Println("Get similar plants in service")
 	fmt.Println("references: ", references)
 	plants := this.getPlantsByReferentsIds(references)
@@ -54,6 +55,7 @@ func (this *recommendationService) GetSimilarPlants(references []string) ([]data
 	resultPlants := this.IPlantRepository.FindPlantsByIds(keys)
 
 	return resultPlants, nil
+
 }
 
 func sortSimilarityMapAndReturn10Keys(similarityMap map[string]float64) []string {

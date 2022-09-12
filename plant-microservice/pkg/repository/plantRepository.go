@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"plant-microservice/pkg/config"
 	"plant-microservice/pkg/data"
+	"plant-microservice/pkg/dto"
 	"plant-microservice/pkg/utils"
 
 	"github.com/google/uuid"
@@ -20,7 +21,7 @@ type PlantRepositoryInterface interface {
 	FindById(id uuid.UUID) (*data.Plant, error)
 	FindByName(name string) (*data.Plant, error)
 	FindReferentPlantsByReferentsIds(references []string) []data.ReferentPlant
-	FindPlantsByIds(ids []string) []data.Plant
+	FindPlantsByIds(ids []string) []dto.PlantItem
 	Create(plant *data.Plant) error
 	Update(plant *data.Plant) error
 	Delete(id uuid.UUID)
@@ -30,11 +31,11 @@ func NewPlantRepository() PlantRepositoryInterface {
 	return &plantRepository{}
 }
 
-func (this *plantRepository) FindPlantsByIds(ids []string) []data.Plant {
+func (this *plantRepository) FindPlantsByIds(ids []string) []dto.PlantItem {
 	db := config.GetDB()
-	var plants []data.Plant
+	var plants []dto.PlantItem
 
-	query := "select * from plantdb.plants where ("
+	query := "select id, name, description, base64_image as image from plantdb.plants where ("
 	for k, v := range ids {
 		if k == len(ids)-1 {
 			query += " id = '" + v + "')"
