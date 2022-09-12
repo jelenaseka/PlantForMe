@@ -62,6 +62,7 @@ func (this *collectionPlantService) GetOneById(id uuid.UUID) (*dto.CollectionPla
 }
 
 func (this *collectionPlantService) GetReferentPlantsIdByUsername(username string) ([]string, error_utils.MessageErr) {
+	fmt.Println("GetReferentPlantsIdByUsername in service")
 	referentIds, err := this.ICollectionPlantRepository.FindReferentPlantsIdByUsername(username)
 
 	if err != nil {

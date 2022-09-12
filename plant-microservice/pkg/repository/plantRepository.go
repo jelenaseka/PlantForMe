@@ -14,11 +14,13 @@ type plantRepository struct {
 }
 
 type PlantRepositoryInterface interface {
-	FindAll(url.Values) ([]data.Plant, error)
+	FindAllReferentPlants() ([]data.ReferentPlant, error)
+	FindAllByUrl(url.Values) ([]data.Plant, error)
 	FindAllForCollectionPlantReference() ([]data.PlantReference, error)
 	FindById(id uuid.UUID) (*data.Plant, error)
 	FindByName(name string) (*data.Plant, error)
-	FindPlantsByReferentsIds(references []string) []data.ReferentPlant
+	FindReferentPlantsByReferentsIds(references []string) []data.ReferentPlant
+	FindPlantsByIds(ids []string) []data.Plant
 	Create(plant *data.Plant) error
 	Update(plant *data.Plant) error
 	Delete(id uuid.UUID)
@@ -28,7 +30,24 @@ func NewPlantRepository() PlantRepositoryInterface {
 	return &plantRepository{}
 }
 
-func (this *plantRepository) FindPlantsByReferentsIds(references []string) []data.ReferentPlant {
+func (this *plantRepository) FindPlantsByIds(ids []string) []data.Plant {
+	db := config.GetDB()
+	var plants []data.Plant
+
+	query := "select * from plantdb.plants where ("
+	for k, v := range ids {
+		if k == len(ids)-1 {
+			query += " id = '" + v + "')"
+		} else {
+			query += " id = '" + v + "'" + " OR "
+		}
+	}
+	db.Debug().Raw(query).Find(&plants)
+
+	return plants
+}
+
+func (this *plantRepository) FindReferentPlantsByReferentsIds(references []string) []data.ReferentPlant {
 	db := config.GetDB()
 	var plants []data.ReferentPlant
 
@@ -50,7 +69,18 @@ func (this *plantRepository) FindPlantsByReferentsIds(references []string) []dat
 	return plants
 }
 
-func (repo *plantRepository) FindAll(urlValues url.Values) ([]data.Plant, error) {
+func (repo *plantRepository) FindAllReferentPlants() ([]data.ReferentPlant, error) {
+	db := config.GetDB()
+	var plants []data.ReferentPlant
+
+	query := "select id, name, light, watering, is_blooming, growth_rate, hardiness, height, life_time from plantdb.plants where deleted_at is NULL;"
+
+	db.Debug().Raw(query).Find(&plants)
+
+	return plants, nil
+}
+
+func (repo *plantRepository) FindAllByUrl(urlValues url.Values) ([]data.Plant, error) {
 	db := config.GetDB()
 	var plants []data.Plant
 

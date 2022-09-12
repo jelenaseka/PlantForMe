@@ -62,6 +62,7 @@ func (this *CollectionPlantHandler) GetOne(w http.ResponseWriter, r *http.Reques
 }
 
 func (this *CollectionPlantHandler) GetReferentPlantsIdByUsername(w http.ResponseWriter, r *http.Request) {
+	this.l.Print("Get Referent PlantsId By Username")
 	headers := r.Header
 	_, ok := headers["Username"]
 	if !ok {

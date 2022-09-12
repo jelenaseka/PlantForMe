@@ -29,10 +29,10 @@ func (this *RecommendationHandler) GetPlantsByReferentsIds(w http.ResponseWriter
 		return
 	}
 
-	plants := this.IRecommendationService.GetSimilarPlants(referents.ReferentIds)
-	// if err != nil {
-	// 	http.Error(w, err.Message(), err.Status())
-	// }
+	plants, e := this.IRecommendationService.GetSimilarPlants(referents.ReferentIds)
+	if e != nil {
+		http.Error(w, e.Message(), e.Status())
+	}
 
 	json.NewEncoder(w).Encode(plants)
 }

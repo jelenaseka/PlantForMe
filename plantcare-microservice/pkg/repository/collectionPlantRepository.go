@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"plantcare-microservice/pkg/config"
 	"plantcare-microservice/pkg/data"
 
@@ -54,11 +55,12 @@ func (this *collectionPlantRepository) FindById(id uuid.UUID) (*data.CollectionP
 }
 
 func (this *collectionPlantRepository) FindReferentPlantsIdByUsername(username string) ([]string, error) {
+	fmt.Println("FindReferentPlantsIdByUsername repository")
 	db := config.GetDB()
 	var referentIds []string
 
-	query := "SELECT cp.referent_plant_id FROM plantcaredb.collection_plants cp, plantcaredb.collections c where cp.collection_id = c.id and c.username = 'luka';"
-	db.Debug().Raw(query).Scan(referentIds)
+	query := "SELECT cp.referent_plant_id FROM plantcaredb.collection_plants cp, plantcaredb.collections c where cp.collection_id = c.id and c.username = '" + username + "';"
+	db.Debug().Raw(query).Scan(&referentIds)
 
 	return referentIds, nil
 }

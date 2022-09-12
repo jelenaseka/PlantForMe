@@ -49,7 +49,7 @@ func main() {
 	getCollectionPlantsR := r.Methods(http.MethodGet).Subrouter()
 	getCollectionPlantsR.HandleFunc("/api/collectionplants/collection/{id}", collectionPlantHandler.GetAllByCollectionId)
 	getCollectionPlantsR.HandleFunc("/api/collectionplants/{id}", collectionPlantHandler.GetOne)
-	getCollectionPlantsR.HandleFunc("/api/collectionplants/referents", collectionPlantHandler.GetReferentPlantsIdByUsername)
+	getCollectionPlantsR.HandleFunc("/api/collectionplants/recommendation/referents", collectionPlantHandler.GetReferentPlantsIdByUsername)
 
 	getTasksR := r.Methods(http.MethodGet).Subrouter()
 	getTasksR.HandleFunc("/api/tasks/collectionplant/{id}", taskHandler.GetAllByCollectionPlantId)
@@ -93,7 +93,7 @@ func main() {
 	deleteTasksR.HandleFunc("/api/tasks/{id}", taskHandler.Delete)
 
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:8080"},
+		AllowedOrigins:   []string{"http://localhost:8080", "http://localhost:8090"},
 		AllowCredentials: true,
 		AllowedMethods:   []string{"GET", "OPTIONS", "POST", "DELETE", "PUT"},
 	})

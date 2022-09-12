@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"recommendation-microservice/pkg/config"
+	"recommendation-microservice/pkg/handlers"
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
@@ -19,6 +20,11 @@ func main() {
 	l := log.Default()
 	l.Println("Port is\t\t", configuration.ServerAddress)
 	r := mux.NewRouter()
+
+	rhandler := handlers.NewRecommendationHandler(l)
+
+	getRecommendationR := r.Methods(http.MethodGet).Subrouter()
+	getRecommendationR.HandleFunc("/api/recommendation", rhandler.GetRecommendation)
 
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:8080"},

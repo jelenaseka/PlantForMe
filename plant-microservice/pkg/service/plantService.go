@@ -34,7 +34,7 @@ func NewPlantService(r repository.PlantRepositoryInterface, c CategoryServiceInt
 }
 
 func (service *plantService) GetAll(urlValues url.Values) ([]dto.PlantResponse, error_utils.MessageErr) {
-	plants, err := service.IPlantRepository.FindAll(urlValues)
+	plants, err := service.IPlantRepository.FindAllByUrl(urlValues)
 
 	if err != nil {
 		return nil, error_utils.NewInternalServerError(fmt.Sprintf("Error when trying to retrieve plants: %s", err.Error()))
